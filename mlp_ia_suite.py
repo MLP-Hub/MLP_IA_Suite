@@ -379,7 +379,7 @@ class MLP_IA_Suite:
         self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)
         self.dlg.Img_mapCanvas.extentsChanged.connect(self.updateMsk)
 
-        self.dlg.Fit_pushButton.clicked.connect(self.zoomToExt)
+        self.dlg.Fit_pushButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
 
         # SHOW THE DIALOG
         self.dlg.show()
