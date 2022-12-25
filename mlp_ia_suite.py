@@ -23,7 +23,7 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QEvent
 from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QSplitter
 from qgis.core import QgsRasterLayer, QgsProject, QgsProcessing 
 from qgis.gui import QgsMapToolPan
 
@@ -31,6 +31,7 @@ from qgis.gui import QgsMapToolPan
 from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
+from .swipe_tool import mapswipetool
 
 import sys
 import os.path
@@ -41,6 +42,8 @@ this_dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(this_dir, 'pylc_master')
 sys.path.append(path)
 import pylc
+
+
 
 # Install requirements for pylc.py
 #MAKE SURE TO CHECK IF ALREADY INSTALLED AND WARN USERS ABOUT DEPENDENCIES
@@ -301,7 +304,20 @@ class MLP_IA_Suite:
         """Zooms to extent of mask and image layer"""
 
         self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent()) # set extent to the extent of the mask layer 
-        #NOTE: this will automaticallt result in the image layer changing as well
+        #NOTE: this will automatically result in the image layer changing as well
+    
+    def swipeShow(self):
+        """Changes display from side-by-side to one window"""
+        
+        self.dlg.Mask_mapCanvas.hide()
+        self.dlg.Img_mapCanvas.hide()
+        self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent()) # set extent to the extent of the image layer
+        self.dlg.Swipe_mapCanvas.setLayers([self.mask_lyr, self.img_lyr])
+        self.dlg.Swipe_mapCanvas.show()
+    
+    def swipeTool(self):
+        swipeTool = mapswipetool.MapSwipeTool(self.dlg.Swipe_mapCanvas)
+        self.dlg.Swipe_mapCanvas.setMapTool(swipeTool)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -380,8 +396,11 @@ class MLP_IA_Suite:
         self.dlg.Img_mapCanvas.extentsChanged.connect(self.updateMsk)
 
         self.dlg.Fit_pushButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
+        self.dlg.Swipe_pushButton.clicked.connect(self.swipeShow)
+        self.dlg.Swipe_pushButton.clicked.connect(self.swipeTool)
 
         # SHOW THE DIALOG
+        self.dlg.Swipe_mapCanvas.hide()
         self.dlg.show()
 
         # Run the dialog event loop
