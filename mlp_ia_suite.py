@@ -395,9 +395,9 @@ class MLP_IA_Suite:
         self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)
         self.dlg.Img_mapCanvas.extentsChanged.connect(self.updateMsk)
 
-        self.dlg.Fit_pushButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
-        self.dlg.Swipe_pushButton.clicked.connect(self.swipeShow)
-        self.dlg.Swipe_pushButton.clicked.connect(self.swipeTool)
+        self.dlg.Fit_toolButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
+        self.dlg.Swipe_toolButton.clicked.connect(self.swipeShow)
+        self.dlg.Swipe_toolButton.clicked.connect(self.swipeTool)
 
         # SHOW THE DIALOG
         self.dlg.Swipe_mapCanvas.hide()
