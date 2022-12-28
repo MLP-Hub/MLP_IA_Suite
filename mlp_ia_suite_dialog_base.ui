@@ -1043,57 +1043,6 @@ border-color: rgb(170, 0, 255);</string>
       </rect>
      </property>
     </widget>
-    <widget class="QToolButton" name="Fit_toolButton">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>210</y>
-       <width>31</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>Icons/zoom-extent.png</normaloff>Icons/zoom-extent.png</iconset>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="Swipe_toolButton">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>210</y>
-       <width>31</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string notr="true"/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>Icons/mapswipetool.png</normaloff>Icons/mapswipetool.png</iconset>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="FullScrn_toolButton">
-     <property name="geometry">
-      <rect>
-       <x>520</x>
-       <y>210</y>
-       <width>31</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>Icons/fullscreen.png</normaloff>Icons/fullscreen.png</iconset>
-     </property>
-    </widget>
     <widget class="QgsMapCanvas" name="Swipe_mapCanvas" native="true">
      <property name="geometry">
       <rect>
@@ -1103,57 +1052,231 @@ border-color: rgb(170, 0, 255);</string>
        <height>551</height>
       </rect>
      </property>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>200</y>
-        <width>120</width>
-        <height>80</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>GroupBox</string>
-      </property>
-     </widget>
     </widget>
-    <widget class="QToolButton" name="Pan_toolButton">
+    <widget class="QFrame" name="frame">
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>210</y>
-       <width>31</width>
-       <height>28</height>
+       <y>206</y>
+       <width>186</width>
+       <height>33</height>
       </rect>
      </property>
-     <property name="cursor">
-      <cursorShape>ArrowCursor</cursorShape>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 240, 240);</string>
      </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
      </property>
-     <property name="text">
-      <string/>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>Icons/pan_icon.png</normaloff>Icons/pan_icon.png</iconset>
+     <property name="lineWidth">
+      <number>1</number>
      </property>
-     <property name="iconSize">
-      <size>
-       <width>25</width>
-       <height>25</height>
-      </size>
+     <property name="midLineWidth">
+      <number>0</number>
      </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonIconOnly</enum>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
+     <widget class="QToolButton" name="Pan_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>Pan</string>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/pan.png</normaloff>Icons/pan.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonIconOnly</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="Fit_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Zoom to Extent</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/zoom-extent.png</normaloff>Icons/zoom-extent.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="Swipe_toolButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>115</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Swipe</string>
+      </property>
+      <property name="text">
+       <string notr="true"/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/mapswipetool.png</normaloff>Icons/mapswipetool.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="FullScrn_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Go Full Screen</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/fullscrn.png</normaloff>Icons/fullscrn.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>26</width>
+        <height>26</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="View_toolButton">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>View</string>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonIconOnly</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="Line" name="line_2">
+      <property name="geometry">
+       <rect>
+        <x>75</x>
+        <y>4</y>
+        <width>5</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgba(255, 255, 255, 0);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
     </widget>
     <zorder>PyLC_description</zorder>
     <zorder>Legend_box</zorder>
@@ -1196,11 +1319,8 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>Scale_label</zorder>
     <zorder>Img_mapCanvas</zorder>
     <zorder>Mask_mapCanvas</zorder>
-    <zorder>Fit_toolButton</zorder>
-    <zorder>Swipe_toolButton</zorder>
-    <zorder>FullScrn_toolButton</zorder>
     <zorder>Swipe_mapCanvas</zorder>
-    <zorder>Pan_toolButton</zorder>
+    <zorder>frame</zorder>
    </widget>
    <widget class="QWidget" name="VP_tab">
     <attribute name="title">

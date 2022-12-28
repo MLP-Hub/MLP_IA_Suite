@@ -293,27 +293,64 @@ class MLP_IA_Suite:
 
         if self.dlg.Mask_mapCanvas.extent() != self.dlg.Img_mapCanvas.extent():
             self.dlg.Img_mapCanvas.setExtent(self.dlg.Mask_mapCanvas.extent())
+            self.dlg.Img_mapCanvas.refresh()
 
     def updateMsk(self):
         """Updates the extent of the image to match the extent of the mask"""
 
         if self.dlg.Mask_mapCanvas.extent() != self.dlg.Img_mapCanvas.extent():
             self.dlg.Mask_mapCanvas.setExtent(self.dlg.Img_mapCanvas.extent())
+            self.dlg.Mask_mapCanvas.refresh()
+
+    def panCanvas(self):
+        """Enables panning when the pan tool is selected"""
+
+        if self.dlg.Swipe_mapCanvas.isVisible():
+            self.toolPanSwipe = QgsMapToolPan(self.dlg.Swipe_mapCanvas)
+            self.dlg.Swipe_mapCanvas.setMapTool(self.toolPanSwipe)
+        else:
+            self.toolPanMask = QgsMapToolPan(self.dlg.Mask_mapCanvas)
+            self.dlg.Mask_mapCanvas.setMapTool(self.toolPanMask)
+            self.toolPanImg = QgsMapToolPan(self.dlg.Img_mapCanvas)
+            self.dlg.Img_mapCanvas.setMapTool(self.toolPanImg)
+
 
     def zoomToExt(self):
         """Zooms to extent of mask and image layer"""
 
-        self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent()) # set extent to the extent of the mask layer 
-        #NOTE: this will automatically result in the image layer changing as well
-    
-    def swipeShow(self):
-        """Changes display from side-by-side to one window"""
+        if self.dlg.Swipe_mapCanvas.isVisible():
+            self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent())
+            self.dlg.Swipe_mapCanvas.refresh()
+        else:
+            self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent())
+            self.dlg.Img_mapCanvas.setExtent(self.img_lyr.extent())
+            self.dlg.Img_mapCanvas.refresh()
+            self.dlg.Mask_mapCanvas.refresh()
         
-        self.dlg.Mask_mapCanvas.hide()
-        self.dlg.Img_mapCanvas.hide()
-        self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent()) # set extent to the extent of the image layer
-        self.dlg.Swipe_mapCanvas.setLayers([self.mask_lyr, self.img_lyr])
-        self.dlg.Swipe_mapCanvas.show()
+    
+    def changeView(self):
+        """Changes display from side-by-side to one window or v-v"""
+        if not self.dlg.Swipe_mapCanvas.isVisible():
+            self.dlg.Mask_mapCanvas.hide()
+            self.dlg.Img_mapCanvas.hide()
+
+            if self.toolPanMask:
+                self.toolPanMask.deactivate()
+                self.toolPanImg.deactivate()
+
+            self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent()) # set extent to the extent of the image layer
+            self.dlg.Swipe_mapCanvas.setLayers([self.mask_lyr, self.img_lyr])
+            self.dlg.Swipe_mapCanvas.show()
+            self.dlg.Swipe_toolButton.setEnabled(True)
+        else:
+            self.dlg.Swipe_mapCanvas.hide()
+
+            if self.toolPanSwipe:
+                self.toolPanSwipe.deactivate()
+
+            self.dlg.Mask_mapCanvas.show()
+            self.dlg.Img_mapCanvas.show()
+            self.dlg.Swipe_toolButton.setEnabled(False)
     
     def swipeTool(self):
         swipeTool = mapswipetool.MapSwipeTool(self.dlg.Swipe_mapCanvas)
@@ -385,18 +422,15 @@ class MLP_IA_Suite:
         self.dlg.Run_pushButton.clicked.connect(self.showMask)
         self.dlg.Run_pushButton.clicked.connect(self.showImg)
         
-        # Enable panning
-        toolPan = QgsMapToolPan(self.dlg.Mask_mapCanvas)
-        self.dlg.Mask_mapCanvas.setMapTool(toolPan)
-        toolPan2 = QgsMapToolPan(self.dlg.Img_mapCanvas)
-        self.dlg.Img_mapCanvas.setMapTool(toolPan2)
 
         # Link the extent of the image to the extent of the mask
         self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)
         self.dlg.Img_mapCanvas.extentsChanged.connect(self.updateMsk)
 
+        # Connect tools to appropriate functions
+        self.dlg.View_toolButton.clicked.connect(self.changeView)
+        self.dlg.Pan_toolButton.clicked.connect(self.panCanvas)
         self.dlg.Fit_toolButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
-        self.dlg.Swipe_toolButton.clicked.connect(self.swipeShow)
         self.dlg.Swipe_toolButton.clicked.connect(self.swipeTool)
 
         # SHOW THE DIALOG
