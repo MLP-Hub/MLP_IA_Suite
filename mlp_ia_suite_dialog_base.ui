@@ -1078,6 +1078,9 @@ border-color: rgb(170, 0, 255);</string>
       <number>0</number>
      </property>
      <widget class="QToolButton" name="Pan_toolButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>80</x>
@@ -1112,7 +1115,7 @@ border-color: rgb(170, 0, 255);</string>
        <bool>true</bool>
       </property>
       <property name="autoExclusive">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="toolButtonStyle">
        <enum>Qt::ToolButtonIconOnly</enum>
@@ -1122,6 +1125,9 @@ border-color: rgb(170, 0, 255);</string>
       </property>
      </widget>
      <widget class="QToolButton" name="Fit_toolButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>40</x>
@@ -1176,13 +1182,16 @@ border-color: rgb(170, 0, 255);</string>
        <bool>true</bool>
       </property>
       <property name="autoExclusive">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="autoRaise">
        <bool>true</bool>
       </property>
      </widget>
      <widget class="QToolButton" name="FullScrn_toolButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -1218,6 +1227,9 @@ border-color: rgb(170, 0, 255);</string>
       </property>
      </widget>
      <widget class="QToolButton" name="View_toolButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>5</x>
