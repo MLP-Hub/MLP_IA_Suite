@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from .interface_tools import showImg
+from .interface_tools import addImg
 
 import sys
 import os.path
@@ -91,15 +91,17 @@ def runPylc(dlg, mod_dict):
     pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
     #pylc.main(pylc_args) # run pylc
     
-    # Display outputs
-    showImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas) # show input image
-
+    # Display output
     outputDir = dlg.OutputImg_lineEdit.text()
     maskName = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[0]
     maskExt = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
     scale_val = dlg.Scale_lineEdit.text()
     outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
 
-    showImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas) # show output mask
+    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas) # show input image in side-by-side
+    addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas) # show output mask in side-by-side
+    addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas) # show output mask in fullview
+    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas) # show input image in full view
+    
 
     enableTools(dlg)

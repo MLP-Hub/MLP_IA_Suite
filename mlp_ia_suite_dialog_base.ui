@@ -1043,7 +1043,7 @@ border-color: rgb(170, 0, 255);</string>
       </rect>
      </property>
     </widget>
-    <widget class="QgsMapCanvas" name="Swipe_mapCanvas" native="true">
+    <widget class="QgsMapCanvas" name="Full_mapCanvas" native="true">
      <property name="geometry">
       <rect>
        <x>400</x>
@@ -1331,7 +1331,7 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>Scale_label</zorder>
     <zorder>Img_mapCanvas</zorder>
     <zorder>Mask_mapCanvas</zorder>
-    <zorder>Swipe_mapCanvas</zorder>
+    <zorder>Full_mapCanvas</zorder>
     <zorder>frame</zorder>
    </widget>
    <widget class="QWidget" name="VP_tab">

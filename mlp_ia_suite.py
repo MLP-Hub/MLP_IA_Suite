@@ -34,7 +34,7 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .swipe_tool import mapswipetool
 from .pylc_setup import modelMenu, runPylc
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, updateExtents, panCanvas
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool
 
 import sys
 import os.path
@@ -201,70 +201,6 @@ class MLP_IA_Suite:
                 self.tr(u'&MLP Image Analysis Suite'),
                 action)
             self.iface.removeToolBarIcon(action)
-        
-
-    def zoomToExt(self):
-        """Zooms to extent of mask and image layer"""
-
-        if self.dlg.Swipe_mapCanvas.isVisible():
-            self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent())
-            self.dlg.Swipe_mapCanvas.refresh()
-        else:
-            self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent())
-            self.dlg.Img_mapCanvas.setExtent(self.img_lyr.extent())
-            self.dlg.Img_mapCanvas.refresh()
-            self.dlg.Mask_mapCanvas.refresh()
-        
-    
-    def changeView(self):
-        """Changes display from side-by-side to one window or v-v"""
-        if not self.dlg.Swipe_mapCanvas.isVisible(): 
-            
-            # hide the side-by-side view canvases
-            self.dlg.Mask_mapCanvas.hide()
-            self.dlg.Img_mapCanvas.hide()
-
-            # unset pan tool (if set)
-            if self.dlg.Pan_toolButton.isChecked():
-                self.dlg.Mask_mapCanvas.unsetMapTool(self.toolPanMask)
-                self.dlg.Img_mapCanvas.unsetMapTool(self.toolPanImg)
-
-            # show the swipe view canvas
-            self.dlg.Swipe_mapCanvas.setExtent(self.img_lyr.extent())
-            self.dlg.Swipe_mapCanvas.setLayers([self.mask_lyr, self.img_lyr])
-            self.dlg.Swipe_mapCanvas.show()
-            self.dlg.Swipe_toolButton.setEnabled(True) # enable the swipe tool
-        
-        else:
-            self.dlg.Swipe_mapCanvas.hide() # hide the swipe view canvas
-            # show the side-by-side view canvases
-            self.dlg.Mask_mapCanvas.show()
-            self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent())
-            self.dlg.Img_mapCanvas.show()
-            self.dlg.Img_mapCanvas.setExtent(self.img_lyr.extent())
-
-            # unset tools
-            self.dlg.Swipe_toolButton.setChecked(False) # uncheck the swipe button
-            self.dlg.Swipe_toolButton.setEnabled(False) # disable the swipe tool
-            if self.dlg.Pan_toolButton.isChecked():
-                self.dlg.Swipe_mapCanvas.unsetMapTool(self.toolPanSwipe)
-            
-        self.dlg.Pan_toolButton.setChecked(False) # uncheck pan button
-
-    
-    def swipeTool(self):
-        """Enables/disables swipe tool"""
-
-        self.dlg.Pan_toolButton.setChecked(False) # uncheck pan button
-        if self.dlg.Swipe_toolButton.isChecked():
-            swipeTool = mapswipetool.MapSwipeTool(self.dlg.Swipe_mapCanvas)
-            self.dlg.Swipe_mapCanvas.setMapTool(swipeTool)
-        else:
-            self.dlg.Swipe_mapCanvas.unsetMapTool(swipeTool)
-
-    def fullScrn(self):
-        """Opens image viewer in full screen"""
-        self.dlg.showMaximized()
 
     def run(self):
         """Run method that performs all the real work"""
@@ -277,7 +213,7 @@ class MLP_IA_Suite:
             self.dlg = MLP_IA_SuiteDialog()
         
         # PYLC TAB 
-
+        self.dlg.Full_mapCanvas.hide() # hide the full map canvas (default side-by-side view)
         mod_dict = modelMenu(self.dlg) # set up model menu
 
         # Set up image scale slider
@@ -297,14 +233,17 @@ class MLP_IA_Suite:
         self.dlg.Img_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Mask_mapCanvas, self.dlg.Img_mapCanvas))
 
         # Connect tools to appropriate functions
-        self.dlg.View_toolButton.clicked.connect(self.changeView)
-        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Swipe_mapCanvas]))
-        self.dlg.Fit_toolButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
-        self.dlg.Swipe_toolButton.clicked.connect(self.swipeTool)
+        canvas_list = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
+        self.dlg.View_toolButton.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas, [self.dlg.Swipe_toolButton]))
+        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton))
+        self.dlg.Pan_toolButton.clicked.connect(lambda: changeTools([self.dlg.Swipe_toolButton], self.dlg.Pan_toolButton))
+        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list)) # Zoom to mask extent
+        self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton))
+        self.dlg.Swipe_toolButton.clicked.connect(lambda: changeTools([self.dlg.Pan_toolButton], self.dlg.Swipe_toolButton))
         #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
 
         # SHOW THE DIALOG
-        self.dlg.Swipe_mapCanvas.hide()
+        
         self.dlg.show()
 
         # Run the dialog event loop

@@ -26,6 +26,8 @@ from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.core import QgsRasterLayer, QgsProject, QgsProcessing 
 from qgis.gui import QgsMapToolPan
 
+from .swipe_tool import mapswipetool
+
 import os.path
 
 def setScaleBoxVal(dlg, val):
@@ -75,16 +77,17 @@ def getFolder(lineEdit):
     filepath = dialog.selectedFiles()
     lineEdit.setText(filepath[0])
 
-def showImg(filepath, name, canvas):
-    """Displays provided image in map canvas"""
+def addImg(filepath, name, canvas):
+    """Adds provided image in map canvas"""
 
     img_lyr= QgsRasterLayer(filepath, name)
     # Load mask as layer into mask map canvas
     QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
     canvas.enableAntiAliasing(True)
     canvas.setExtent(img_lyr.extent()) # set extent to the extent of the image layer
-    canvas.setLayers([img_lyr])
-    canvas.show()
+    layer_list = canvas.layers()
+    layer_list.append(img_lyr)
+    canvas.setLayers(layer_list)
 
 def updateExtents(canvas, ref_canvas):
     """Updates the extent of a map canvas to match a reference canvas"""
@@ -93,10 +96,8 @@ def updateExtents(canvas, ref_canvas):
         canvas.setExtent(ref_canvas.extent())
         canvas.refresh()
 
-def panCanvas(dlg, canvas_list):
+def panCanvas(dlg, canvas_list, pan_button):
     """Enables/disables pan tool for provided map canvas(es)"""
-    
-    dlg.Swipe_toolButton.setChecked(False) # tools are exclusive, so turn off swipe button
     dlg.pan_tools = []
 
     # create pan tools for each canvas
@@ -105,7 +106,44 @@ def panCanvas(dlg, canvas_list):
     
     # set map tool for each canvas to the appropriate pan tool
     for i in range(len(canvas_list)):
-        if dlg.Pan_toolButton.isChecked():
+        if pan_button.isChecked():
             canvas_list[i].setMapTool(dlg.pan_tools[i])
         else:
             canvas_list[i].unsetMapTool(dlg.pan_tools[i])
+
+def swipeTool(dlg, canvas, swipe_button):
+    """Enables/disables swipe tool"""
+
+    if swipe_button.isChecked():
+        dlg.swipeTool = mapswipetool.MapSwipeTool(canvas)
+        canvas.setMapTool(dlg.swipeTool)
+    else:
+        canvas.unsetMapTool(dlg.swipeTool)
+
+def zoomToExt(canvas_list):
+    """Zooms to provided canvas to extent of primary layer"""
+
+    for canvas in canvas_list:
+        active_layer = canvas.layers()[0]
+        canvas.setExtent(active_layer.extent())
+        canvas.refresh()
+
+def changeView(full_canvas, exclusive_tools):
+    """Changes display from side-by-side to one window or v-v"""
+
+    if not full_canvas.isVisible():
+        full_canvas.show()
+        for tool in exclusive_tools:
+            tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)
+    else:
+        full_canvas.hide()
+        for tool in exclusive_tools:
+            tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
+            tool.setChecked(False)
+
+def changeTools(tool_list, active_tool):
+    """Ensures only the active tool is checked"""
+
+    for tool_button in tool_list:
+        if tool_button != active_tool:
+            tool_button.setChecked(False)
