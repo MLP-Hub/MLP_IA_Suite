@@ -78,7 +78,11 @@ def tester(args):
         with torch.no_grad():
             # get model outputs
             model_outputs = []
-            for i, (tile, _) in tqdm(enumerate(img_loader), total=n_batches, desc="Segmentation: ", unit=' batches'):
+            #for i, (tile, _) in tqdm(enumerate(img_loader), total=n_batches, desc="Segmentation: ", unit=' batches'):
+            #    logits = model.test(tile)
+            #    model_outputs += logits
+            #    model.iter += 1
+            for i, (tile, _) in enumerate(img_loader):
                 logits = model.test(tile)
                 model_outputs += logits
                 model.iter += 1

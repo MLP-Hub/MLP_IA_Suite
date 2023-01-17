@@ -34,8 +34,8 @@ def pylcArgs(dlg, mod_dict):
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
     model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
 
-    img_path = dlg.InputImg_lineEdit.text()
-    out_path = dlg.OutputImg_lineEdit.text()
+    img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
+    out_path = os.path.normpath(dlg.OutputImg_lineEdit.text())
     scale_val = float(dlg.Scale_lineEdit.text())
         
     # Set up model arguments
@@ -58,6 +58,7 @@ def pylcArgs(dlg, mod_dict):
 def runPylc(dlg, mod_dict):
 
     pylc_args = pylcArgs(dlg, mod_dict)
+    #print(pylc_args)
     pylc.main(pylc_args)
 
 # GENERIC TOOLS FOLLOW
