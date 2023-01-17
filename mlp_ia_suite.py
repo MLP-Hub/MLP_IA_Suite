@@ -33,7 +33,8 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .swipe_tool import mapswipetool
-from .pylc_interface import modelMenu, setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, runPylc
+from .pylc_setup import modelMenu, runPylc
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, updateExtents, panCanvas
 
 import sys
 import os.path
@@ -200,53 +201,7 @@ class MLP_IA_Suite:
                 self.tr(u'&MLP Image Analysis Suite'),
                 action)
             self.iface.removeToolBarIcon(action)
-
-    
         
-    #def selectOutDir(self):
-    #    """Select output directory"""
-
-    #    dirpath=QFileDialog.getExistingDirectory(self.dlg,"Select output directory")
-    #    self.dlg.OutputImg_lineEdit.setText(dirpath)
-        
-        
-    def updateImg(self):
-        """Updates the extent of the image to match the extent of the mask"""
-
-        if self.dlg.Mask_mapCanvas.extent() != self.dlg.Img_mapCanvas.extent():
-            self.dlg.Img_mapCanvas.setExtent(self.dlg.Mask_mapCanvas.extent())
-            self.dlg.Img_mapCanvas.refresh()
-
-    def updateMsk(self):
-        """Updates the extent of the image to match the extent of the mask"""
-
-        if self.dlg.Mask_mapCanvas.extent() != self.dlg.Img_mapCanvas.extent():
-            self.dlg.Mask_mapCanvas.setExtent(self.dlg.Img_mapCanvas.extent())
-            self.dlg.Mask_mapCanvas.refresh()
-
-    def panCanvas(self):
-        """Enables/disables pan tool"""
-
-        self.dlg.Swipe_toolButton.setChecked(False) # tools are exclusive, so turn off swipe button
-
-        # create pan tools
-        self.toolPanSwipe = QgsMapToolPan(self.dlg.Swipe_mapCanvas)
-        self.toolPanImg = QgsMapToolPan(self.dlg.Img_mapCanvas)
-        self.toolPanMask = QgsMapToolPan(self.dlg.Mask_mapCanvas)
-
-        # enable or disable pan tools depending on whether the tool button is checked
-        if self.dlg.Pan_toolButton.isChecked():
-            if self.dlg.Swipe_mapCanvas.isVisible():    
-                self.dlg.Swipe_mapCanvas.setMapTool(self.toolPanSwipe)
-            else:
-                self.dlg.Mask_mapCanvas.setMapTool(self.toolPanMask)
-                self.dlg.Img_mapCanvas.setMapTool(self.toolPanImg)
-        else:
-            if self.dlg.Swipe_mapCanvas.isVisible():
-                self.dlg.Swipe_mapCanvas.unsetMapTool(self.toolPanSwipe)
-            else:
-                self.dlg.Mask_mapCanvas.unsetMapTool(self.toolPanMask)
-                self.dlg.Img_mapCanvas.unsetMapTool(self.toolPanImg)
 
     def zoomToExt(self):
         """Zooms to extent of mask and image layer"""
@@ -321,29 +276,29 @@ class MLP_IA_Suite:
             self.first_start = False
             self.dlg = MLP_IA_SuiteDialog()
         
-        # PYLC
-        # GET USER INPUT
-        mod_dict = modelMenu(self.dlg) # Set up model combo box and return dictionary of models
+        # PYLC TAB 
 
-        self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value())) # Set image scale (slider)
-        self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text())) # Set image scale (text box)
+        mod_dict = modelMenu(self.dlg) # set up model menu
+
+        # Set up image scale slider
+        self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value()))
+        self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text()))
 
         # Get file/folder inputs
         self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
         self.dlg.OutputImg_button.clicked.connect(lambda: getFolder(self.dlg.OutputImg_lineEdit))
         self.dlg.InputMsk_button.clicked.connect(lambda: getFileFolder(self.dlg.InputMsk_lineEdit))
 
-        # RUN PYLC AND DISPLAY OUTPUTS
-        self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict)) # Run PyLC and display outputs
+        # Run PyLC and display outputs
+        self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
         
-
-        # Link the extent of the image to the extent of the mask
-        self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)
-        self.dlg.Img_mapCanvas.extentsChanged.connect(self.updateMsk)
+        # Link the extent of the image to the extent of the mask and v.v.
+        self.dlg.Mask_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas))
+        self.dlg.Img_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Mask_mapCanvas, self.dlg.Img_mapCanvas))
 
         # Connect tools to appropriate functions
         self.dlg.View_toolButton.clicked.connect(self.changeView)
-        self.dlg.Pan_toolButton.clicked.connect(self.panCanvas)
+        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Swipe_mapCanvas]))
         self.dlg.Fit_toolButton.clicked.connect(self.zoomToExt) # Zoom to mask extent
         self.dlg.Swipe_toolButton.clicked.connect(self.swipeTool)
         #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
