@@ -33,7 +33,7 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .swipe_tool import mapswipetool
-from .pylc_interface import modelMenu, setScaleBoxVal, setScaleSlideVal, getFileFolder, pylcArgs, showImg, runPylc
+from .pylc_interface import modelMenu, setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, runPylc
 
 import sys
 import os.path
@@ -203,44 +203,11 @@ class MLP_IA_Suite:
 
     
         
-    def selectOutDir(self):
-        """Select output directory"""
+    #def selectOutDir(self):
+    #    """Select output directory"""
 
-        dirpath=QFileDialog.getExistingDirectory(self.dlg,"Select output directory")
-        self.dlg.OutputImg_lineEdit.setText(dirpath)
-
-
-    def showMask(self):
-        """Displays classified mask in PyLC tool tab"""
-
-        # Load mask as layer into mask map canvas
-        mask_pth = self.outputFile
-        self.mask_lyr= QgsRasterLayer(mask_pth, "Mask")
-        QgsProject.instance().addMapLayer(self.mask_lyr, False) # add layer to the registry (but don't load into main map)
-        self.dlg.Mask_mapCanvas.enableAntiAliasing(True)
-        self.dlg.Mask_mapCanvas.setExtent(self.mask_lyr.extent()) # set extent to the extent of the mask layer
-        self.dlg.Mask_mapCanvas.setLayers([self.mask_lyr])
-        self.dlg.Mask_mapCanvas.show()
-
-    def showImg(self):
-        """Displays image in PyLC tool tab"""
-
-        img_pth = self.dlg.InputImg_lineEdit.text()
-        self.img_lyr= QgsRasterLayer(img_pth, "Image")
-        # Load mask as layer into mask map canvas
-        QgsProject.instance().addMapLayer(self.img_lyr, False) # add layer to the registry (but don't load into main map)
-        self.dlg.Img_mapCanvas.enableAntiAliasing(True)
-        self.dlg.Img_mapCanvas.setExtent(self.img_lyr.extent()) # set extent to the extent of the image layer
-        self.dlg.Img_mapCanvas.setLayers([self.img_lyr])
-        self.dlg.Img_mapCanvas.show()
-
-    def enableTools(self):
-        """Enables canvas tools once canvas is populated with mask and image"""
-
-        self.dlg.View_toolButton.setEnabled(True)
-        self.dlg.Fit_toolButton.setEnabled(True)
-        self.dlg.Pan_toolButton.setEnabled(True)
-        self.dlg.FullScrn_toolButton.setEnabled(True)
+    #    dirpath=QFileDialog.getExistingDirectory(self.dlg,"Select output directory")
+    #    self.dlg.OutputImg_lineEdit.setText(dirpath)
         
         
     def updateImg(self):
@@ -363,33 +330,12 @@ class MLP_IA_Suite:
 
         # Get file/folder inputs
         self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
-        self.dlg.OutputImg_button.clicked.connect(self.selectOutDir)
+        self.dlg.OutputImg_button.clicked.connect(lambda: getFolder(self.dlg.OutputImg_lineEdit))
         self.dlg.InputMsk_button.clicked.connect(lambda: getFileFolder(self.dlg.InputMsk_lineEdit))
 
         # RUN PYLC AND DISPLAY OUTPUTS
-        #pylc_args = pylcArgs(self.dlg, mod_dict)
-        #print(pylc_args)
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict)) # Run PyLC and display outputs
         
-
-        #outputDir = self.dlg.OutputImg_lineEdit.text()
-        #maskName = os.path.basename(self.dlg.InputImg_lineEdit.text()).rsplit('.', 1)[0]
-        #maskExt = os.path.basename(self.dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
-        #scale_val = self.dlg.Scale_lineEdit.text()
-
-        #self.outputMsk = os.path(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
-        #showImg(self.dlg.InputImg_lineEdit.text(),"Input Image",self.dlg.Img_mapCanvas)
-        #showImg(self.outputMsk,"PyLC Mask",self.dlg.Msk_mapCanvas)
-
-
-
-        # DISPLAY OUPUTS
-        #self.outputFile = "C:\WLNP\pylc-master\data\outputs\pylc_2-1_deeplab_ch3_schema_a\masks\image1_jpg_scale_1.0.png" # temp for testing
-
-        #change this to run when PyLC is done --> maybe result = pylc.main(args) and return true from pylc.py when it finishes?
-        #self.dlg.Run_pushButton.clicked.connect(self.showMask)
-        #self.dlg.Run_pushButton.clicked.connect(lambda: showImg(self.dlg.InputImg_lineEdit.text(),"Image",self.dlg.Img_mapCanvas))
-        #self.dlg.Run_pushButton.clicked.connect(self.enableTools)
 
         # Link the extent of the image to the extent of the mask
         self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)

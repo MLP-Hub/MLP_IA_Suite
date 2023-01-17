@@ -28,7 +28,9 @@ def modelMenu(dlg):
     return mod_dict
 
 def pylcArgs(dlg, mod_dict):
+    """Gets user input and sets up PyLC arguments"""
 
+    # Get user input parameters
     dir_path = __file__
     dir_path = dir_path[:-18]
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
@@ -56,10 +58,23 @@ def pylcArgs(dlg, mod_dict):
     return args
 
 def runPylc(dlg, mod_dict):
+    """Runs pylc and displays outputs"""
 
-    pylc_args = pylcArgs(dlg, mod_dict)
-    #print(pylc_args)
-    pylc.main(pylc_args)
+    pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
+    #pylc.main(pylc_args) # run pylc
+    
+    # Display outputs
+    showImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas) # show input image
+
+    outputDir = dlg.OutputImg_lineEdit.text()
+    maskName = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[0]
+    maskExt = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
+    scale_val = dlg.Scale_lineEdit.text()
+    outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
+
+    showImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas) # show output mask
+
+    enableTools(dlg)
 
 # GENERIC TOOLS FOLLOW
 
@@ -76,17 +91,6 @@ def setScaleSlideVal(dlg, val):
     val = float(val)
     val = int(val*10)
     dlg.Scale_slider.setValue(val)
-
-def showImg(filepath, name, canvas):
-    """Displays provided image in map canvas"""
-
-    img_lyr= QgsRasterLayer(filepath, name)
-    # Load mask as layer into mask map canvas
-    QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
-    canvas.enableAntiAliasing(True)
-    canvas.setExtent(img_lyr.extent()) # set extent to the extent of the image layer
-    canvas.setLayers([img_lyr])
-    canvas.show()
 
 def getFileFolder(lineEdit):
     """Allows user to select image file or folder"""
@@ -109,3 +113,33 @@ def getFileFolder(lineEdit):
 
     filepath = dialog.selectedFiles()
     lineEdit.setText(filepath[0])
+
+def getFolder(lineEdit):
+    """Select folder (usually output directory)"""
+
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(dialog.DontUseNativeDialog)
+
+    dialog.exec_()
+    filepath = dialog.selectedFiles()
+    lineEdit.setText(filepath[0])
+
+def showImg(filepath, name, canvas):
+    """Displays provided image in map canvas"""
+
+    img_lyr= QgsRasterLayer(filepath, name)
+    # Load mask as layer into mask map canvas
+    QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
+    canvas.enableAntiAliasing(True)
+    canvas.setExtent(img_lyr.extent()) # set extent to the extent of the image layer
+    canvas.setLayers([img_lyr])
+    canvas.show()
+
+def enableTools(dlg):
+    """Enables canvas tools once canvas is populated with mask and image"""
+
+    dlg.View_toolButton.setEnabled(True)
+    dlg.Fit_toolButton.setEnabled(True)
+    dlg.Pan_toolButton.setEnabled(True)
+    dlg.FullScrn_toolButton.setEnabled(True)
