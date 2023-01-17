@@ -33,7 +33,7 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .swipe_tool import mapswipetool
-from .pylc_interface import showImag
+from .pylc_interface import modelMenu, setScaleBoxVal, setScaleSlideVal, getFileFolder, pylcArgs, showImg, runPylc
 
 import sys
 import os.path
@@ -201,42 +201,6 @@ class MLP_IA_Suite:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def setScaleBoxVal(self, val):
-        """Changes scale box value based on slider"""
-
-        val = float(val / 10)
-        val = str(val)
-        self.dlg.Scale_lineEdit.setText(val)
-
-    def setScaleSlideVal(self, val):
-        """Changes scale slider value based on text box"""
-
-        val = float(val)
-        val = int(val*10)
-        self.dlg.Scale_slider.setValue(val)
-
-            
-    def getImgFile(self):
-        """Allows user to select image file or folder"""
-
-        def _selected(name):
-            """Changes file mode depending on whether current selection is a file or a folder"""
-
-            if os.path.isdir(name):
-                dialog.setFileMode(QFileDialog.Directory)
-            else:
-                dialog.setFileMode(QFileDialog.ExistingFile)
-
-  
-        dialog = QFileDialog()
-        dialog.setFileMode(dialog.ExistingFiles)
-        dialog.setOption(dialog.DontUseNativeDialog)
-        dialog.currentChanged.connect(_selected) #if selection changes from file to folder
-        
-        dialog.exec_()
-
-        filepath = dialog.selectedFiles()
-        self.dlg.InputImg_lineEdit.setText(filepath[0])
     
         
     def selectOutDir(self):
@@ -245,27 +209,6 @@ class MLP_IA_Suite:
         dirpath=QFileDialog.getExistingDirectory(self.dlg,"Select output directory")
         self.dlg.OutputImg_lineEdit.setText(dirpath)
 
-    def getMskFile(self):
-        """Allows user to select mask file or folder"""
-
-        def _selected(name):
-            """Changes file mode depending on whether current selection is a file or a folder"""
-
-            if os.path.isdir(name):
-                dialog.setFileMode(QFileDialog.Directory)
-            else:
-                dialog.setFileMode(QFileDialog.ExistingFile)
-
-  
-        dialog = QFileDialog()
-        dialog.setFileMode(dialog.ExistingFiles)
-        dialog.setOption(dialog.DontUseNativeDialog)
-        dialog.currentChanged.connect(_selected) # if selection changes from file to folder
-        
-        dialog.exec_()
-
-        filepath = dialog.selectedFiles()
-        self.dlg.InputMsk_lineEdit.setText(filepath[0])
 
     def showMask(self):
         """Displays classified mask in PyLC tool tab"""
@@ -411,63 +354,42 @@ class MLP_IA_Suite:
             self.first_start = False
             self.dlg = MLP_IA_SuiteDialog()
         
+        # PYLC
         # GET USER INPUT
-        # Set up model combo box
-        mod_dict = {"Greyscale 1":"pylc_2-1_deeplab_ch1_schema_a.pth","Greyscale 2":"pylc_2-2_deeplab_ch1_schema_a.pth",
-                "Greyscale 3":"pylc_2-3_deeplab_ch1_schema_a.pth","Greyscale 4":"pylc_2-4_deeplab_ch1_schema_a.pth",
-                "Greyscale 5":"pylc_2-5_deeplab_ch1_schema_a.pth","Colour 1":"pylc_2-1_deeplab_ch3_schema_a.pth",
-                "Colour 2":"pylc_2-2_deeplab_ch3_schema_a.pth","Colour 3":"pylc_2-3_deeplab_ch3_schema_a.pth","Colour 5":
-                "pylc_2-5_deeplab_ch3_schema_a.pth"}
-        self.dlg.Model_comboBox.clear()
-        self.dlg.Model_comboBox.addItems(key for key in mod_dict) # Add model names to combo box
+        mod_dict = modelMenu(self.dlg) # Set up model combo box and return dictionary of models
 
-        # Get image scale
-        self.dlg.Scale_slider.valueChanged['int'].connect(self.setScaleBoxVal)
-        self.dlg.Scale_lineEdit.textChanged.connect(self.setScaleSlideVal)
+        self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value())) # Set image scale (slider)
+        self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text())) # Set image scale (text box)
 
         # Get file/folder inputs
-        self.dlg.InputImg_button.clicked.connect(self.getImgFile)
+        self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
         self.dlg.OutputImg_button.clicked.connect(self.selectOutDir)
-        self.dlg.InputMsk_button.clicked.connect(self.getMskFile)
+        self.dlg.InputMsk_button.clicked.connect(lambda: getFileFolder(self.dlg.InputMsk_lineEdit))
 
-        # EXTRACT MODEL PARAMETERS
-        # Get model filepath
-        dir_path = __file__
-        dir_path = dir_path[:-9]
-        model_file = mod_dict[self.dlg.Model_comboBox.currentText()] #accesses model file name from model dictionary
-        model_path = os.path.normpath(dir_path + "\pylc-master\data\models\\"+model_file)
-
-        img_path = self.dlg.InputImg_lineEdit.text()
-        out_path = self.dlg.OutputImg_lineEdit.text()
-        scale_val = float(self.dlg.Scale_lineEdit.text())
+        # RUN PYLC AND DISPLAY OUTPUTS
+        #pylc_args = pylcArgs(self.dlg, mod_dict)
+        #print(pylc_args)
+        self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict)) # Run PyLC and display outputs
         
-        # Set up model arguments (with defaults)
-        args = {'schema':None, 
-                'model':model_path, 
-                'img':img_path, 
-                'mask':None, 
-                'scale':scale_val, 
-                'save_logits':None, 
-                'aggregate_metrics':None,
-                'output_dir':out_path}
 
-        # Check for optional model arguments
-        mask_path = self.dlg.InputMsk_lineEdit.text()
-        if mask_path:
-            args['mask'] = mask_path
+        #outputDir = self.dlg.OutputImg_lineEdit.text()
+        #maskName = os.path.basename(self.dlg.InputImg_lineEdit.text()).rsplit('.', 1)[0]
+        #maskExt = os.path.basename(self.dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
+        #scale_val = self.dlg.Scale_lineEdit.text()
 
-        # RUN PYLC
-        #self.dlg.Run_pushButton.clicked.connect(pylc.main(args)) # Run PyLC and display outputs
+        #self.outputMsk = os.path(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
+        #showImg(self.dlg.InputImg_lineEdit.text(),"Input Image",self.dlg.Img_mapCanvas)
+        #showImg(self.outputMsk,"PyLC Mask",self.dlg.Msk_mapCanvas)
+
+
 
         # DISPLAY OUPUTS
-        #output file path will be: outputDir\imageFileName_imageExtension_scale_1.0.png
-        self.outputFile = "C:\WLNP\pylc-master\data\outputs\pylc_2-1_deeplab_ch3_schema_a\masks\image1_jpg_scale_1.0.png" # temp for testing
+        #self.outputFile = "C:\WLNP\pylc-master\data\outputs\pylc_2-1_deeplab_ch3_schema_a\masks\image1_jpg_scale_1.0.png" # temp for testing
 
         #change this to run when PyLC is done --> maybe result = pylc.main(args) and return true from pylc.py when it finishes?
-        self.dlg.Run_pushButton.clicked.connect(self.showMask)
-        #self.dlg.Run_pushButton.clicked.connect(self.showImg)
-        self.dlg.Run_pushButton.clicked.connect(lambda: showImag(self.dlg,"Image"))
-        self.dlg.Run_pushButton.clicked.connect(self.enableTools)
+        #self.dlg.Run_pushButton.clicked.connect(self.showMask)
+        #self.dlg.Run_pushButton.clicked.connect(lambda: showImg(self.dlg.InputImg_lineEdit.text(),"Image",self.dlg.Img_mapCanvas))
+        #self.dlg.Run_pushButton.clicked.connect(self.enableTools)
 
         # Link the extent of the image to the extent of the mask
         self.dlg.Mask_mapCanvas.extentsChanged.connect(self.updateImg)
