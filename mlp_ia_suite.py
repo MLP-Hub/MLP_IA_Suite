@@ -22,29 +22,20 @@
  ***************************************************************************/
 """
 from ast import Lambda
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
-from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
-from qgis.core import QgsRasterLayer, QgsProject, QgsProcessing 
-from qgis.gui import QgsMapToolPan
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
-from .swipe_tool import mapswipetool
 from .pylc_setup import modelMenu, runPylc
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool
 
 import sys
 import os.path
 import subprocess
-
-# Import the code for pylc
-this_dir = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(this_dir, 'pylc_master')
-sys.path.append(path)
-import pylc
 
 
 
