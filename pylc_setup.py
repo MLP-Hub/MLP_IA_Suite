@@ -89,7 +89,10 @@ def runPylc(dlg, mod_dict):
     """Runs pylc and displays outputs"""
 
     pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
-    pylc.main(pylc_args) # run pylc
+    try:
+        pylc.main(pylc_args) # run pylc
+    except:
+        print("There has been an error when running pylc")
     
     # Display output
     outputDir = dlg.OutputImg_lineEdit.text()
