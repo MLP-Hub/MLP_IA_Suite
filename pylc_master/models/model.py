@@ -16,8 +16,6 @@ import torch
 import torch.utils.data
 from torch import nn
 import numpy as np
-from models.architectures.unet import UNet
-from models.architectures.res_unet import ResUNet
 from models.architectures.deeplab import DeepLab
 from models.modules.loss import MultiLoss, RunningLoss
 from models.modules.checkpoint import Checkpoint
@@ -135,34 +133,9 @@ class Model:
             self.meta.save_dir
         )
 
-        # UNet
-        if self.meta.arch == 'unet':
-            self.net = UNet(
-                in_channels=self.meta.ch,
-                n_classes=self.meta.n_classes,
-                up_mode=self.meta.up_mode,
-                activ_func=self.activations[self.meta.activ_type],
-                normalizer=self.normalizers[self.meta.norm_type],
-                dropout=self.meta.dropout
-            )
-            self.net = self.net.to(self.device)
-            self.crop_target = self.meta.crop_target
-
-        # Alternate Residual UNet
-        elif self.meta.arch == 'resunet':
-            self.net = ResUNet(
-                in_channels=self.meta.ch,
-                n_classes=self.meta.n_classes,
-                up_mode=self.meta.up_mode,
-                activ_func=self.activations[self.meta.activ_type],
-                batch_norm=True,
-                dropout=self.meta.dropout
-            )
-            self.net = self.net.to(self.device)
-            self.crop_target = self.meta.crop_target
-
         # DeeplabV3+
-        elif self.meta.arch == 'deeplab':
+        if self.meta.arch == 'deeplab':
+            print("Deeplab architecture selected")
             self.net = DeepLab(
                 activ_func=self.activations[self.meta.activ_type],
                 normalizer=self.normalizers[self.meta.norm_type],
