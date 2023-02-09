@@ -14,7 +14,6 @@ File: evaluate.py
 import json
 import os
 import torch
-import utils.tex as tex
 import numpy as np
 import cv2
 import utils.tools as utils
@@ -237,22 +236,6 @@ class Evaluator:
         # clear metrics plot
         self.metrics.plt.clf()
         return metrics_file, cmap_img_file, cmap_data_file
-
-    def save_tex(self):
-        """
-        Save prediction evaluation results as LaTeX table to file.
-
-        Returns
-        -------
-        tex_file: str
-            Output path to TeX data file.
-        """
-        tex_file = os.path.join(self.metrics_dir, self.fid + '_metrics.tex')
-        if utils.confirm_write_file(tex_file):
-            with open(tex_file, 'w') as fp:
-                fp.write(tex.convert_md_to_tex(self.meta))
-                return tex_file
-        return
 
     def save_image(self, args):
         """

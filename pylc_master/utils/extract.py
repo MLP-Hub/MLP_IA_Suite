@@ -19,8 +19,6 @@ import cv2
 from config import Parameters, defaults
 from db.dataset import MLPDataset
 import utils.tools as utils
-from utils.profile import get_profile, print_meta
-
 
 class Extractor(object):
     """
@@ -257,15 +255,6 @@ class Extractor(object):
         # generate unique extraction ID
         self.meta.id = '_db_pylc_' + self.meta.ch_label + '_' + str(int(time.time()))
 
-        return self
-
-    def profile(self):
-        """
-        Compute profile metadata for current dataset.
-         """
-        dset = self.get_data()
-        self.meta = get_profile(dset)
-        print_meta(self.meta)
         return self
 
     def coshuffle(self):

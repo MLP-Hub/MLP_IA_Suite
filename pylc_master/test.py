@@ -12,7 +12,6 @@ Module: Model Test
 File: test.py
 """
 import torch
-from tqdm import tqdm
 import utils.tools as utils
 from config import defaults, Parameters
 from utils.extract import Extractor

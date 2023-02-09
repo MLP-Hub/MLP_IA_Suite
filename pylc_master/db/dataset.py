@@ -16,7 +16,6 @@ import os
 import torch
 import torch.utils.data
 from config import defaults
-from db.buffer import Buffer
 from db.database import DB
 
 
@@ -53,24 +52,6 @@ class MLPDataset(torch.utils.data.IterableDataset):
 
         # get size of dataset
         self.size = self.db.partition_size
-
-    def __iter__(self):
-        """
-        Iterate over preset dataset chunks ('buffer_size' in settings);
-        see: https://pytorch.org/docs/stable/data.html
-        """
-        # initialize data buffer
-        self.db.reset()
-        self.buffer = iter(Buffer(self.db, shuffle=self.shuffle))
-        return self
-
-    def __next__(self):
-        # get next payload from buffer
-        item = next(self.buffer, None)
-        if item:
-            return item
-        else:
-            raise StopIteration
 
     def loader(self, batch_size=1, n_workers=0, drop_last=False):
         """
