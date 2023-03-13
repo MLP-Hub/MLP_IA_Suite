@@ -27,7 +27,7 @@
 </string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="Home_tab">
     <property name="styleSheet">
@@ -328,8 +328,8 @@
       <rect>
        <x>20</x>
        <y>60</y>
-       <width>1361</width>
-       <height>171</height>
+       <width>371</width>
+       <height>271</height>
       </rect>
      </property>
      <property name="font">
@@ -338,7 +338,7 @@
       </font>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. For more information, including details for model selection, visit the &lt;a href=&quot;https://github.com/scrose/pylc&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PyLC Github&lt;/span&gt;&lt;/a&gt; page.&lt;/p&gt;&lt;p&gt;To use the plug-in, choose the image or folder of images you want classified using the input image(s) button, then select the appropriate model and choose an output destination. Optionally, you can generate a text file of model performance stats based on the algorithm which will be stored in the same output folder as the image. You can also input a mask or set of masks to compare to the one(s) created by the model. To generate aggregate metrics for batched evaluations, choose the report aggregate metrics option.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. For more information, including details for model selection, visit the &lt;a href=&quot;https://github.com/scrose/pylc&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PyLC Github&lt;/span&gt;&lt;/a&gt; page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -354,7 +354,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>460</y>
+       <y>500</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -367,7 +367,7 @@
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>460</y>
+       <y>500</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -383,7 +383,7 @@
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>460</y>
+       <y>500</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -401,7 +401,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>500</y>
+       <y>550</y>
        <width>201</width>
        <height>22</height>
       </rect>
@@ -414,7 +414,7 @@
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>500</y>
+       <y>550</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -432,7 +432,7 @@
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>580</y>
+       <y>640</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -450,7 +450,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>580</y>
+       <y>640</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -463,128 +463,23 @@
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>580</y>
-       <width>31</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-    <widget class="Line" name="Optional_line">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>610</y>
-       <width>281</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="Optional_label">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>610</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Optional</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="InputMsk_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>680</y>
-       <width>31</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="InputMsk_lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>680</y>
-       <width>161</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="InputMsk_label">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>680</y>
-       <width>161</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Comparison mask(s)</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="Stats_checkBox">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
        <y>640</y>
-       <width>251</width>
-       <height>20</height>
+       <width>31</width>
+       <height>22</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(243, 243, 243);</string>
      </property>
      <property name="text">
-      <string>Generate performance stats</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
+      <string>...</string>
      </property>
     </widget>
     <widget class="QPushButton" name="Run_pushButton">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>750</y>
+       <y>680</y>
        <width>93</width>
        <height>31</height>
       </rect>
@@ -605,7 +500,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>280</y>
+       <y>320</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -621,7 +516,7 @@
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>280</y>
+       <y>320</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -637,7 +532,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>320</y>
+       <y>360</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -653,7 +548,7 @@
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>320</y>
+       <y>360</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -669,7 +564,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>360</y>
+       <y>400</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -685,7 +580,7 @@
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>360</y>
+       <y>400</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -701,7 +596,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>400</y>
+       <y>440</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -717,7 +612,7 @@
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>400</y>
+       <y>440</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -733,7 +628,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>240</y>
+       <y>280</y>
        <width>361</width>
        <height>201</height>
       </rect>
@@ -747,7 +642,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>280</y>
+       <y>320</y>
        <width>181</width>
        <height>28</height>
       </rect>
@@ -768,7 +663,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>280</y>
+       <y>320</y>
        <width>141</width>
        <height>28</height>
       </rect>
@@ -789,7 +684,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>320</y>
+       <y>360</y>
        <width>181</width>
        <height>28</height>
       </rect>
@@ -810,7 +705,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>320</y>
+       <y>360</y>
        <width>141</width>
        <height>28</height>
       </rect>
@@ -831,7 +726,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>360</y>
+       <y>400</y>
        <width>181</width>
        <height>28</height>
       </rect>
@@ -852,7 +747,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>360</y>
+       <y>400</y>
        <width>131</width>
        <height>28</height>
       </rect>
@@ -873,7 +768,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>400</y>
+       <y>440</y>
        <width>181</width>
        <height>28</height>
       </rect>
@@ -894,7 +789,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>400</y>
+       <y>440</y>
        <width>141</width>
        <height>28</height>
       </rect>
@@ -915,7 +810,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>250</y>
+       <y>290</y>
        <width>161</width>
        <height>21</height>
       </rect>
@@ -934,35 +829,11 @@ border-color: rgb(170, 0, 255);</string>
       <string>Landcover Types</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="AggMet_checkBox">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>710</y>
-       <width>251</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Report aggregate metrics</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
-     </property>
-    </widget>
     <widget class="QSlider" name="Scale_slider">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>540</y>
+       <y>600</y>
        <width>160</width>
        <height>22</height>
       </rect>
@@ -993,7 +864,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>540</y>
+       <y>600</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1009,7 +880,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>540</y>
+       <y>600</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1027,9 +898,9 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>240</y>
+       <y>110</y>
        <width>481</width>
-       <height>551</height>
+       <height>681</height>
       </rect>
      </property>
     </widget>
@@ -1037,19 +908,9 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>900</x>
-       <y>240</y>
+       <y>110</y>
        <width>481</width>
-       <height>551</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QgsMapCanvas" name="Full_mapCanvas" native="true">
-     <property name="geometry">
-      <rect>
-       <x>400</x>
-       <y>240</y>
-       <width>981</width>
-       <height>551</height>
+       <height>681</height>
       </rect>
      </property>
     </widget>
@@ -1057,7 +918,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>206</y>
+       <y>70</y>
        <width>186</width>
        <height>33</height>
       </rect>
@@ -1290,6 +1151,16 @@ border-color: rgb(170, 0, 255);</string>
       </property>
      </widget>
     </widget>
+    <widget class="QgsMapCanvas" name="Full_mapCanvas" native="true">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>110</y>
+       <width>981</width>
+       <height>681</height>
+      </rect>
+     </property>
+    </widget>
     <zorder>PyLC_description</zorder>
     <zorder>Legend_box</zorder>
     <zorder>PyLC_title</zorder>
@@ -1301,12 +1172,6 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>OutputImg_label</zorder>
     <zorder>OutputImg_lineEdit</zorder>
     <zorder>OutputImg_button</zorder>
-    <zorder>Optional_label</zorder>
-    <zorder>Optional_line</zorder>
-    <zorder>InputMsk_button</zorder>
-    <zorder>InputMsk_lineEdit</zorder>
-    <zorder>InputMsk_label</zorder>
-    <zorder>Stats_checkBox</zorder>
     <zorder>Run_pushButton</zorder>
     <zorder>broad_color</zorder>
     <zorder>con_color</zorder>
@@ -1325,14 +1190,13 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>ice_label</zorder>
     <zorder>regen_label</zorder>
     <zorder>legend_title</zorder>
-    <zorder>AggMet_checkBox</zorder>
     <zorder>Scale_slider</zorder>
     <zorder>Scale_lineEdit</zorder>
     <zorder>Scale_label</zorder>
     <zorder>Img_mapCanvas</zorder>
     <zorder>Mask_mapCanvas</zorder>
-    <zorder>Full_mapCanvas</zorder>
     <zorder>frame</zorder>
+    <zorder>Full_mapCanvas</zorder>
    </widget>
    <widget class="QWidget" name="VP_tab">
     <attribute name="title">
@@ -1372,8 +1236,8 @@ border-color: rgb(170, 0, 255);</string>
       <rect>
        <x>20</x>
        <y>60</y>
-       <width>1361</width>
-       <height>141</height>
+       <width>371</width>
+       <height>111</height>
       </rect>
      </property>
      <property name="font">
@@ -1382,7 +1246,7 @@ border-color: rgb(170, 0, 255);</string>
       </font>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a forward algorithm to create a virtual photograph given a camera position and digital elevation model. More information can be found in &lt;a href=&quot;https://doi.org/10.1659/MRD-JOURNAL-D-16-00038.1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;this report&lt;/span&gt;&lt;/a&gt; by Sanseverion et al. (2016). To use the tool, select a digital elevation model (DEM). Due to file size constraints, the DEM should be clipped to the relevant area around the camera station. The program can generate a hillshade from the DEM or you can upload your own. Choose the reference image that you are working with to allow visual comparison with the virtual photograph. Next, fill in the camera parameters. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM. Click Generate to preview the virtual photograph. Adjust the camera parameters using the arrows to change the position, elevation, and rotation of the camera. You can also load a previous camera position and save your current camera position to use later. The undo button will reverse the last camera adjustment.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a ray tracing algorithm to create a virtual photograph given camera parameters and digital elevation model. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -1398,7 +1262,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>220</y>
+       <y>180</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1416,7 +1280,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>220</y>
+       <y>180</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1432,7 +1296,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>220</y>
+       <y>180</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1448,7 +1312,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>260</y>
+       <y>220</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1464,7 +1328,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>270</y>
+       <y>230</y>
        <width>71</width>
        <height>20</height>
       </rect>
@@ -1481,11 +1345,11 @@ border-color: rgb(170, 0, 255);</string>
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="Generate_hillshd_button">
+    <widget class="QPushButton" name="GenerateHS_button">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>290</y>
+       <y>250</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1501,7 +1365,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>330</y>
+       <y>290</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1517,7 +1381,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>330</y>
+       <y>290</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1535,7 +1399,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>330</y>
+       <y>290</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1551,7 +1415,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>360</y>
+       <y>320</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -1560,21 +1424,11 @@ border-color: rgb(170, 0, 255);</string>
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="VP_preview_graphic">
-     <property name="geometry">
-      <rect>
-       <x>400</x>
-       <y>210</y>
-       <width>981</width>
-       <height>581</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="CamParams_label">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>380</y>
+       <y>350</y>
        <width>171</width>
        <height>16</height>
       </rect>
@@ -1592,8 +1446,8 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>420</y>
-       <width>81</width>
+       <y>390</y>
+       <width>71</width>
        <height>22</height>
       </rect>
      </property>
@@ -1604,8 +1458,8 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QLabel" name="Easting_label">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>420</y>
+       <x>100</x>
+       <y>390</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1617,8 +1471,8 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QLabel" name="Northing_label">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>420</y>
+       <x>230</x>
+       <y>390</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1630,9 +1484,9 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QLineEdit" name="Northing_lineEdit">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>420</y>
-       <width>81</width>
+       <x>150</x>
+       <y>390</y>
+       <width>71</width>
        <height>22</height>
       </rect>
      </property>
@@ -1643,22 +1497,22 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QLabel" name="Elev_label">
      <property name="geometry">
       <rect>
-       <x>90</x>
-       <y>450</y>
-       <width>55</width>
+       <x>230</x>
+       <y>430</y>
+       <width>81</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Elev (m)</string>
+      <string>Elevation (m)</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="Elev_lineEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>450</y>
-       <width>61</width>
+       <x>150</x>
+       <y>430</y>
+       <width>71</width>
        <height>22</height>
       </rect>
      </property>
@@ -1669,21 +1523,21 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QLabel" name="Azi_label">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>450</y>
-       <width>55</width>
+       <x>70</x>
+       <y>430</y>
+       <width>71</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Azi (°)</string>
+      <string>Azimuth (°)</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="Azi_lineEdit">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>450</y>
+       <x>20</x>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1692,24 +1546,24 @@ border-color: rgb(170, 0, 255);</string>
       <string notr="true">background-color: rgb(243, 243, 243);</string>
      </property>
     </widget>
-    <widget class="QLabel" name="FOV_label">
+    <widget class="QLabel" name="vertFOV_label">
      <property name="geometry">
       <rect>
-       <x>300</x>
-       <y>450</y>
-       <width>51</width>
+       <x>70</x>
+       <y>510</y>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>FOV (°)</string>
+      <string>Vertical FOV (°)</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="FOV_lineEdit">
+    <widget class="QLineEdit" name="vertFOV_lineEdit">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>450</y>
+       <x>20</x>
+       <y>510</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1722,7 +1576,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>530</y>
+       <y>640</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1742,7 +1596,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>570</y>
+       <y>680</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1762,7 +1616,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>610</y>
+       <y>720</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1782,7 +1636,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>570</y>
+       <y>680</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1802,7 +1656,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>530</y>
+       <y>640</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1822,7 +1676,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>590</y>
+       <y>700</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1842,7 +1696,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>530</y>
+       <y>640</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1868,7 +1722,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>530</y>
+       <y>640</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1894,7 +1748,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>500</y>
+       <y>610</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1915,7 +1769,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>500</y>
+       <y>610</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1936,7 +1790,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>500</y>
+       <y>610</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1957,7 +1811,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>580</y>
+       <y>690</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1970,7 +1824,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>580</y>
+       <y>690</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1983,7 +1837,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>610</y>
+       <y>720</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1996,7 +1850,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>610</y>
+       <y>720</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2009,7 +1863,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>660</y>
+       <y>770</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -2029,8 +1883,8 @@ border-color: rgb(170, 0, 255);</string>
     <widget class="QPushButton" name="SaveVP_button">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>660</y>
+       <x>120</x>
+       <y>770</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -2051,7 +1905,7 @@ border-color: rgb(170, 0, 255);</string>
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>370</y>
+       <y>330</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -2064,14 +1918,14 @@ border-color: rgb(170, 0, 255);</string>
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../Interface Development/Icons/load_icon.png</normaloff>../Interface Development/Icons/load_icon.png</iconset>
+       <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
      </property>
     </widget>
     <widget class="QPushButton" name="SaveCamParam_button">
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>370</y>
+       <y>330</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -2084,14 +1938,14 @@ border-color: rgb(170, 0, 255);</string>
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../Interface Development/Icons/save_icon.png</normaloff>../Interface Development/Icons/save_icon.png</iconset>
+       <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
      </property>
     </widget>
     <widget class="QPushButton" name="UndoCamParam_button">
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>370</y>
+       <y>330</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -2104,62 +1958,368 @@ border-color: rgb(170, 0, 255);</string>
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../Interface Development/Icons/undo_icon.png</normaloff>../Interface Development/Icons/undo_icon.png</iconset>
+       <normaloff>Icons/undo_icon.png</normaloff>Icons/undo_icon.png</iconset>
      </property>
     </widget>
-    <widget class="QPushButton" name="SwipeVP_button">
+    <widget class="QLabel" name="horFOV_label">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>660</y>
-       <width>91</width>
+       <x>220</x>
+       <y>510</y>
+       <width>111</width>
        <height>22</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
+     <property name="text">
+      <string>Horizontal FOV (°)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="horFOV_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>510</y>
+       <width>41</width>
+       <height>22</height>
+      </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
      </property>
-     <property name="text">
-      <string>Swipe</string>
-     </property>
     </widget>
-    <widget class="QLabel" name="Swipetext">
+    <widget class="QLabel" name="Ext_label">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>700</y>
-       <width>371</width>
-       <height>141</height>
+       <x>70</x>
+       <y>550</y>
+       <width>131</width>
+       <height>22</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-     </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click the Swipe button and drag your cursor across the virtual photograph preview to see how well it aligns with your reference image. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignJustify|Qt::AlignTop</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
+      <string>Viewshed extent (km)</string>
      </property>
     </widget>
-    <zorder>Swipetext</zorder>
-    <zorder>FOV_label</zorder>
+    <widget class="QLineEdit" name="Ext_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>550</y>
+       <width>41</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(243, 243, 243);</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="CamHgt_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>470</y>
+       <width>41</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(243, 243, 243);</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="CamHgt_label">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>470</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Camera height (m)</string>
+     </property>
+    </widget>
+    <widget class="Line" name="camParam_line_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>590</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QgsMapCanvas" name="Full_mapCanvas_2" native="true">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>100</y>
+       <width>981</width>
+       <height>681</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>100</y>
+       <width>481</width>
+       <height>681</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>100</y>
+       <width>481</width>
+       <height>681</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_2">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>60</y>
+       <width>186</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(240, 240, 240);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="midLineWidth">
+      <number>0</number>
+     </property>
+     <widget class="QToolButton" name="Pan_toolButton_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>Pan</string>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/pan.png</normaloff>Icons/pan.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>false</bool>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonIconOnly</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="Fit_toolButton_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Zoom to Extent</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/zoom-extent.png</normaloff>Icons/zoom-extent.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="Swipe_toolButton_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>115</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Swipe</string>
+      </property>
+      <property name="text">
+       <string notr="true"/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/mapswipetool.png</normaloff>Icons/mapswipetool.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>false</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="FullScrn_toolButton_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Go Full Screen</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/fullscrn.png</normaloff>Icons/fullscrn.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>26</width>
+        <height>26</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="View_toolButton_2">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>4</y>
+        <width>31</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>View</string>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonIconOnly</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>75</x>
+        <y>4</y>
+        <width>5</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgba(255, 255, 255, 0);</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </widget>
+    <zorder>vertFOV_label</zorder>
     <zorder>VP_title</zorder>
     <zorder>VP_description</zorder>
     <zorder>InputDEM_label</zorder>
@@ -2167,12 +2327,11 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>InputDEM_button</zorder>
     <zorder>Load_hillshd_button</zorder>
     <zorder>Hillshade_label</zorder>
-    <zorder>Generate_hillshd_button</zorder>
+    <zorder>GenerateHS_button</zorder>
     <zorder>InputRefImg_button</zorder>
     <zorder>RefImg_label</zorder>
     <zorder>InputRefImg_lineEdit</zorder>
     <zorder>camParam_line</zorder>
-    <zorder>VP_preview_graphic</zorder>
     <zorder>CamParams_label</zorder>
     <zorder>Easting_lineEdit</zorder>
     <zorder>Easting_label</zorder>
@@ -2182,7 +2341,7 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>Elev_lineEdit</zorder>
     <zorder>Azi_label</zorder>
     <zorder>Azi_lineEdit</zorder>
-    <zorder>FOV_lineEdit</zorder>
+    <zorder>vertFOV_lineEdit</zorder>
     <zorder>Forward_button</zorder>
     <zorder>Left_button</zorder>
     <zorder>Backward_button</zorder>
@@ -2203,7 +2362,17 @@ border-color: rgb(170, 0, 255);</string>
     <zorder>LoadCamParam_button</zorder>
     <zorder>SaveCamParam_button</zorder>
     <zorder>UndoCamParam_button</zorder>
-    <zorder>SwipeVP_button</zorder>
+    <zorder>horFOV_label</zorder>
+    <zorder>horFOV_lineEdit</zorder>
+    <zorder>Ext_label</zorder>
+    <zorder>Ext_lineEdit</zorder>
+    <zorder>CamHgt_lineEdit</zorder>
+    <zorder>CamHgt_label</zorder>
+    <zorder>camParam_line_2</zorder>
+    <zorder>Full_mapCanvas_2</zorder>
+    <zorder>VP_mapCanvas</zorder>
+    <zorder>Img_mapCanvas_2</zorder>
+    <zorder>frame_2</zorder>
    </widget>
    <widget class="QWidget" name="Align_tab">
     <attribute name="title">

@@ -102,6 +102,5 @@ def runPylc(dlg, mod_dict):
     addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas) # show output mask in side-by-side
     addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas) # show output mask in fullview
     addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas) # show input image in full view
-    
 
     enableTools(dlg)

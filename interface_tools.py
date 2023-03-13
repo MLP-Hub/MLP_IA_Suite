@@ -22,8 +22,8 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
-from qgis.core import QgsRasterLayer, QgsProject, QgsProcessing 
+from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.core import QgsRasterLayer, QgsProject
 from qgis.gui import QgsMapToolPan
 
 from .swipe_tool import mapswipetool
@@ -71,6 +71,17 @@ def getFolder(lineEdit):
 
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.Directory)
+    dialog.setOption(dialog.DontUseNativeDialog)
+
+    dialog.exec_()
+    filepath = dialog.selectedFiles()
+    lineEdit.setText(filepath[0])
+
+def getFile(lineEdit):
+    """Select file"""
+
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.ExistingFile)
     dialog.setOption(dialog.DontUseNativeDialog)
 
     dialog.exec_()

@@ -24,14 +24,19 @@
 from ast import Lambda
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QFileDialog
+
+from qgis.core import QgsRasterLayer
 
 # Initialize Qt resources from file resources.py
 from .resources import *
+
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool
+from .vp_creation import createHillshade, displaySaveVP
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool
+
 
 import sys
 import os.path
@@ -193,9 +198,25 @@ class MLP_IA_Suite:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def get_hs(self):
+        """Gets user input hillshade for virtual photo"""
+
+        # User selects hillshade file
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setOption(dialog.DontUseNativeDialog)
+        dialog.exec_()
+        self.dlg.hillshade_path = dialog.selectedFiles()
+
+        self.dlg.hillshade_layer = QgsRasterLayer(self.dlg.hillshade_path, "Hillshade") # create hillshade layer
+
+        # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
+        crs = self.dlg.hillshade_layer.crs()
+        crs.createFromId(26912)
+        self.dlg.hillshade_layer.setCrs(crs)
+
     def run(self):
         """Run method that performs all the real work"""
-
 
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
@@ -214,7 +235,6 @@ class MLP_IA_Suite:
         # Get file/folder inputs
         self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
         self.dlg.OutputImg_button.clicked.connect(lambda: getFolder(self.dlg.OutputImg_lineEdit))
-        self.dlg.InputMsk_button.clicked.connect(lambda: getFileFolder(self.dlg.InputMsk_lineEdit))
 
         # Run PyLC and display outputs
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
@@ -223,7 +243,7 @@ class MLP_IA_Suite:
         self.dlg.Mask_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas))
         self.dlg.Img_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Mask_mapCanvas, self.dlg.Img_mapCanvas))
 
-        # Connect tools to appropriate functions
+        # Connect tools to appropriate functions (PyLC tab)
         canvas_list = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
         self.dlg.View_toolButton.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas, [self.dlg.Swipe_toolButton]))
         self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton))
@@ -233,8 +253,29 @@ class MLP_IA_Suite:
         self.dlg.Swipe_toolButton.clicked.connect(lambda: changeTools([self.dlg.Pan_toolButton], self.dlg.Swipe_toolButton))
         #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
 
-        # SHOW THE DIALOG
+        # VP TAB
+        # Get file/folder inputs
+        self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit))
+        self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit))
+        self.dlg.Load_hs_button.clicked.connect(self.hs_path)
         
+
+        self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM
+        self.dlg.GenerateVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, False))
+        self.dlg.SaveVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, True))
+
+        # Connect tools to appropriate functions (VP tab)
+        canvas_list = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
+        self.dlg.View_toolButton_2.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas, [self.dlg.Swipe_toolButton]))
+        self.dlg.Pan_toolButton_2.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton))
+        self.dlg.Pan_toolButton_2.clicked.connect(lambda: changeTools([self.dlg.Swipe_toolButton], self.dlg.Pan_toolButton))
+        self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list)) # Zoom to mask extent
+        self.dlg.Swipe_toolButton_2.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton))
+        self.dlg.Swipe_toolButton_2.clicked.connect(lambda: changeTools([self.dlg.Pan_toolButton], self.dlg.Swipe_toolButton))
+        
+
+
+        # SHOW THE DIALOG
         self.dlg.show()
 
         # Run the dialog event loop
