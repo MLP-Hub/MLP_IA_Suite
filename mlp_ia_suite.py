@@ -206,7 +206,7 @@ class MLP_IA_Suite:
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setOption(dialog.DontUseNativeDialog)
         dialog.exec_()
-        self.dlg.hillshade_path = dialog.selectedFiles()
+        self.dlg.hillshade_path = dialog.selectedFiles()[0]
 
         self.dlg.hillshade_layer = QgsRasterLayer(self.dlg.hillshade_path, "Hillshade") # create hillshade layer
 

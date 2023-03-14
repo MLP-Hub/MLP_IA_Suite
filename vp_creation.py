@@ -70,20 +70,6 @@ def createHillshade(dlg):
     dlg.hillshade_layer.setCrs(crs)
 
 
-def camXY(dlg, lat, lon):
-    """Determines pixel coordinates of camera position"""
-
-    ex = dlg.hillshade_layer.extent() # get hillshade extents
-    ymax = ex.yMaximum() # get top left coordinate
-    print(ymax)
-    xmin = ex.xMinimum() # get top left coordinate
-
-    # Get camera position in pixel coordinates
-    cam_x = int(lat - xmin)
-    cam_y = int(ymax - lon)
-
-    return cam_x, cam_y
-
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
@@ -95,12 +81,11 @@ def readCamParams(dlg):
     cam_params["azi"] = float(dlg.Azi_lineEdit.text())
     cam_params["v_fov"] = float(dlg.vertFOV_lineEdit.text())
     cam_params["h_fov"] = float(dlg.horFOV_lineEdit.text())
-    cam_params["ray_len"] = float(dlg.Ext_lineEdit.text())
-
+    cam_params["ray_len"] = float(dlg.Ext_lineEdit.text())*1000
     cam_params["hgt"] = float(dlg.CamHgt_lineEdit.text())
-    # if user specified elevation, read it
+    
     if dlg.Elev_lineEdit.text():
-        cam_params["elev"] = float(dlg.Elev_lineEdit.text())
+        cam_params["elev"] = float(dlg.Elev_lineEdit.text()) # if user specified elevation, read it
     else:
         cam_params["elev"] = None
 
@@ -113,6 +98,26 @@ def readCamParams(dlg):
     
     return cam_params
 
+def camXY(dlg, lat, lon):
+    """Determines pixel coordinates of camera position"""
+
+    # get hillshade extents and spatial resolution
+    ex = dlg.hillshade_layer.extent() 
+    pixelSizeX = dlg.hillshade_layer.rasterUnitsPerPixelX()
+    pixelSizeY = dlg.hillshade_layer.rasterUnitsPerPixelY()
+
+    # if pixelSizeX != pixelSizeY --> error
+    
+    # get top left coordinate
+    ymax = ex.yMaximum()
+    xmin = ex.xMinimum() 
+
+    # get camera position in pixel coordinates
+    cam_x = int((lat - xmin)/pixelSizeX)
+    cam_y = int((ymax - lon)/pixelSizeY)
+
+    return cam_x, cam_y, pixelSizeX, pixelSizeY
+
 def createVP(dlg):
     """Creates virtual photograph""" 
     
@@ -121,30 +126,30 @@ def createVP(dlg):
     HS_img = cv2.imread(dlg.hillshade_path) # read hillshade into image array
     
     cam_params = readCamParams(dlg) # read camera parameters
-    cam_x, cam_y = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find px coordinates of camera position
+    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find px coordinates of camera position and raster resolution
     
     img = np.zeros((cam_params["img_h"],cam_params["img_w"]),dtype=np.uint8) # create blank image
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
-    pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, cam_params["img_h"]).round(3) # create list of image angles
+    
+    pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, cam_params["img_h"]) # create list of image angles
+    pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
 
     # create ray start position (remove first 100 m)
-    ray_start_y = int(cam_y - 100*math.cos(np.radians(a)))
-    ray_start_x = int(cam_x + 100*math.sin(np.radians(a)))
+    ray_start_y = int(cam_y - (100*math.cos(np.radians(a))/pixelSizeX))
+    ray_start_x = int(cam_x + (100*math.sin(np.radians(a))/pixelSizeY))
 
     for img_x in range(0,cam_params["img_w"]):
             
         # create ray end position
-        ray_end_y = int(cam_y - cam_params["ray_len"]*math.cos(np.radians(a)))
-        ray_end_x = int(cam_x + cam_params["ray_len"]*math.sin(np.radians(a)))
+        ray_end_y = int(cam_y - (cam_params["ray_len"]*math.cos(np.radians(a))/pixelSizeX))
+        ray_end_x = int(cam_x + (cam_params["ray_len"]*math.sin(np.radians(a))/pixelSizeY))
+ 
+        rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
 
-        # create a ray
-        rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x)
         val = DEM_img[rr, cc] - (DEM_img[cam_y, cam_x]+cam_params["hgt"]) # get array of elevations
-
-        # create a list of angles of view for the DEM
-        ll = np.sqrt((abs(rr-cam_y))**2 + (abs(cc-cam_x))**2)
-        dem_angles = np.degrees(np.arctan2(val, ll)).round(3) #ROUNDING?
+        ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # create a list of angles of view for the DEM
+        dem_angles = np.divide(val,ll) # find ratio (opp/adj)
 
         dem_angles_inc = np.maximum.accumulate(dem_angles) # checks for only increasing DEM angles
         unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
@@ -159,11 +164,11 @@ def createVP(dlg):
 
         yinterp = np.interp(nonsky_pixels, unique_angles, greyscale_vals) # interpolate any missing greyscale values
 
-        img_column = np.concatenate((yinterp, np.ones(cam_params["img_h"] - len(yinterp)) * 255))
+        img_column = np.concatenate((yinterp, np.ones(cam_params["img_h"] - len(yinterp)) * 255)) # create column for image and fill sky pixels white
 
-        img[:, img_x] = np.flip(img_column, axis=0)
+        img[:, img_x] = np.flip(img_column, axis=0) # flip the column
             
-        a = round(a+(cam_params["h_fov"]/cam_params["img_w"]),3) # update ray angle
+        a = a+(cam_params["h_fov"]/cam_params["img_w"]) # update ray angle
 
     return img
 
@@ -175,8 +180,7 @@ def displaySaveVP(dlg, save):
         vp_path = QFileDialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
     else:
         # save vp to temp path
-        file_out = tempfile.NamedTemporaryFile(suffix='.tiff')
-        vp_path = file_out.name
+        vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')
 
     vp = createVP(dlg) # creates virtual photo
     cv2.imwrite(vp_path, vp)
