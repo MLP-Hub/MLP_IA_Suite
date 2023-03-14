@@ -254,10 +254,11 @@ class MLP_IA_Suite:
         #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
 
         # VP TAB
+        self.dlg.Full_mapCanvas_2.hide()
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit))
         self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit))
-        self.dlg.Load_hs_button.clicked.connect(self.hs_path)
+        self.dlg.Load_hillshd_button.clicked.connect(self.get_hs)
         
 
         self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM

@@ -75,6 +75,7 @@ def camXY(dlg, lat, lon):
 
     ex = dlg.hillshade_layer.extent() # get hillshade extents
     ymax = ex.yMaximum() # get top left coordinate
+    print(ymax)
     xmin = ex.xMinimum() # get top left coordinate
 
     # Get camera position in pixel coordinates
@@ -86,11 +87,11 @@ def camXY(dlg, lat, lon):
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
-    cam_params = []
+    cam_params = {}
 
     # Get camera parameters from user input
-    cam_params["lat"] = float(dlg.lat_lineEdit.text())
-    cam_params["lon"] = float(dlg.long_lineEdit.text())
+    cam_params["lat"] = float(dlg.Easting_lineEdit.text())
+    cam_params["lon"] = float(dlg.Northing_lineEdit.text())
     cam_params["azi"] = float(dlg.Azi_lineEdit.text())
     cam_params["v_fov"] = float(dlg.vertFOV_lineEdit.text())
     cam_params["h_fov"] = float(dlg.horFOV_lineEdit.text())
@@ -116,16 +117,20 @@ def createVP(dlg):
     """Creates virtual photograph""" 
     
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-    DEM_img = cv2.imread(DEM_path) # read DEM into image array
+    DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
     HS_img = cv2.imread(dlg.hillshade_path) # read hillshade into image array
     
     cam_params = readCamParams(dlg) # read camera parameters
-    cam_x, cam_y = camXY(dlg, cam_params["lat"], cam_params["lat"]) # find px coordinates of camera position
+    cam_x, cam_y = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find px coordinates of camera position
     
     img = np.zeros((cam_params["img_h"],cam_params["img_w"]),dtype=np.uint8) # create blank image
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, cam_params["img_h"]).round(3) # create list of image angles
+
+    # create ray start position (remove first 100 m)
+    ray_start_y = int(cam_y - 100*math.cos(np.radians(a)))
+    ray_start_x = int(cam_x + 100*math.sin(np.radians(a)))
 
     for img_x in range(0,cam_params["img_w"]):
             
@@ -134,8 +139,8 @@ def createVP(dlg):
         ray_end_x = int(cam_x + cam_params["ray_len"]*math.sin(np.radians(a)))
 
         # create a ray
-        rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x)
-        val = DEM_img[rr, cc] - (DEM_img[cam_y, cam_x]+100)
+        rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x)
+        val = DEM_img[rr, cc] - (DEM_img[cam_y, cam_x]+cam_params["hgt"]) # get array of elevations
 
         # create a list of angles of view for the DEM
         ll = np.sqrt((abs(rr-cam_y))**2 + (abs(cc-cam_x))**2)
@@ -165,17 +170,16 @@ def createVP(dlg):
 def displaySaveVP(dlg, save):
     """Displays and saves virtual photo"""
 
-    vp = createVP(dlg) # creates virtual photo
-
     if save:
         # open save dialog and save vp
-        vp_path = QFileDialog.getSaveFileName()
-        cv2.imwrite(vp_path, vp)
+        vp_path = QFileDialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
     else:
         # save vp to temp path
         file_out = tempfile.NamedTemporaryFile(suffix='.tiff')
         vp_path = file_out.name
-        cv2.imwrite(vp_path, vp)
+
+    vp = createVP(dlg) # creates virtual photo
+    cv2.imwrite(vp_path, vp)
 
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2) # show input image in side-by-side
     addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas) # show output mask in side-by-side

@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/plugins/mlp_ia_suite" >
-        <file>icon.png</file>
-    </qresource>
-</RCC>
