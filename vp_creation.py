@@ -84,10 +84,11 @@ def readCamParams(dlg):
     cam_params["ray_len"] = float(dlg.Ext_lineEdit.text())*1000
     cam_params["hgt"] = float(dlg.CamHgt_lineEdit.text())
     
-    if dlg.Elev_lineEdit.text():
-        cam_params["elev"] = float(dlg.Elev_lineEdit.text()) # if user specified elevation, read it
-    else:
+    if dlg.Elev_lineEdit.text() == "":
         cam_params["elev"] = None
+    else:
+        cam_params["elev"] = float(dlg.Elev_lineEdit.text()) # if user specified elevation, read it
+        
 
     # find image height and width
     img_path = dlg.InputRefImg_lineEdit.text()
@@ -126,7 +127,11 @@ def createVP(dlg):
     HS_img = cv2.imread(dlg.hillshade_path) # read hillshade into image array
     
     cam_params = readCamParams(dlg) # read camera parameters
-    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find px coordinates of camera position and raster resolution
+    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
+    
+    if cam_params["elev"] is None:
+        cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
+
     
     img = np.zeros((cam_params["img_h"],cam_params["img_w"]),dtype=np.uint8) # create blank image
 
@@ -147,7 +152,7 @@ def createVP(dlg):
  
         rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
 
-        val = DEM_img[rr, cc] - (DEM_img[cam_y, cam_x]+cam_params["hgt"]) # get array of elevations
+        val = DEM_img[rr, cc] - (cam_params["elev"]+cam_params["hgt"]) # get array of elevations
         ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # create a list of angles of view for the DEM
         dem_angles = np.divide(val,ll) # find ratio (opp/adj)
 
@@ -172,6 +177,14 @@ def createVP(dlg):
 
     return img
 
+def enableTools(dlg):
+    """Enables canvas tools once canvas is populated with mask and image"""
+
+    dlg.View_toolButton_2.setEnabled(True)
+    dlg.Fit_toolButton_2.setEnabled(True)
+    dlg.Pan_toolButton_2.setEnabled(True)
+    dlg.FullScrn_toolButton_2.setEnabled(True)
+
 def displaySaveVP(dlg, save):
     """Displays and saves virtual photo"""
 
@@ -190,3 +203,4 @@ def displaySaveVP(dlg, save):
     addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2) # show output mask in fullview
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2) # show input image in full view
     
+    enableTools(dlg)

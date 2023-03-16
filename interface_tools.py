@@ -23,7 +23,7 @@
 """
 
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsRasterLayer, QgsProject
+from qgis.core import QgsRasterLayer, QgsProject, QgsRasterTransparency
 from qgis.gui import QgsMapToolPan
 
 from .swipe_tool import mapswipetool
@@ -139,6 +139,28 @@ def zoomToExt(canvas_list):
         canvas.setExtent(active_layer.extent())
         canvas.refresh()
 
+def transparency(val, canvas):
+    """Changes top image transparency based on slider"""
+
+    active_layer = canvas.layers()[0]
+
+    raster_transparency  = active_layer.renderer().rasterTransparency()
+
+    ltr = QgsRasterTransparency.TransparentSingleValuePixel()
+    tr_list = []
+    ltr.min = 0  # Or another value
+    ltr.max = 255  # Or another value
+    ltr.percentTransparent = val  # Or another value
+    tr_list.append(ltr)
+
+    raster_transparency.setTransparentSingleValuePixelList(tr_list)
+
+    #rt=QgsRasterTransparency()
+    #rt.initializeTransparentPixelList(0)
+
+    #active_layer.setTransparency(val/100)
+    active_layer.triggerRepaint()
+        
 def changeView(full_canvas, exclusive_tools):
     """Changes display from side-by-side to one window or v-v"""
 
