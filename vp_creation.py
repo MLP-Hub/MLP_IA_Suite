@@ -88,16 +88,72 @@ def readCamParams(dlg):
         cam_params["elev"] = None
     else:
         cam_params["elev"] = float(dlg.Elev_lineEdit.text()) # if user specified elevation, read it
+
+    return cam_params
         
 
-    # find image height and width
+def getImgDimensions(dlg):
+    """Extracts width and height of reference image"""
+
     img_path = dlg.InputRefImg_lineEdit.text()
     ref_img = cv2.imread(img_path) # read the reference image
     h, w, *_ = ref_img.shape # get image dimensions
-    cam_params["img_h"] = h
-    cam_params["img_w"] = w
     
-    return cam_params
+    return h, w
+
+def loadCamParam(dlg):
+    """This function loads camera parameters from a text file"""
+        
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.ExistingFile)
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("Text files (*.txt)")
+    dialog.exec_()
+    cam_filepath = dialog.selectedFiles()[0]
+
+    cam_file = open(cam_filepath, "r")
+
+    cam_params = {}
+
+    for line in cam_file:
+       (key, val) = line.split(":")
+       cam_params[key] = val
+
+    # Read camera parameters into corresponding fields on interface
+    dlg.Easting_lineEdit.setText(cam_params["lat"])
+    dlg.Northing_lineEdit.setText(cam_params["lon"])
+    dlg.Azi_lineEdit.setText(cam_params["azi"])
+    dlg.vertFOV_lineEdit.setText(cam_params["v_fov"])
+    dlg.horFOV_lineEdit.setText(cam_params["h_fov"])
+    cam_params["ray_len"] = str(float(cam_params["ray_len"])/1000)
+    dlg.Ext_lineEdit.setText(cam_params["ray_len"])
+    dlg.CamHgt_lineEdit.setText(cam_params["hgt"])
+
+    cam_params["elev"]=cam_params["elev"].strip() # remove newline character from elevation field
+
+    if cam_params["elev"] == "None":  
+        dlg.Elev_lineEdit.setText("")
+    else:
+        dlg.Elev_lineEdit.setText(cam_params["elev"])
+
+
+def saveCamParam(dlg):
+    """This function saves current camera parameters to a text file"""
+
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+    dialog.setNameFilter("Text files (*.txt)")
+    dialog.exec_()
+    cam_filepath = dialog.selectedFiles()[0]
+    cam_file = open(cam_filepath, "w")
+
+    cam_params = readCamParams(dlg)
+    for key, value in cam_params.items(): 
+        cam_file.write('%s:%s\n' % (key, value))
+
+    cam_file.close()
+
 
 def camXY(dlg, lat, lon):
     """Determines pixel coordinates of camera position"""
@@ -127,24 +183,26 @@ def createVP(dlg):
     HS_img = cv2.imread(dlg.hillshade_path) # read hillshade into image array
     
     cam_params = readCamParams(dlg) # read camera parameters
+    img_h, img_w = getImgDimensions(dlg)
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
     
     if cam_params["elev"] is None:
         cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
+        dlg.Elev_lineEdit.setText(str(cam_params["elev"]))
 
     
-    img = np.zeros((cam_params["img_h"],cam_params["img_w"]),dtype=np.uint8) # create blank image
+    img = np.zeros((img_h,img_w),dtype=np.uint8) # create blank image
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
-    pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, cam_params["img_h"]) # create list of image angles
+    pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, img_h) # create list of image angles
     pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
 
     # create ray start position (remove first 100 m)
     ray_start_y = int(cam_y - (100*math.cos(np.radians(a))/pixelSizeX))
     ray_start_x = int(cam_x + (100*math.sin(np.radians(a))/pixelSizeY))
 
-    for img_x in range(0,cam_params["img_w"]):
+    for img_x in range(0,img_w):
             
         # create ray end position
         ray_end_y = int(cam_y - (cam_params["ray_len"]*math.cos(np.radians(a))/pixelSizeX))
@@ -169,11 +227,11 @@ def createVP(dlg):
 
         yinterp = np.interp(nonsky_pixels, unique_angles, greyscale_vals) # interpolate any missing greyscale values
 
-        img_column = np.concatenate((yinterp, np.ones(cam_params["img_h"] - len(yinterp)) * 255)) # create column for image and fill sky pixels white
+        img_column = np.concatenate((yinterp, np.ones(img_h - len(yinterp)) * 255)) # create column for image and fill sky pixels white
 
         img[:, img_x] = np.flip(img_column, axis=0) # flip the column
             
-        a = a+(cam_params["h_fov"]/cam_params["img_w"]) # update ray angle
+        a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
     return img
 
@@ -190,7 +248,9 @@ def displaySaveVP(dlg, save):
 
     if save:
         # open save dialog and save vp
-        vp_path = QFileDialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
+        dialog = QFileDialog()
+        dialog.setOption(dialog.DontUseNativeDialog)
+        vp_path = dialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
     else:
         # save vp to temp path
         vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')

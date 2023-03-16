@@ -74,19 +74,20 @@ def getFolder(lineEdit):
     dialog.setOption(dialog.DontUseNativeDialog)
 
     dialog.exec_()
-    filepath = dialog.selectedFiles()
-    lineEdit.setText(filepath[0])
+    filepath = dialog.selectedFiles()[0]
+    lineEdit.setText(filepath)
 
-def getFile(lineEdit):
+def getFile(lineEdit, filter_string):
     """Select file"""
 
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.ExistingFile)
     dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter(filter_string)
 
     dialog.exec_()
-    filepath = dialog.selectedFiles()
-    lineEdit.setText(filepath[0])
+    filepath = dialog.selectedFiles()[0]
+    lineEdit.setText(filepath)
 
 def addImg(filepath, name, canvas):
     """Adds provided image in map canvas"""
@@ -141,6 +142,7 @@ def zoomToExt(canvas_list):
 
 def transparency(val, canvas):
     """Changes top image transparency based on slider"""
+    # not sure why this needs to be so complicated
 
     active_layer = canvas.layers()[0]
 
@@ -148,17 +150,12 @@ def transparency(val, canvas):
 
     ltr = QgsRasterTransparency.TransparentSingleValuePixel()
     tr_list = []
-    ltr.min = 0  # Or another value
-    ltr.max = 255  # Or another value
-    ltr.percentTransparent = val  # Or another value
+    ltr.min = 0
+    ltr.max = 255
+    ltr.percentTransparent = val # set transparency based on slider value
     tr_list.append(ltr)
 
     raster_transparency.setTransparentSingleValuePixelList(tr_list)
-
-    #rt=QgsRasterTransparency()
-    #rt.initializeTransparentPixelList(0)
-
-    #active_layer.setTransparency(val/100)
     active_layer.triggerRepaint()
         
 def changeView(full_canvas, exclusive_tools):
