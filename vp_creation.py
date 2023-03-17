@@ -70,6 +70,23 @@ def createHillshade(dlg):
     dlg.hillshade_layer.setCrs(crs)
 
 
+def getHS(dlg):
+    """Gets user input hillshade for virtual photo"""
+
+    # User selects hillshade file
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)")
+    dialog.exec_()
+    dlg.hillshade_path = os.path.realpath(dialog.selectedFiles()[0])
+
+    dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade") # create hillshade layer
+
+    # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
+    crs = dlg.hillshade_layer.crs()
+    crs.createFromId(26912)
+    dlg.hillshade_layer.setCrs(crs)
+
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
@@ -79,7 +96,6 @@ def readCamParams(dlg):
     cam_params["lat"] = float(dlg.Easting_lineEdit.text())
     cam_params["lon"] = float(dlg.Northing_lineEdit.text())
     cam_params["azi"] = float(dlg.Azi_lineEdit.text())
-    cam_params["v_fov"] = float(dlg.vertFOV_lineEdit.text())
     cam_params["h_fov"] = float(dlg.horFOV_lineEdit.text())
     cam_params["ray_len"] = float(dlg.Ext_lineEdit.text())*1000
     cam_params["hgt"] = float(dlg.CamHgt_lineEdit.text())
@@ -123,7 +139,6 @@ def loadCamParam(dlg):
     dlg.Easting_lineEdit.setText(cam_params["lat"])
     dlg.Northing_lineEdit.setText(cam_params["lon"])
     dlg.Azi_lineEdit.setText(cam_params["azi"])
-    dlg.vertFOV_lineEdit.setText(cam_params["v_fov"])
     dlg.horFOV_lineEdit.setText(cam_params["h_fov"])
     cam_params["ray_len"] = str(float(cam_params["ray_len"])/1000)
     dlg.Ext_lineEdit.setText(cam_params["ray_len"])
@@ -180,11 +195,13 @@ def createVP(dlg):
     
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
     DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
-    HS_img = cv2.imread(dlg.hillshade_path) # read hillshade into image array
+    HS_img = skimage.io.imread(dlg.hillshade_path) # read hillshade into image array
     
     cam_params = readCamParams(dlg) # read camera parameters
     img_h, img_w = getImgDimensions(dlg)
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
+
+    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horzintal field of view and picture size
     
     if cam_params["elev"] is None:
         cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
@@ -195,7 +212,7 @@ def createVP(dlg):
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
-    pic_angles = np.linspace(-cam_params["v_fov"]/2, cam_params["v_fov"]/2, img_h) # create list of image angles
+    pic_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
 
     # create ray start position (remove first 100 m)
@@ -221,7 +238,7 @@ def createVP(dlg):
         rr_new = rr[unique_angles_indx]
         cc_new = cc[unique_angles_indx]
 
-        greyscale_vals = HS_img[rr_new, cc_new][:,0] # extract greyscale values at specified rows and columns
+        greyscale_vals = HS_img[rr_new, cc_new] # extract greyscale values at specified rows and columns
 
         nonsky_pixels = pic_angles[pic_angles < max(dem_angles_inc)] # truncate picture array to remove sky pixels
 

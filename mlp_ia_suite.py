@@ -34,7 +34,7 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
-from .vp_creation import createHillshade, displaySaveVP, loadCamParam, saveCamParam
+from .vp_creation import createHillshade, getHS, displaySaveVP, loadCamParam, saveCamParam
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool, transparency
 
 
@@ -198,23 +198,6 @@ class MLP_IA_Suite:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def get_hs(self):
-        """Gets user input hillshade for virtual photo"""
-
-        # User selects hillshade file
-        dialog = QFileDialog()
-        dialog.setOption(dialog.DontUseNativeDialog)
-        dialog.setAcceptMode(QFileDialog.AcceptSave)
-        dialog.setNameFilter("TIF format (*.tif *.TIF);TIFF format (*.tiff *.TIFF)")
-        dialog.exec_()
-        self.dlg.hillshade_path = dialog.selectedFiles()[0]
-
-        self.dlg.hillshade_layer = QgsRasterLayer(self.dlg.hillshade_path, "Hillshade") # create hillshade layer
-
-        # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
-        crs = self.dlg.hillshade_layer.crs()
-        crs.createFromId(26912)
-        self.dlg.hillshade_layer.setCrs(crs)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -259,9 +242,9 @@ class MLP_IA_Suite:
         self.dlg.Full_mapCanvas_2.hide()
         
         # Get file/folder inputs
-        self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);TIFF format (*.tiff *.TIFF)"))
-        self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);JPG format (*.jpg);PNG format (*.png);TIF format (*.tif *.TIF);TIFF format (*.tiff *.TIFF)"))
-        self.dlg.Load_hillshd_button.clicked.connect(self.get_hs)
+        self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.Load_hillshd_button.clicked.connect(lambda: getHS(self.dlg))
         
         # Generate hillshade and VP
         self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM

@@ -54,6 +54,7 @@ def getFileFolder(lineEdit):
             dialog.setFileMode(QFileDialog.Directory)
         else:
             dialog.setFileMode(QFileDialog.ExistingFile)
+            dialog.setNameFilter("JPG format (*.jpg);;TIF format (*.tif *.TIF)")
 
   
     dialog = QFileDialog()

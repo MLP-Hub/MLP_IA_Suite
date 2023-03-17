@@ -1560,7 +1560,7 @@ border-radius: 4px;
     <widget class="QLabel" name="Northing_label">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>270</x>
        <y>390</y>
        <width>55</width>
        <height>22</height>
@@ -1573,7 +1573,7 @@ border-radius: 4px;
     <widget class="QLineEdit" name="Northing_lineEdit">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>190</x>
        <y>390</y>
        <width>71</width>
        <height>22</height>
@@ -1586,7 +1586,7 @@ border-radius: 4px;
     <widget class="QLabel" name="Elev_label">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>100</x>
        <y>430</y>
        <width>81</width>
        <height>22</height>
@@ -1599,7 +1599,7 @@ border-radius: 4px;
     <widget class="QLineEdit" name="Elev_lineEdit">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>20</x>
        <y>430</y>
        <width>71</width>
        <height>22</height>
@@ -1613,7 +1613,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>430</y>
+       <y>470</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1626,33 +1626,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>430</y>
-       <width>41</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="vertFOV_label">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>510</y>
-       <width>101</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Vertical FOV (°)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="vertFOV_lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>510</y>
+       <y>470</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2053,8 +2027,8 @@ border-radius: 4px;
     <widget class="QLabel" name="horFOV_label">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>510</y>
+       <x>240</x>
+       <y>470</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2066,8 +2040,8 @@ border-radius: 4px;
     <widget class="QLineEdit" name="horFOV_lineEdit">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>510</y>
+       <x>190</x>
+       <y>470</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2080,7 +2054,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>550</y>
+       <y>510</y>
        <width>131</width>
        <height>22</height>
       </rect>
@@ -2093,7 +2067,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>550</y>
+       <y>510</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2105,8 +2079,8 @@ border-radius: 4px;
     <widget class="QLineEdit" name="CamHgt_lineEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>470</y>
+       <x>190</x>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2118,8 +2092,8 @@ border-radius: 4px;
     <widget class="QLabel" name="CamHgt_label">
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>470</y>
+       <x>240</x>
+       <y>430</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2481,7 +2455,6 @@ border-radius: 4px;
       </property>
      </widget>
     </widget>
-    <zorder>vertFOV_label</zorder>
     <zorder>VP_title</zorder>
     <zorder>VP_description</zorder>
     <zorder>InputDEM_label</zorder>
@@ -2503,7 +2476,6 @@ border-radius: 4px;
     <zorder>Elev_lineEdit</zorder>
     <zorder>Azi_label</zorder>
     <zorder>Azi_lineEdit</zorder>
-    <zorder>vertFOV_lineEdit</zorder>
     <zorder>Forward_button</zorder>
     <zorder>Left_button</zorder>
     <zorder>Backward_button</zorder>
