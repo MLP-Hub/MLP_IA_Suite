@@ -243,11 +243,12 @@ class MLP_IA_Suite:
         
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        #self.dlg.InputDEM_button.clicked.connect(lambda: createDEM(self.dlg))
         self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         self.dlg.Load_hillshd_button.clicked.connect(lambda: getHS(self.dlg))
         
         # Generate hillshade and VP
-        self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM
+        #self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM
         self.dlg.GenerateVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, False))
         self.dlg.SaveVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, True))
 

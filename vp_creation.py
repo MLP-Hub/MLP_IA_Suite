@@ -35,40 +35,6 @@ import cv2
 import numpy as np
 import math
 
-def createHillshade(dlg):
-    """Converts DEM to hillshade"""
-
-    # Read DEM
-    DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
-
-    # Set DEM coordinate reference system to NAD83 UTM Zone 12N
-    crs = DEM_layer.crs()
-    crs.createFromId(26912)
-    DEM_layer.setCrs(crs)
-        
-    # Convert DEM to hillshade and save to temporary file
-    parameters = {'INPUT': DEM_layer, 
-                    'BAND': 1,
-                    'COMPUTE_EDGES': False,
-                    'ZEVENBERGEN': False,
-                    'Z_FACTOR': 1.0,
-                    'SCALE': 1.0,
-                    'AZIMUTH': 315,
-                    'COMBINED': False,
-                    'ALTITUDE': 45,
-                    'MULTIDIRECTIONAL': False,
-                    'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
-    
-    hillshade=processing.run("gdal:hillshade", parameters)
-    dlg.hillshade_path=hillshade['OUTPUT']
-    dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade")   
-
-    # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
-    crs = dlg.hillshade_layer.crs()
-    crs.createFromId(26912)
-    dlg.hillshade_layer.setCrs(crs)
-
 
 def getHS(dlg):
     """Gets user input hillshade for virtual photo"""
@@ -169,7 +135,82 @@ def saveCamParam(dlg):
 
     cam_file.close()
 
+# def createDEM(dlg):
+#     """Creates DEM layer from user input"""
+#     # Read DEM
+#     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
+#     dlg.DEM_layer = QgsRasterLayer(DEM_path, "DEM")
 
+#     # Set DEM coordinate reference system to NAD83 UTM Zone 12N
+#     crs = dlg.DEM_layer.crs()
+#     crs.createFromId(26912)
+#     dlg.DEM_layer.setCrs(crs)
+
+def createHillshade(dlg, clipped_DEM):
+    """Converts DEM to hillshade"""
+
+    print(clipped_DEM)
+
+    # Convert DEM to hillshade and save to temporary file
+    parameters = {'INPUT': clipped_DEM, 
+                    'BAND': 1,
+                    'COMPUTE_EDGES': False,
+                    'ZEVENBERGEN': False,
+                    'Z_FACTOR': 1.0,
+                    'SCALE': 1.0,
+                    'AZIMUTH': 315,
+                    'COMBINED': False,
+                    'ALTITUDE': 45,
+                    'MULTIDIRECTIONAL': False,
+                    'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
+    
+    hillshade=processing.run("gdal:hillshade", parameters)
+    dlg.hillshade_path=hillshade['OUTPUT']
+    dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade")   
+
+    # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
+    crs = dlg.hillshade_layer.crs()
+    crs.createFromId(26912)
+    dlg.hillshade_layer.setCrs(crs)
+
+def clipDEM(dlg, cam_x, cam_y):
+    """Clips DEM based on camera parameters"""
+
+    """Creates DEM layer from user input"""
+    # Read DEM
+    DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
+    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+
+    # Set DEM coordinate reference system to NAD83 UTM Zone 12N
+    crs = DEM_layer.crs()
+    crs.createFromId(26912)
+    DEM_layer.setCrs(crs)
+
+    minX = cam_x - 10000
+    maxX = cam_x + 10000
+    minY = cam_y - 10000
+    maxY = cam_y + 10000
+    extents = ", ".join(str(e) for e in [minX, maxX, minY, maxY])
+
+    parameters = {'INPUT':DEM_layer,
+                    'PROJWIN':extents,
+                    'OVERCRS':None,
+                    'NODATA':None,
+                    'OPTIONS':None,
+                    'DATA_TYPE':None,
+                    'EXTRA':None,
+                    'OUTPUT':"C:\\JNP\\Spatial_Data\\DEM_data\\test_clip_dem.tif"
+            }
+
+    clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
+    
+    clipDEM_path=clipped_DEM['OUTPUT']
+    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM")   
+    createHillshade(dlg, clipDEM_layer)
+
+    return clipDEM_path
+
+    
 def camXY(dlg, lat, lon):
     """Determines pixel coordinates of camera position"""
 
@@ -193,21 +234,22 @@ def camXY(dlg, lat, lon):
 def createVP(dlg):
     """Creates virtual photograph""" 
     
-    DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-    DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
-    HS_img = skimage.io.imread(dlg.hillshade_path) # read hillshade into image array
-    
     cam_params = readCamParams(dlg) # read camera parameters
+
+    DEM_path = clipDEM(dlg, cam_params["lat"], cam_params["lon"])
+    
+    DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
+    HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
+
     img_h, img_w = getImgDimensions(dlg)
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
 
-    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horzintal field of view and picture size
+    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
     
     if cam_params["elev"] is None:
         cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
         dlg.Elev_lineEdit.setText(str(cam_params["elev"]))
 
-    
     img = np.zeros((img_h,img_w),dtype=np.uint8) # create blank image
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
