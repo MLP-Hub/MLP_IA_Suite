@@ -1397,64 +1397,11 @@ border-radius: 4px;
       <string>...</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Load_hillshd_button">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>220</y>
-       <width>161</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string>Load Pre-exisiting</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="Hillshade_label">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>230</y>
-       <width>71</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Hillshade</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="GenerateHS_button">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>250</y>
-       <width>161</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string>Generate from DEM</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="InputRefImg_button">
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>290</y>
+       <y>220</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1470,7 +1417,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>290</y>
+       <y>220</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1488,7 +1435,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>290</y>
+       <y>220</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1504,7 +1451,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>320</y>
+       <y>250</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -1517,7 +1464,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>350</y>
+       <y>280</y>
        <width>171</width>
        <height>16</height>
       </rect>
@@ -1535,7 +1482,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>390</y>
+       <y>320</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1548,33 +1495,33 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>390</y>
+       <y>320</y>
        <width>55</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Easting</string>
+      <string>Latitude</string>
      </property>
     </widget>
     <widget class="QLabel" name="Northing_label">
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>390</y>
+       <y>320</y>
        <width>55</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Northing</string>
+      <string>Longitude</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="Northing_lineEdit">
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>390</y>
+       <y>320</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1587,7 +1534,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>430</y>
+       <y>360</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1600,7 +1547,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>430</y>
+       <y>360</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1613,7 +1560,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>470</y>
+       <y>400</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1626,7 +1573,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>470</y>
+       <y>400</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1639,7 +1586,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>640</y>
+       <y>490</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1659,7 +1606,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>680</y>
+       <y>530</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1679,7 +1626,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>720</y>
+       <y>570</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1699,7 +1646,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>680</y>
+       <y>530</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1719,7 +1666,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>640</y>
+       <y>490</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1739,7 +1686,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>700</y>
+       <y>550</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1759,7 +1706,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>640</y>
+       <y>490</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1785,7 +1732,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>640</y>
+       <y>490</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1811,7 +1758,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>610</y>
+       <y>460</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1832,7 +1779,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>610</y>
+       <y>460</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1853,7 +1800,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>610</y>
+       <y>460</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1874,7 +1821,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>690</y>
+       <y>540</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1887,7 +1834,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>690</y>
+       <y>540</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1900,7 +1847,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>720</y>
+       <y>570</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1913,7 +1860,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>720</y>
+       <y>570</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1968,7 +1915,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>330</y>
+       <y>260</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1988,7 +1935,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>330</y>
+       <y>260</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -2008,7 +1955,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>330</y>
+       <y>260</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -2028,7 +1975,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>470</y>
+       <y>400</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2041,33 +1988,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>470</y>
-       <width>41</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="Ext_label">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>510</y>
-       <width>131</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Viewshed extent (km)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="Ext_lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>510</y>
+       <y>400</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2080,7 +2001,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>430</y>
+       <y>360</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2093,7 +2014,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>430</y>
+       <y>360</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2106,7 +2027,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>590</y>
+       <y>440</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -2460,9 +2381,6 @@ border-radius: 4px;
     <zorder>InputDEM_label</zorder>
     <zorder>InputDEM_lineEdit</zorder>
     <zorder>InputDEM_button</zorder>
-    <zorder>Load_hillshd_button</zorder>
-    <zorder>Hillshade_label</zorder>
-    <zorder>GenerateHS_button</zorder>
     <zorder>InputRefImg_button</zorder>
     <zorder>RefImg_label</zorder>
     <zorder>InputRefImg_lineEdit</zorder>
@@ -2498,8 +2416,6 @@ border-radius: 4px;
     <zorder>UndoCamParam_button</zorder>
     <zorder>horFOV_label</zorder>
     <zorder>horFOV_lineEdit</zorder>
-    <zorder>Ext_label</zorder>
-    <zorder>Ext_lineEdit</zorder>
     <zorder>CamHgt_lineEdit</zorder>
     <zorder>CamHgt_label</zorder>
     <zorder>camParam_line_2</zorder>

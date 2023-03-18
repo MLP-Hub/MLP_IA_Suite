@@ -34,7 +34,7 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
-from .vp_creation import createHillshade, getHS, displaySaveVP, loadCamParam, saveCamParam
+from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool, transparency
 
 
@@ -243,20 +243,29 @@ class MLP_IA_Suite:
         
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        #self.dlg.InputDEM_button.clicked.connect(lambda: createDEM(self.dlg))
         self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        self.dlg.Load_hillshd_button.clicked.connect(lambda: getHS(self.dlg))
         
         # Generate hillshade and VP
-        #self.dlg.GenerateHS_button.clicked.connect(lambda: createHillshade(self.dlg)) # generate hillshade from DEM
+        self.dlg.lat_init = None # initial lat and long for DEM clipping
+        self.dlg.lon_init = None
         self.dlg.GenerateVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, False))
         self.dlg.SaveVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, True))
 
+        # Load or save camera parameters
         self.dlg.LoadCamParam_button.clicked.connect(lambda: loadCamParam(self.dlg))
         self.dlg.SaveCamParam_button.clicked.connect(lambda: saveCamParam(self.dlg))
 
+        # Connect the camera position buttons to the appropriate functions
+        self.dlg.Forward_button.clicked.connect(lambda: moveCam(self.dlg, "Forward"))
+        self.dlg.Backward_button.clicked.connect(lambda: moveCam(self.dlg, "Backward"))
+        self.dlg.Left_button.clicked.connect(lambda: moveCam(self.dlg, "Left"))
+        self.dlg.Right_button.clicked.connect(lambda: moveCam(self.dlg, "Right"))
+        self.dlg.Up_button.clicked.connect(lambda: camHeight(self.dlg, "Up"))
+        self.dlg.Down_button.clicked.connect(lambda: camHeight(self.dlg, "Down"))
+        self.dlg.Clckwis_button.clicked.connect(lambda: rotateCam(self.dlg, "Clckwise"))
+        self.dlg.CountClckwis_button.clicked.connect(lambda: rotateCam(self.dlg, "CntrClckwise"))
 
-        # Link the extent of the image to the extent of the mask and v.v.
+        # Link the extent of the image to the extent of the VP and v.v.
         self.dlg.VP_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas))
         self.dlg.Img_mapCanvas_2.extentsChanged.connect(lambda: updateExtents(self.dlg.VP_mapCanvas, self.dlg.Img_mapCanvas_2))
 

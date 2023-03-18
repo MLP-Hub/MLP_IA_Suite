@@ -36,23 +36,6 @@ import numpy as np
 import math
 
 
-def getHS(dlg):
-    """Gets user input hillshade for virtual photo"""
-
-    # User selects hillshade file
-    dialog = QFileDialog()
-    dialog.setOption(dialog.DontUseNativeDialog)
-    dialog.setNameFilter("TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)")
-    dialog.exec_()
-    dlg.hillshade_path = os.path.realpath(dialog.selectedFiles()[0])
-
-    dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade") # create hillshade layer
-
-    # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
-    crs = dlg.hillshade_layer.crs()
-    crs.createFromId(26912)
-    dlg.hillshade_layer.setCrs(crs)
-
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
@@ -63,7 +46,6 @@ def readCamParams(dlg):
     cam_params["lon"] = float(dlg.Northing_lineEdit.text())
     cam_params["azi"] = float(dlg.Azi_lineEdit.text())
     cam_params["h_fov"] = float(dlg.horFOV_lineEdit.text())
-    cam_params["ray_len"] = float(dlg.Ext_lineEdit.text())*1000
     cam_params["hgt"] = float(dlg.CamHgt_lineEdit.text())
     
     if dlg.Elev_lineEdit.text() == "":
@@ -73,15 +55,6 @@ def readCamParams(dlg):
 
     return cam_params
         
-
-def getImgDimensions(dlg):
-    """Extracts width and height of reference image"""
-
-    img_path = dlg.InputRefImg_lineEdit.text()
-    ref_img = cv2.imread(img_path) # read the reference image
-    h, w, *_ = ref_img.shape # get image dimensions
-    
-    return h, w
 
 def loadCamParam(dlg):
     """This function loads camera parameters from a text file"""
@@ -106,8 +79,6 @@ def loadCamParam(dlg):
     dlg.Northing_lineEdit.setText(cam_params["lon"])
     dlg.Azi_lineEdit.setText(cam_params["azi"])
     dlg.horFOV_lineEdit.setText(cam_params["h_fov"])
-    cam_params["ray_len"] = str(float(cam_params["ray_len"])/1000)
-    dlg.Ext_lineEdit.setText(cam_params["ray_len"])
     dlg.CamHgt_lineEdit.setText(cam_params["hgt"])
 
     cam_params["elev"]=cam_params["elev"].strip() # remove newline character from elevation field
@@ -135,21 +106,68 @@ def saveCamParam(dlg):
 
     cam_file.close()
 
-# def createDEM(dlg):
-#     """Creates DEM layer from user input"""
-#     # Read DEM
-#     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-#     dlg.DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+def moveCam(dlg, dir):
+    """Moves camera in space relative to azimuth"""
 
-#     # Set DEM coordinate reference system to NAD83 UTM Zone 12N
-#     crs = dlg.DEM_layer.crs()
-#     crs.createFromId(26912)
-#     dlg.DEM_layer.setCrs(crs)
+    cam_x = float(dlg.Easting_lineEdit.text())
+    cam_y = float(dlg.Northing_lineEdit.text())
+    azi = float(dlg.Azi_lineEdit.text())
+    step_size_m = float(dlg.StepSizeM_lineEdit.text())
+
+    if dir == "Forward":
+        cam_y = cam_y + np.sin(np.radians(azi))*step_size_m
+        cam_x = cam_x + np.cos(np.radians(azi))*step_size_m
+    elif dir == "Backward":
+        cam_y = cam_y - np.sin(np.radians(azi))*step_size_m
+        cam_x = cam_x - np.cos(np.radians(azi))*step_size_m
+    elif dir == "Left":
+        cam_y = cam_y + np.sin(np.radians(azi+90))*step_size_m
+        cam_x = cam_x + np.cos(np.radians(azi+90))*step_size_m
+    else:
+        cam_y = cam_y + np.sin(np.radians(azi-90))*step_size_m
+        cam_x = cam_x + np.cos(np.radians(azi-90))*step_size_m
+
+    dlg.Easting_lineEdit.setText(str(round(cam_x,2)))
+    dlg.Northing_lineEdit.setText(str(round(cam_y,2)))
+        
+
+def camHeight(dlg, dir):
+    """Changes camera height"""
+
+    cam_hgt = float(dlg.CamHgt_lineEdit.text())
+    step_size_m = float(dlg.StepSizeM_lineEdit.text())
+
+    if dir == "Up":
+        cam_hgt = cam_hgt + step_size_m
+    else:
+        cam_hgt = cam_hgt - step_size_m
+
+    dlg.CamHgt_lineEdit.setText(str(cam_hgt))
+
+def rotateCam(dlg, dir):
+    """Changes camera rotation"""
+
+    azi = float(dlg.Azi_lineEdit.text())
+    step_size_deg = float(dlg.StepSizeDeg_lineEdit.text())
+
+    if dir == "Clckwise":
+        azi = azi + step_size_deg
+    else:
+        azi = azi - step_size_deg
+
+    dlg.Azi_lineEdit.setText(str(azi))
+
+def getImgDimensions(dlg):
+    """Extracts width and height of reference image"""
+
+    img_path = dlg.InputRefImg_lineEdit.text()
+    ref_img = cv2.imread(img_path) # read the reference image
+    h, w, *_ = ref_img.shape # get image dimensions
+    
+    return h, w
 
 def createHillshade(dlg, clipped_DEM):
     """Converts DEM to hillshade"""
-
-    print(clipped_DEM)
 
     # Convert DEM to hillshade and save to temporary file
     parameters = {'INPUT': clipped_DEM, 
@@ -176,8 +194,7 @@ def createHillshade(dlg, clipped_DEM):
 def clipDEM(dlg, cam_x, cam_y):
     """Clips DEM based on camera parameters"""
 
-    """Creates DEM layer from user input"""
-    # Read DEM
+    # Read DEM from user input
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
     DEM_layer = QgsRasterLayer(DEM_path, "DEM")
 
@@ -186,11 +203,12 @@ def clipDEM(dlg, cam_x, cam_y):
     crs.createFromId(26912)
     DEM_layer.setCrs(crs)
 
-    minX = cam_x - 10000
-    maxX = cam_x + 10000
-    minY = cam_y - 10000
-    maxY = cam_y + 10000
-    extents = ", ".join(str(e) for e in [minX, maxX, minY, maxY])
+    # Get clipping extents
+    ex = DEM_layer.extent() 
+    dem_extents = np.array([ex.xMinimum(), ex.xMaximum(), ex.yMinimum(), ex.yMaximum()]) # get full DEM extents
+    clip_extents = np.array([cam_x - 25500, cam_x + 25500, cam_y - 25500, cam_y + 25500]) # get clipped extents
+    out = np.max(np.vstack((clip_extents, dem_extents)), axis=0) # ensure clipped extents are still on DEM
+    extents = ", ".join(str(e) for e in out)
 
     parameters = {'INPUT':DEM_layer,
                     'PROJWIN':extents,
@@ -199,7 +217,7 @@ def clipDEM(dlg, cam_x, cam_y):
                     'OPTIONS':None,
                     'DATA_TYPE':None,
                     'EXTRA':None,
-                    'OUTPUT':"C:\\JNP\\Spatial_Data\\DEM_data\\test_clip_dem.tif"
+                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
             }
 
     clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
@@ -236,9 +254,13 @@ def createVP(dlg):
     
     cam_params = readCamParams(dlg) # read camera parameters
 
-    DEM_path = clipDEM(dlg, cam_params["lat"], cam_params["lon"])
+    # generate new clipped DEM and hillshade on first round or when camera moves more than 500 m
+    if dlg.lat_init is None or (cam_params['lat'] > (dlg.lat_init + 500)) or (cam_params['lat'] > (dlg.lon_init + 500)):
+        dlg.DEM_path = clipDEM(dlg, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
+        dlg.lat_init = cam_params['lat'] # replace with new camera position
+        dlg.lon_init = cam_params['lon'] 
     
-    DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
+    DEM_img = skimage.io.imread(dlg.DEM_path) # read clipped DEM into image array
     HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
 
     img_h, img_w = getImgDimensions(dlg)
@@ -264,8 +286,8 @@ def createVP(dlg):
     for img_x in range(0,img_w):
             
         # create ray end position
-        ray_end_y = int(cam_y - (cam_params["ray_len"]*math.cos(np.radians(a))/pixelSizeX))
-        ray_end_x = int(cam_x + (cam_params["ray_len"]*math.sin(np.radians(a))/pixelSizeY))
+        ray_end_y = int(cam_y - (25000*math.cos(np.radians(a))/pixelSizeX))
+        ray_end_x = int(cam_x + (25000*math.sin(np.radians(a))/pixelSizeY))
  
         rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
 
@@ -321,5 +343,9 @@ def displaySaveVP(dlg, save):
     addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas) # show output mask in side-by-side
     addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2) # show output mask in fullview
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2) # show input image in full view
+
+    dlg.VP_mapCanvas.refresh()
+    dlg.Img_mapCanvas_2.refresh()
+    dlg.Full_mapCanvas_2.refresh()
     
     enableTools(dlg)
