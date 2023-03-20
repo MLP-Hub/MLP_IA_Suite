@@ -25,7 +25,8 @@
 from .interface_tools import addImg
 
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsRasterLayer, QgsProcessing
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsCoordinateReferenceSystem
+from qgis.gui import QgsProjectionSelectionDialog
 from qgis import processing
 
 import os.path
@@ -34,6 +35,7 @@ import skimage
 import cv2
 import numpy as np
 import math
+import csv
 
 
 def readCamParams(dlg):
@@ -198,10 +200,21 @@ def clipDEM(dlg, cam_x, cam_y):
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
     DEM_layer = QgsRasterLayer(DEM_path, "DEM")
 
-    # Set DEM coordinate reference system to NAD83 UTM Zone 12N
-    crs = DEM_layer.crs()
-    crs.createFromId(26912)
-    DEM_layer.setCrs(crs)
+    # Ensure DEM is in projected CRS with unit meters
+    dlg.crs = DEM_layer.crs()
+    print(dlg.crs.mapUnits())
+    if dlg.crs.mapUnits() != 0:
+        crs_dlg = QgsProjectionSelectionDialog()
+        crs_file = open("C:\\Users\\clair\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\mlp_ia_suite\\crs_list.txt", "r")
+        crs_data = crs_file.read()
+        crs_list = crs_data.split("\n")
+        crs_file.close()
+        crs_dlg.setOgcWmsCrsFilter(crs_list)
+        crs_dlg.exec()
+        crs_id = crs_dlg.crs().authid()
+        #new_crs = QgsCoordinateReferenceSystem(crs_id)
+        dlg.crs.createFromId(crs_id) # Replace '5347' with whatever CRS id you want
+        DEM_layer.setCrs(dlg.crs)
 
     # Get clipping extents
     ex = DEM_layer.extent() 
@@ -292,7 +305,7 @@ def createVP(dlg):
         rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
 
         val = DEM_img[rr, cc] - (cam_params["elev"]+cam_params["hgt"]) # get array of elevations
-        ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # create a list of angles of view for the DEM
+        ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # find camera distance to point
         dem_angles = np.divide(val,ll) # find ratio (opp/adj)
 
         dem_angles_inc = np.maximum.accumulate(dem_angles) # checks for only increasing DEM angles

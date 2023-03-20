@@ -1351,7 +1351,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>180</y>
+       <y>200</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1369,7 +1369,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>180</y>
+       <y>200</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1385,7 +1385,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>180</y>
+       <y>200</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1401,7 +1401,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>220</y>
+       <y>240</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1417,7 +1417,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>220</y>
+       <y>240</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1435,7 +1435,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>220</y>
+       <y>240</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1451,7 +1451,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>250</y>
+       <y>280</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -1464,7 +1464,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>280</y>
+       <y>300</y>
        <width>171</width>
        <height>16</height>
       </rect>
@@ -1482,7 +1482,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>320</y>
+       <y>350</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1495,7 +1495,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>320</y>
+       <y>350</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1508,7 +1508,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>320</y>
+       <y>350</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1521,7 +1521,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>320</y>
+       <y>350</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1534,7 +1534,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>360</y>
+       <y>390</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1547,7 +1547,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>360</y>
+       <y>390</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1560,7 +1560,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>400</y>
+       <y>430</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1573,7 +1573,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>400</y>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1586,7 +1586,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>490</y>
+       <y>520</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1606,7 +1606,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>530</y>
+       <y>560</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1626,7 +1626,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>570</y>
+       <y>600</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1646,7 +1646,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>530</y>
+       <y>560</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1666,7 +1666,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>490</y>
+       <y>520</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1686,7 +1686,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>550</y>
+       <y>580</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1706,7 +1706,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>490</y>
+       <y>520</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1732,7 +1732,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>490</y>
+       <y>520</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1758,7 +1758,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>460</y>
+       <y>490</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1779,7 +1779,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>460</y>
+       <y>490</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1800,7 +1800,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>460</y>
+       <y>490</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1821,7 +1821,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>540</y>
+       <y>570</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1834,7 +1834,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>540</y>
+       <y>570</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1847,7 +1847,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>570</y>
+       <y>600</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1860,7 +1860,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>570</y>
+       <y>600</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1873,7 +1873,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>770</y>
+       <y>670</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -1894,7 +1894,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>770</y>
+       <y>670</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1915,7 +1915,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>260</y>
+       <y>290</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1935,7 +1935,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>260</y>
+       <y>290</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1955,7 +1955,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>300</x>
-       <y>260</y>
+       <y>290</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1975,7 +1975,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>400</y>
+       <y>430</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -1988,7 +1988,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>400</y>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2001,7 +2001,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>360</y>
+       <y>390</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2014,7 +2014,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>360</y>
+       <y>390</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2027,7 +2027,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>440</y>
+       <y>470</y>
        <width>311</width>
        <height>16</height>
       </rect>
@@ -2376,6 +2376,19 @@ border-radius: 4px;
       </property>
      </widget>
     </widget>
+    <widget class="Line" name="camParam_line_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>640</y>
+       <width>311</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
     <zorder>VP_title</zorder>
     <zorder>VP_description</zorder>
     <zorder>InputDEM_label</zorder>
@@ -2423,6 +2436,7 @@ border-radius: 4px;
     <zorder>Img_mapCanvas_2</zorder>
     <zorder>Full_mapCanvas_2</zorder>
     <zorder>frame_2</zorder>
+    <zorder>camParam_line_3</zorder>
    </widget>
    <widget class="QWidget" name="Align_tab">
     <attribute name="title">
