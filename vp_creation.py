@@ -202,7 +202,6 @@ def clipDEM(dlg, cam_x, cam_y):
 
     # Ensure DEM is in projected CRS with unit meters
     dlg.crs = DEM_layer.crs()
-    print(dlg.crs.mapUnits())
     if dlg.crs.mapUnits() != 0:
         crs_dlg = QgsProjectionSelectionDialog()
         crs_file = open("C:\\Users\\clair\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\mlp_ia_suite\\crs_list.txt", "r")
@@ -293,33 +292,49 @@ def createVP(dlg):
     pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
 
     # create ray start position (remove first 100 m)
-    ray_start_y = int(cam_y - (100*math.cos(np.radians(a))/pixelSizeX))
-    ray_start_x = int(cam_x + (100*math.sin(np.radians(a))/pixelSizeY))
+    # ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
+    # ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
 
-    for img_x in range(0,img_w):
+    for img_x in range(0,5):
             
         # create ray end position
-        ray_end_y = int(cam_y - (25000*math.cos(np.radians(a))/pixelSizeX))
-        ray_end_x = int(cam_x + (25000*math.sin(np.radians(a))/pixelSizeY))
+        ray_end_y = round(cam_y - (25000*math.cos(np.radians(a))/pixelSizeY))
+        ray_end_x = round(cam_x + (25000*math.sin(np.radians(a))/pixelSizeX))
  
-        rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
+        # rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
+        rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x) # create a ray
 
         val = DEM_img[rr, cc] - (cam_params["elev"]+cam_params["hgt"]) # get array of elevations
         ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # find camera distance to point
         dem_angles = np.divide(val,ll) # find ratio (opp/adj)
 
-        dem_angles_inc = np.maximum.accumulate(dem_angles) # checks for only increasing DEM angles
-        unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
-            
+        dem_angles_inc = np.fmax.accumulate(dem_angles) # checks for only increasing DEM angles
+        #unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
+
         # find rows and columns of increasing unique angles
-        rr_new = rr[unique_angles_indx]
-        cc_new = cc[unique_angles_indx]
+        #rr_new = rr[unique_angles_indx]
+        #cc_new = cc[unique_angles_indx]
+
+        pic_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
+        pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
+
+        bins = np.digitize(dem_angles_inc, pic_angles)
+        unique_bins, unique_bins_indx = np.unique(bins, return_index=True)
+        print(unique_bins)
+        unique_angles = dem_angles_inc[unique_bins_indx]
+        pic_angles[unique_bins-1] = unique_angles
+
+        # find rows and columns of increasing unique angles (and bins)
+        rr_new = rr[unique_bins_indx]
+        cc_new = cc[unique_bins_indx]
 
         greyscale_vals = HS_img[rr_new, cc_new] # extract greyscale values at specified rows and columns
 
         nonsky_pixels = pic_angles[pic_angles < max(dem_angles_inc)] # truncate picture array to remove sky pixels
 
         yinterp = np.interp(nonsky_pixels, unique_angles, greyscale_vals) # interpolate any missing greyscale values
+
+        #yinterp = np.interp(pic_angles, unique_angles, greyscale_vals) # interpolate any missing greyscale values
 
         img_column = np.concatenate((yinterp, np.ones(img_h - len(yinterp)) * 255)) # create column for image and fill sky pixels white
 
