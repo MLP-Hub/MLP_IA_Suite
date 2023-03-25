@@ -290,41 +290,21 @@ def createVP(dlg):
     
     pic_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     pic_angles = np.tan(np.radians(pic_angles)) # find ratio (opp/adj)
-    
-    ray_total = DEM_img*0 # blank array same shape as DEM to find total number of rays crossing each pixel
-
-    for img_x in range(0,img_w):
-        # for loop determines how many rays cross each cell in the DEM
-
-        # create ray start position (remove first 100 m)
-        # ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
-        # ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
-            
-        # create ray end position
-        ray_end_y = round(cam_y - (25000*math.cos(np.radians(a))/pixelSizeY))
-        ray_end_x = round(cam_x + (25000*math.sin(np.radians(a))/pixelSizeX))
- 
-        #rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
-        rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x) # create a ray
-        
-        ray_total[rr,cc] += 1 # add one ray at each position on the DEM
-        a = a+(cam_params["h_fov"]/img_w) # update ray angle
-
-    a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
-    ray_count = DEM_img*0 # blank array same shape as DEM to count number of rays crossing each pixel
+    img_angles = pic_angles
+    pixel_height = np.radians(v_fov/img_h)*2 # height of one pixel in radians
 
     for img_x in range(0, img_w):
 
         # create ray start position (remove first 100 m)
-        # ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
-        # ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
+        ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
+        ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
         
         # create ray end position
         ray_end_y = round(cam_y - (25000*math.cos(np.radians(a))/pixelSizeY))
         ray_end_x = round(cam_x + (25000*math.sin(np.radians(a))/pixelSizeX))
  
-        #rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
-        rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x) # create a ray
+        rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
+        #rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x) # create a ray
 
         val = DEM_img[rr, cc] - (cam_params["elev"]+cam_params["hgt"]) # get array of elevations
         ll = np.sqrt((abs(rr-cam_y)*pixelSizeY)**2 + (abs(cc-cam_x)*pixelSizeX)**2) # find camera distance to point
@@ -337,16 +317,23 @@ def createVP(dlg):
         rr_new = rr[unique_angles_indx]
         cc_new = cc[unique_angles_indx]
 
-        ray_count[rr_new, cc_new] += 1 # add one to ray count
-        num_rays = ray_total[rr_new, cc_new] # extract number of rays crossing each pixel
+        bin_indx = np.digitize(unique_angles, img_angles)
+        bins_unique, unique_bins_indx = np.unique(bin_indx, return_index=True)
 
-        angles_aa = np.add(unique_angles,np.multiply(np.divide(np.diff(unique_angles, 1, prepend = 0),num_rays),ray_count[rr_new, cc_new]))
+        # find rows and columns of binned angles
+        rr_new = rr_new[unique_bins_indx]
+        cc_new = cc_new[unique_bins_indx]
+
+        angle_diff = np.subtract(pic_angles[bins_unique],unique_angles[unique_bins_indx])/pixel_height
+
+        greyscale_actual = HS_img[rr_new, cc_new] # extract greyscale values at specified rows and columns
+        greyscale_next = HS_img[rr_new+1, cc_new+1]
+
+        greyscale_vals = np.add(np.multiply(greyscale_actual,angle_diff),np.multiply(greyscale_next,1-angle_diff))
 
         nonsky_pixels = pic_angles[pic_angles < max(dem_angles_inc)] # truncate picture array to remove sky pixels
 
-        greyscale_vals = HS_img[rr_new, cc_new] # extract greyscale values at specified rows and columns
-
-        yinterp = np.interp(nonsky_pixels[1:], angles_aa[1:], greyscale_vals[1:]) # interpolate any missing greyscale values
+        yinterp = np.interp(nonsky_pixels, unique_angles[unique_bins_indx], greyscale_vals) # interpolate any missing greyscale values
 
         img_column = np.concatenate((yinterp, np.ones(img_h - len(yinterp)) * 255)) # create column for image and fill sky pixels white
 
