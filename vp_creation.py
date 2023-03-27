@@ -307,14 +307,14 @@ def createVP(dlg):
         # and find the corresponding greyscale values
 
         # create ray start position (remove first 100 m)
-        ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
-        ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
+        ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
+        ray_start_x = cam_x + (100*math.sin(np.radians(a))/pixelSizeX)
         # ray_start_y = cam_y
         # ray_start_x = cam_x
         
         # create ray end position
-        ray_end_y = round(cam_y - (10000*math.cos(np.radians(a))/pixelSizeY))
-        ray_end_x = round(cam_x + (10000*math.sin(np.radians(a))/pixelSizeX))
+        ray_end_y = cam_y - (10000*math.cos(np.radians(a))/pixelSizeY)
+        ray_end_x = cam_x + (10000*math.sin(np.radians(a))/pixelSizeX)
 
         xs = np.linspace(ray_start_x, ray_end_x, round(25000/pixelSizeX))
         ys = np.linspace(ray_start_y, ray_end_y, round(25000/pixelSizeY))
