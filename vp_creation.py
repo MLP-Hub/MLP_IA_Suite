@@ -218,9 +218,17 @@ def clipDEM(dlg, cam_x, cam_y):
 
     # Get clipping extents
     ex = DEM_layer.extent() 
-    dem_extents = np.array([ex.xMinimum(), ex.xMaximum(), ex.yMinimum(), ex.yMaximum()]) # get full DEM extents
-    clip_extents = np.array([cam_x - 25500, cam_x + 25500, cam_y - 25500, cam_y + 25500]) # get clipped extents
-    out = np.max(np.vstack((clip_extents, dem_extents)), axis=0) # ensure clipped extents are still on DEM
+    min_x = max([ex.xMinimum(),(cam_x - 25500)])
+    max_x = min([ex.xMaximum(),(cam_x + 25500)])
+
+    min_y = max([ex.yMinimum(),(cam_y - 25500)])
+    max_y = min([ex.yMaximum(),(cam_y + 25500)])
+
+
+    # dem_extents = np.array([ex.xMinimum(), ex.xMaximum(), ex.yMinimum(), ex.yMaximum()]) # get full DEM extents
+    # clip_extents = np.array([cam_x - 25500, cam_x + 25500, cam_y - 25500, cam_y + 25500]) # get clipped extents
+    # out = np.min(np.vstack((clip_extents, dem_extents)), axis=0) # ensure clipped extents are still on DEM
+    out = [min_x, max_x, min_y, max_y]
     extents = ", ".join(str(e) for e in out)
 
     parameters = {'INPUT':DEM_layer,
@@ -254,7 +262,7 @@ def camXY(dlg, lat, lon):
     
     # get top left coordinate
     ymax = ex.yMaximum()
-    xmin = ex.xMinimum() 
+    xmin = ex.xMinimum()
 
     # get camera position in pixel coordinates
     cam_x = int((lat - xmin)/pixelSizeX)
@@ -292,56 +300,52 @@ def createVP(dlg):
     img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
 
-    img_h_angles = np.linspace((cam_params["azi"] - cam_params["h_fov"]/2),(cam_params["azi"] + cam_params["h_fov"]/2),img_w)
-    #img_h_angles = np.tan(np.radians(img_h_angles))
-
-    dem_v_angles = []
-    dem_h_angles = []
-    greyscale_vals = []
 
     for img_x in range(0, img_w):
         # First, find all visible pixles
         # get the horizontal and vertical angles to the camera position
         # and find the corresponding greyscale values
 
-        # # create ray start position (remove first 100 m)
-        # ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
-        # ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
+        # create ray start position (remove first 100 m)
+        ray_start_y = round(cam_y - (100*math.cos(np.radians(a))/pixelSizeY))
+        ray_start_x = round(cam_x + (100*math.sin(np.radians(a))/pixelSizeX))
+        # ray_start_y = cam_y
+        # ray_start_x = cam_x
         
         # create ray end position
-        ray_end_y = round(cam_y - (25000*math.cos(np.radians(a))/pixelSizeY))
-        ray_end_x = round(cam_x + (25000*math.sin(np.radians(a))/pixelSizeX))
- 
-        # rr, cc = skimage.draw.line(ray_start_y, ray_start_x, ray_end_y, ray_end_x) # create a ray
-        rr, cc = skimage.draw.line(cam_y, cam_x, ray_end_y, ray_end_x) # create a ray
+        ray_end_y = round(cam_y - (10000*math.cos(np.radians(a))/pixelSizeY))
+        ray_end_x = round(cam_x + (10000*math.sin(np.radians(a))/pixelSizeX))
 
-        greyscale = HS_img[rr, cc] # extract greyscale values under ray
+        xs = np.linspace(ray_start_x, ray_end_x, round(25000/pixelSizeX))
+        ys = np.linspace(ray_start_y, ray_end_y, round(25000/pixelSizeY))
 
-        opp = np.subtract(cc, cam_x)*pixelSizeY
-        adj = np.subtract(cam_y, rr)*pixelSizeX
-        hor_angles = np.degrees(np.arctan(np.divide(opp,adj)))
+        # print(cam_x, cam_y)
+        # print(ray_start_x)
+        # print(ray_end_x)
+        # print(ray_start_y)
+        # print(ray_end_y)
 
-        dem_elevs = DEM_img[rr, cc] - (cam_params["elev"]+cam_params["hgt"]) # get array of elevations
+        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]+cam_params["hgt"]
+        greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
+
+        opp = (xs - cam_x)*pixelSizeX
+        adj = (cam_y - ys)*pixelSizeY
+
         dem_dist = np.sqrt(np.add(opp**2, adj**2))
-        vert_angles = np.divide(dem_elevs,dem_dist) # find ratio (opp/adj)
+        vert_angles = np.divide(elevs,dem_dist) # find ratio (opp/adj)
 
         dem_angles_inc = np.fmax.accumulate(vert_angles) # checks for only increasing DEM angles
         unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
 
-        dem_v_angles.extend(list(vert_angles[unique_angles_indx]))
-        dem_h_angles.extend(list(hor_angles[unique_angles_indx]))
-        greyscale_vals.extend(list(greyscale[unique_angles_indx]))
+        greys_visible = greys[unique_angles_indx]
 
+        nonsky_pixels = img_v_angles[img_v_angles < max(dem_angles_inc)] # truncate picture array to remove sky pixels
+        yinterp = np.interp(nonsky_pixels, unique_angles, greys_visible) # interpolate any missing greyscale values
+        
+        img_column = np.concatenate((yinterp, np.ones(img_h - len(yinterp)) * 255)) # create column for image and fill sky pixels white
+        img[:, img_x] = np.flip(img_column, axis=0) # flip the column
+            
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
-
-    dem_angles = np.column_stack((np.array(dem_h_angles),np.array(dem_v_angles)))
-    input_angles, unique_indx = np.unique(dem_angles, return_index=True, axis = 0)
-    greyscale_vals = np.array(greyscale_vals)[unique_indx]
-
-    interp = scipy.interpolate.LinearNDInterpolator(list(input_angles), list(greyscale_vals), fill_value=1, rescale=False)
-    X,Y = np.meshgrid(img_h_angles,img_v_angles)
-    img = interp(X,Y)
-    img = np.flipud(img)
 
     return img
 
