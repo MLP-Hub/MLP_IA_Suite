@@ -23,10 +23,8 @@
 """
 from ast import Lambda
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
-
-from qgis.core import QgsRasterLayer
+from qgis.PyQt.QtGui import QIcon, QDoubleValidator
+from qgis.PyQt.QtWidgets import QAction
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -240,6 +238,17 @@ class MLP_IA_Suite:
 
         # VP TAB
         self.dlg.Full_mapCanvas_2.hide()
+
+        # Set up line edits (to take appropriate data type)
+        numValidator = QDoubleValidator(bottom = 0, notation=QDoubleValidator.StandardNotation) # only allow positive float
+        self.dlg.Easting_lineEdit.setValidator(numValidator)
+        self.dlg.Northing_lineEdit.setValidator(numValidator)
+        self.dlg.Azi_lineEdit.setValidator(numValidator)
+        self.dlg.horFOV_lineEdit.setValidator(numValidator)
+        self.dlg.CamHgt_lineEdit.setValidator(numValidator)
+        self.dlg.Elev_lineEdit.setValidator(numValidator)
+        self.dlg.StepSizeM_lineEdit.setValidator(numValidator)
+        self.dlg.StepSizeDeg_lineEdit.setValidator(numValidator)
         
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))

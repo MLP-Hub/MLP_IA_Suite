@@ -1380,6 +1380,9 @@ border-radius: 4px;
      <property name="text">
       <string/>
      </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="InputDEM_button">
      <property name="geometry">
@@ -1445,6 +1448,9 @@ border-radius: 4px;
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="Line" name="camParam_line">

@@ -24,9 +24,9 @@
 
 from .interface_tools import addImg
 
-from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsCoordinateReferenceSystem
-from qgis.gui import QgsProjectionSelectionDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
+from qgis.core import QgsRasterLayer, QgsProcessing
+from qgis.gui import QgsProjectionSelectionDialog 
 from qgis import processing
 
 import os.path
@@ -42,14 +42,28 @@ import csv
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
+    # Read camera parameters as text
     cam_params = {}
+    cam_params["lat"] = dlg.Easting_lineEdit.text()
+    cam_params["lon"] = dlg.Northing_lineEdit.text()
+    cam_params["azi"] = dlg.Azi_lineEdit.text()
+    cam_params["h_fov"] = dlg.horFOV_lineEdit.text()
+    cam_params["hgt"] = dlg.CamHgt_lineEdit.text()
 
-    # Get camera parameters from user input
-    cam_params["lat"] = float(dlg.Easting_lineEdit.text())
-    cam_params["lon"] = float(dlg.Northing_lineEdit.text())
-    cam_params["azi"] = float(dlg.Azi_lineEdit.text())
-    cam_params["h_fov"] = float(dlg.horFOV_lineEdit.text())
-    cam_params["hgt"] = float(dlg.CamHgt_lineEdit.text())
+    # Convert camera parameters to float (checks if left blank)
+    errorMsg = QMessageBox()
+    errorMsg.setIcon(QMessageBox.Critical)
+    msgFields = ["Easting", "Northing", "Azimuth", "Field of view", "Camera height"]
+    i = 0
+
+    for param, val in cam_params.items():
+        try:
+            cam_params[param] = float(val)
+        except ValueError:
+            errorMsg.setText("Error: {} cannot be blank".format(msgFields[i]))
+            errorMsg.exec_()
+            return
+        i+=1
     
     if dlg.Elev_lineEdit.text() == "":
         cam_params["elev"] = None
@@ -284,6 +298,8 @@ def createVP(dlg):
     """Creates virtual photograph""" 
     
     cam_params = readCamParams(dlg) # read camera parameters
+    if cam_params is None:
+        return # exit VP creation if the camera parameters are incorrect
 
     # Read DEM from user input
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
@@ -371,6 +387,8 @@ def enableTools(dlg):
 def displaySaveVP(dlg, save):
     """Displays and saves virtual photo"""
 
+    # First check all inputs
+
     if save:
         # open save dialog and save vp
         dialog = QFileDialog()
@@ -381,6 +399,8 @@ def displaySaveVP(dlg, save):
         vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')
 
     vp = createVP(dlg) # creates virtual photo
+    if vp is None:
+        return
     cv2.imwrite(vp_path, vp)
 
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2) # show input image in side-by-side
