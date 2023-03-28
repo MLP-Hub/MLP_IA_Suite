@@ -118,11 +118,11 @@ def moveCam(dlg, dir):
     step_size_m = float(dlg.StepSizeM_lineEdit.text())
 
     if dir == "Forward":
-        cam_y = cam_y + np.sin(np.radians(azi))*step_size_m
-        cam_x = cam_x + np.cos(np.radians(azi))*step_size_m
+        cam_y = cam_y + np.cos(np.radians(azi))*step_size_m
+        cam_x = cam_x + np.sin(np.radians(azi))*step_size_m
     elif dir == "Backward":
-        cam_y = cam_y - np.sin(np.radians(azi))*step_size_m
-        cam_x = cam_x - np.cos(np.radians(azi))*step_size_m
+        cam_y = cam_y - np.cos(np.radians(azi))*step_size_m
+        cam_x = cam_x - np.sin(np.radians(azi))*step_size_m
     elif dir == "Left":
         cam_y = cam_y + np.sin(np.radians(azi+90))*step_size_m
         cam_x = cam_x + np.cos(np.radians(azi+90))*step_size_m
@@ -130,8 +130,8 @@ def moveCam(dlg, dir):
         cam_y = cam_y + np.sin(np.radians(azi-90))*step_size_m
         cam_x = cam_x + np.cos(np.radians(azi-90))*step_size_m
 
-    dlg.Easting_lineEdit.setText(str(round(cam_x,2)))
-    dlg.Northing_lineEdit.setText(str(round(cam_y,2)))
+    dlg.Easting_lineEdit.setText(str(round(cam_x,3)))
+    dlg.Northing_lineEdit.setText(str(round(cam_y,3)))
         
 
 def camHeight(dlg, dir):
@@ -169,7 +169,7 @@ def getImgDimensions(dlg):
     
     return h, w
 
-def createHillshade(dlg, clipped_DEM):
+def createHillshade(clipped_DEM):
     """Converts DEM to hillshade"""
 
     # Convert DEM to hillshade and save to temporary file
@@ -186,52 +186,14 @@ def createHillshade(dlg, clipped_DEM):
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
     
     hillshade=processing.run("gdal:hillshade", parameters)
-    dlg.hillshade_path=hillshade['OUTPUT']
-    dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade")   
+    hillshade_path=hillshade['OUTPUT']
+    hillshade_layer = QgsRasterLayer(hillshade_path, "Hillshade")
+
+    return hillshade_path, hillshade_layer   
 
 
-def clipDEM(dlg, cam_x, cam_y):
+def clipDEM(DEM_layer, cam_x, cam_y):
     """Clips DEM based on camera parameters"""
-
-    # Read DEM from user input
-    DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
-
-    # Ensure DEM is in projected CRS with unit meters
-    source_crs = DEM_layer.crs() # get current CRS
-    dir_path = os.path.dirname(__file__)
-    crs_catalog_path = os.path.normpath(dir_path + "\\crs_list.txt") # path to file containing list of appropriate CRS
-
-
-    if source_crs.mapUnits() != 0:
-        crs_dlg = QgsProjectionSelectionDialog() # open CRS selection dialog
-        crs_file = open(crs_catalog_path, "r")
-        crs_data = crs_file.read()
-        crs_list = crs_data.split("\n") # list of acceptable CRS
-        crs_file.close()
-        crs_dlg.setOgcWmsCrsFilter(crs_list)
-        crs_dlg.exec()
-        dest_crs = crs_dlg.crs()
-        parameters = { 'INPUT':DEM_layer, 
-                        'SOURCE_CRS':source_crs,
-                        'TARGET_CRS':dest_crs,
-                        'RESAMPLING':2,
-                        'NODATA':None,
-                        'TARGET_RESOLUTION':None,
-                        'OPTIONS':'',
-                        'DATA_TYPE':6,
-                        'TARGET_EXTENT':None,
-                        'TARGET_EXTENT_CRS':None,
-                        'MULTITHREADING':False,
-                        'EXTRA':'',
-                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
-            }
-        
-       
-
-        proj_DEM = processing.run("gdal:warpreproject", parameters)
-        projDEM_path=proj_DEM['OUTPUT']
-        DEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
 
     # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
     ex = DEM_layer.extent() 
@@ -257,18 +219,56 @@ def clipDEM(dlg, cam_x, cam_y):
     
     clipDEM_path=clipped_DEM['OUTPUT']
     clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM")  
-    createHillshade(dlg, clipDEM_layer)
 
-    return clipDEM_path
+    return clipDEM_path, clipDEM_layer
+
+def reprojectDEM(DEM_layer):
+    """Ensures DEM has appropriate CRS"""
+
+    # Ensure DEM is in projected CRS with unit meters
+    source_crs = DEM_layer.crs() # get current CRS
+    dir_path = os.path.dirname(__file__)
+    crs_catalog_path = os.path.normpath(dir_path + "\\crs_list.txt") # path to file containing list of appropriate CRS
+        
+    crs_dlg = QgsProjectionSelectionDialog() # open CRS selection dialog
+    crs_file = open(crs_catalog_path, "r")
+    crs_data = crs_file.read()
+    crs_list = crs_data.split("\n") # list of acceptable CRS
+    crs_file.close()
+    crs_dlg.setOgcWmsCrsFilter(crs_list)
+    crs_dlg.exec()
+    dest_crs = crs_dlg.crs() # destination CRS selected by user
+
+    # Reproject DEM
+    parameters = { 'INPUT':DEM_layer, 
+                        'SOURCE_CRS':source_crs,
+                        'TARGET_CRS':dest_crs,
+                        'RESAMPLING':2,
+                        'NODATA':None,
+                        'TARGET_RESOLUTION':None,
+                        'OPTIONS':'',
+                        'DATA_TYPE':6,
+                        'TARGET_EXTENT':None,
+                        'TARGET_EXTENT_CRS':None,
+                        'MULTITHREADING':False,
+                        'EXTRA':'',
+                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+            }
+        
+    proj_DEM = processing.run("gdal:warpreproject", parameters)
+    projDEM_path=proj_DEM['OUTPUT']
+    projDEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
+
+    return projDEM_path, projDEM_layer
 
     
-def camXY(dlg, lat, lon):
+def camXY(hillshade_layer, lat, lon):
     """Determines pixel coordinates of camera position"""
 
     # get hillshade extents and spatial resolution
-    ex = dlg.hillshade_layer.extent() 
-    pixelSizeX = dlg.hillshade_layer.rasterUnitsPerPixelX()
-    pixelSizeY = dlg.hillshade_layer.rasterUnitsPerPixelY()
+    ex = hillshade_layer.extent() 
+    pixelSizeX = hillshade_layer.rasterUnitsPerPixelX()
+    pixelSizeY = hillshade_layer.rasterUnitsPerPixelY()
     
     # get top left coordinate
     ymax = ex.yMaximum()
@@ -285,23 +285,32 @@ def createVP(dlg):
     
     cam_params = readCamParams(dlg) # read camera parameters
 
+    # Read DEM from user input
+    DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
+    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+    
+    # Check that DEM has appropriate CRS
+    source_crs = DEM_layer.crs() # get current CRS
+    if source_crs.mapUnits() != 0:
+        DEM_path, DEM_layer = reprojectDEM(DEM_layer)
+
     # generate new clipped DEM and hillshade on first round or when camera moves more than 500 m
     if dlg.lat_init is None or (cam_params['lat'] > (dlg.lat_init + 500)) or (cam_params['lat'] > (dlg.lon_init + 500)):
-        dlg.DEM_path = clipDEM(dlg, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
+        DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
+        dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 
     
-    DEM_img = skimage.io.imread(dlg.DEM_path) # read clipped DEM into image array
+    DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
     HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
 
     img_h, img_w = getImgDimensions(dlg)
-    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
+    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg.hs_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
 
     v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
     
     if cam_params["elev"] is None:
         cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
-        dlg.Elev_lineEdit.setText(str(cam_params["elev"]))
 
     img = np.zeros((img_h,img_w),dtype=np.uint8) # create blank image
 

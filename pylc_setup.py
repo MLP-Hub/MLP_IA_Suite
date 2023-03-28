@@ -51,7 +51,6 @@ def pylcArgs(dlg, mod_dict):
     """Gets user input and sets up PyLC arguments"""
 
     # Get user input parameters
-    #filepath = __file__
     dir_path = os.path.dirname(__file__)
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
     model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
