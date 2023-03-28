@@ -1351,7 +1351,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>200</y>
+       <y>240</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1369,7 +1369,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>200</y>
+       <y>240</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1385,7 +1385,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>200</y>
+       <y>240</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1401,7 +1401,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>240</y>
+       <y>280</y>
        <width>31</width>
        <height>22</height>
       </rect>
@@ -1417,7 +1417,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>240</y>
+       <y>280</y>
        <width>151</width>
        <height>20</height>
       </rect>
@@ -1435,7 +1435,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>240</y>
+       <y>280</y>
        <width>161</width>
        <height>22</height>
       </rect>
@@ -1451,8 +1451,8 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>280</y>
-       <width>311</width>
+       <y>320</y>
+       <width>331</width>
        <height>16</height>
       </rect>
      </property>
@@ -1464,7 +1464,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>300</y>
+       <y>340</y>
        <width>171</width>
        <height>16</height>
       </rect>
@@ -1482,7 +1482,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>350</y>
+       <y>390</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1495,33 +1495,33 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>350</y>
+       <y>390</y>
        <width>55</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Latitude</string>
+      <string>Easting</string>
      </property>
     </widget>
     <widget class="QLabel" name="Northing_label">
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>350</y>
+       <y>390</y>
        <width>55</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Longitude</string>
+      <string>Northing</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="Northing_lineEdit">
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>350</y>
+       <y>390</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1534,7 +1534,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>100</x>
-       <y>390</y>
+       <y>430</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1547,7 +1547,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>390</y>
+       <y>430</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1560,7 +1560,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>430</y>
+       <y>470</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1573,7 +1573,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>430</y>
+       <y>470</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1585,8 +1585,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Forward_button">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>520</y>
+       <x>60</x>
+       <y>600</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1605,8 +1605,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Left_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>560</y>
+       <x>20</x>
+       <y>640</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1625,8 +1625,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Backward_button">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>600</y>
+       <x>60</x>
+       <y>680</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1645,8 +1645,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Right_button">
      <property name="geometry">
       <rect>
-       <x>90</x>
-       <y>560</y>
+       <x>100</x>
+       <y>640</y>
        <width>31</width>
        <height>28</height>
       </rect>
@@ -1665,8 +1665,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Up_button">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>520</y>
+       <x>160</x>
+       <y>600</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1685,8 +1685,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Down_button">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>580</y>
+       <x>160</x>
+       <y>660</y>
        <width>31</width>
        <height>41</height>
       </rect>
@@ -1705,8 +1705,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="CountClckwis_button">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>520</y>
+       <x>220</x>
+       <y>600</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1731,8 +1731,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="Clckwis_button">
      <property name="geometry">
       <rect>
-       <x>270</x>
-       <y>520</y>
+       <x>280</x>
+       <y>600</y>
        <width>51</width>
        <height>28</height>
       </rect>
@@ -1757,8 +1757,8 @@ border-radius: 4px;
     <widget class="QLabel" name="Position_label">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>490</y>
+       <x>40</x>
+       <y>570</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1778,8 +1778,8 @@ border-radius: 4px;
     <widget class="QLabel" name="Height_label">
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>490</y>
+       <x>150</x>
+       <y>570</y>
        <width>55</width>
        <height>22</height>
       </rect>
@@ -1799,8 +1799,8 @@ border-radius: 4px;
     <widget class="QLabel" name="Rotation_label">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>490</y>
+       <x>240</x>
+       <y>570</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1820,8 +1820,8 @@ border-radius: 4px;
     <widget class="QLabel" name="StepSizeM_label">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>570</y>
+       <x>270</x>
+       <y>650</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1833,8 +1833,8 @@ border-radius: 4px;
     <widget class="QLineEdit" name="StepSizeM_lineEdit">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>570</y>
+       <x>220</x>
+       <y>650</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1842,12 +1842,15 @@ border-radius: 4px;
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
      </property>
+     <property name="text">
+      <string>1</string>
+     </property>
     </widget>
     <widget class="QLabel" name="StepSizeDeg_label">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>600</y>
+       <x>270</x>
+       <y>680</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -1859,8 +1862,8 @@ border-radius: 4px;
     <widget class="QLineEdit" name="StepSizeDeg_lineEdit">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>600</y>
+       <x>220</x>
+       <y>680</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -1868,12 +1871,15 @@ border-radius: 4px;
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
      </property>
+     <property name="text">
+      <string>1</string>
+     </property>
     </widget>
     <widget class="QPushButton" name="GenerateVP_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>670</y>
+       <x>20</x>
+       <y>750</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -1882,6 +1888,9 @@ border-radius: 4px;
       <font>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>Generate temporary VP</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
@@ -1893,8 +1902,8 @@ border-radius: 4px;
     <widget class="QPushButton" name="SaveVP_button">
      <property name="geometry">
       <rect>
-       <x>120</x>
-       <y>670</y>
+       <x>130</x>
+       <y>750</y>
        <width>71</width>
        <height>22</height>
       </rect>
@@ -1903,6 +1912,9 @@ border-radius: 4px;
       <font>
        <pointsize>10</pointsize>
       </font>
+     </property>
+     <property name="toolTip">
+      <string>Save VP to file</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
@@ -1914,11 +1926,14 @@ border-radius: 4px;
     <widget class="QPushButton" name="LoadCamParam_button">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>290</y>
+       <x>270</x>
+       <y>330</y>
        <width>31</width>
        <height>28</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Load camera position</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
@@ -1934,11 +1949,14 @@ border-radius: 4px;
     <widget class="QPushButton" name="SaveCamParam_button">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>290</y>
+       <x>310</x>
+       <y>330</y>
        <width>31</width>
        <height>28</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Save camera position</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(243, 243, 243);</string>
@@ -1951,31 +1969,11 @@ border-radius: 4px;
        <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
      </property>
     </widget>
-    <widget class="QPushButton" name="UndoCamParam_button">
-     <property name="geometry">
-      <rect>
-       <x>300</x>
-       <y>290</y>
-       <width>31</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>Icons/undo_icon.png</normaloff>Icons/undo_icon.png</iconset>
-     </property>
-    </widget>
     <widget class="QLabel" name="horFOV_label">
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>430</y>
+       <y>470</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -1988,7 +1986,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>430</y>
+       <y>470</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2001,7 +1999,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>390</y>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -2014,7 +2012,7 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>240</x>
-       <y>390</y>
+       <y>430</y>
        <width>111</width>
        <height>22</height>
       </rect>
@@ -2027,8 +2025,8 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>470</y>
-       <width>311</width>
+       <y>510</y>
+       <width>331</width>
        <height>16</height>
       </rect>
      </property>
@@ -2314,6 +2312,9 @@ border-radius: 4px;
         <height>15</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Transparency</string>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -2380,13 +2381,108 @@ border-radius: 4px;
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>640</y>
-       <width>311</width>
+       <y>720</y>
+       <width>331</width>
        <height>16</height>
       </rect>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="camParam_line_4">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>180</y>
+       <width>331</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="LoadDEM_button">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>190</y>
+       <width>31</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Load reference data</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(243, 243, 243);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="SaveDEM_button">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>190</y>
+       <width>31</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Save reference data</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(243, 243, 243);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
+     </property>
+    </widget>
+    <widget class="QLabel" name="RefData_label">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>200</y>
+       <width>171</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Reference Data</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="RefData_label_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>530</y>
+       <width>171</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Camera Adjustments</string>
      </property>
     </widget>
     <zorder>VP_title</zorder>
@@ -2426,7 +2522,6 @@ border-radius: 4px;
     <zorder>SaveVP_button</zorder>
     <zorder>LoadCamParam_button</zorder>
     <zorder>SaveCamParam_button</zorder>
-    <zorder>UndoCamParam_button</zorder>
     <zorder>horFOV_label</zorder>
     <zorder>horFOV_lineEdit</zorder>
     <zorder>CamHgt_lineEdit</zorder>
@@ -2437,6 +2532,11 @@ border-radius: 4px;
     <zorder>Full_mapCanvas_2</zorder>
     <zorder>frame_2</zorder>
     <zorder>camParam_line_3</zorder>
+    <zorder>camParam_line_4</zorder>
+    <zorder>LoadDEM_button</zorder>
+    <zorder>SaveDEM_button</zorder>
+    <zorder>RefData_label</zorder>
+    <zorder>RefData_label_2</zorder>
    </widget>
    <widget class="QWidget" name="Align_tab">
     <attribute name="title">

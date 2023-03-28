@@ -189,10 +189,6 @@ def createHillshade(dlg, clipped_DEM):
     dlg.hillshade_path=hillshade['OUTPUT']
     dlg.hillshade_layer = QgsRasterLayer(dlg.hillshade_path, "Hillshade")   
 
-    # Set hillshade coordinate reference system to NAD83 UTM Zone 12N
-    crs = dlg.hillshade_layer.crs()
-    crs.createFromId(26912)
-    dlg.hillshade_layer.setCrs(crs)
 
 def clipDEM(dlg, cam_x, cam_y):
     """Clips DEM based on camera parameters"""
@@ -202,32 +198,48 @@ def clipDEM(dlg, cam_x, cam_y):
     DEM_layer = QgsRasterLayer(DEM_path, "DEM")
 
     # Ensure DEM is in projected CRS with unit meters
-    dlg.crs = DEM_layer.crs()
-    if dlg.crs.mapUnits() != 0:
-        crs_dlg = QgsProjectionSelectionDialog()
-        crs_file = open("C:\\Users\\clair\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\mlp_ia_suite\\crs_list.txt", "r")
+    source_crs = DEM_layer.crs() # get current CRS
+    dir_path = os.path.dirname(__file__)
+    crs_catalog_path = os.path.normpath(dir_path + "\\crs_list.txt") # path to file containing list of appropriate CRS
+
+
+    if source_crs.mapUnits() != 0:
+        crs_dlg = QgsProjectionSelectionDialog() # open CRS selection dialog
+        crs_file = open(crs_catalog_path, "r")
         crs_data = crs_file.read()
-        crs_list = crs_data.split("\n")
+        crs_list = crs_data.split("\n") # list of acceptable CRS
         crs_file.close()
         crs_dlg.setOgcWmsCrsFilter(crs_list)
         crs_dlg.exec()
-        crs_id = crs_dlg.crs().authid()
-        #new_crs = QgsCoordinateReferenceSystem(crs_id)
-        dlg.crs.createFromId(crs_id) # Replace '5347' with whatever CRS id you want
-        DEM_layer.setCrs(dlg.crs)
+        dest_crs = crs_dlg.crs()
+        parameters = { 'INPUT':DEM_layer, 
+                        'SOURCE_CRS':source_crs,
+                        'TARGET_CRS':dest_crs,
+                        'RESAMPLING':2,
+                        'NODATA':None,
+                        'TARGET_RESOLUTION':None,
+                        'OPTIONS':'',
+                        'DATA_TYPE':6,
+                        'TARGET_EXTENT':None,
+                        'TARGET_EXTENT_CRS':None,
+                        'MULTITHREADING':False,
+                        'EXTRA':'',
+                        'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+            }
+        
+       
 
-    # Get clipping extents
+        proj_DEM = processing.run("gdal:warpreproject", parameters)
+        projDEM_path=proj_DEM['OUTPUT']
+        DEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
+
+    # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
     ex = DEM_layer.extent() 
     min_x = max([ex.xMinimum(),(cam_x - 25500)])
     max_x = min([ex.xMaximum(),(cam_x + 25500)])
-
     min_y = max([ex.yMinimum(),(cam_y - 25500)])
     max_y = min([ex.yMaximum(),(cam_y + 25500)])
 
-
-    # dem_extents = np.array([ex.xMinimum(), ex.xMaximum(), ex.yMinimum(), ex.yMaximum()]) # get full DEM extents
-    # clip_extents = np.array([cam_x - 25500, cam_x + 25500, cam_y - 25500, cam_y + 25500]) # get clipped extents
-    # out = np.min(np.vstack((clip_extents, dem_extents)), axis=0) # ensure clipped extents are still on DEM
     out = [min_x, max_x, min_y, max_y]
     extents = ", ".join(str(e) for e in out)
 
@@ -244,7 +256,7 @@ def clipDEM(dlg, cam_x, cam_y):
     clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
     
     clipDEM_path=clipped_DEM['OUTPUT']
-    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM")   
+    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM")  
     createHillshade(dlg, clipDEM_layer)
 
     return clipDEM_path
@@ -257,8 +269,6 @@ def camXY(dlg, lat, lon):
     ex = dlg.hillshade_layer.extent() 
     pixelSizeX = dlg.hillshade_layer.rasterUnitsPerPixelX()
     pixelSizeY = dlg.hillshade_layer.rasterUnitsPerPixelY()
-
-    # if pixelSizeX != pixelSizeY --> error
     
     # get top left coordinate
     ymax = ex.yMaximum()
@@ -309,21 +319,13 @@ def createVP(dlg):
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
         ray_start_x = cam_x + (100*math.sin(np.radians(a))/pixelSizeX)
-        # ray_start_y = cam_y
-        # ray_start_x = cam_x
         
         # create ray end position
-        ray_end_y = cam_y - (10000*math.cos(np.radians(a))/pixelSizeY)
-        ray_end_x = cam_x + (10000*math.sin(np.radians(a))/pixelSizeX)
+        ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
+        ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
 
         xs = np.linspace(ray_start_x, ray_end_x, round(25000/pixelSizeX))
         ys = np.linspace(ray_start_y, ray_end_y, round(25000/pixelSizeY))
-
-        # print(cam_x, cam_y)
-        # print(ray_start_x)
-        # print(ray_end_x)
-        # print(ray_start_y)
-        # print(ray_end_y)
 
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]+cam_params["hgt"]
         greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)

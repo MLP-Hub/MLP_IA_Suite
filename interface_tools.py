@@ -95,14 +95,13 @@ def addImg(filepath, name, canvas):
 
     layer_list = canvas.layers()
 
-    lyr_ids = []
+    lyr_ids = {}
     for lyr in layer_list:
-        lyr_ids.append(lyr.id())
-    for lyr in lyr_ids:
-        QgsProject.instance().removeMapLayer(lyr) # remove existing layers from canvas
-
+        lyr_ids[lyr.name()] = lyr.id()
+    if name in lyr_ids:
+        QgsProject.instance().removeMapLayer(lyr_ids[name]) # if the layer already exists, remove it from the canvas
+        
     img_lyr= QgsRasterLayer(filepath, name)
-    #QgsProject.instance().removeMapLayer(img_lyr) # remove layer if it already exists
     # Load mask as layer into mask map canvas
     QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
     canvas.enableAntiAliasing(True)
