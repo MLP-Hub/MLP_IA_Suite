@@ -24,8 +24,9 @@
 
 from .interface_tools import addImg
 
-from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
-from qgis.core import QgsRasterLayer, QgsProcessing
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
+from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject, QThread
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback
 from qgis.gui import QgsProjectionSelectionDialog 
 from qgis import processing
 
@@ -36,8 +37,82 @@ import cv2
 import scipy
 import numpy as np
 import math
-import csv
+from functools import partial
 
+class Worker(QObject):
+    '''Worker clips digital elevation model'''
+
+    def __init__(self, layer, cam_x, cam_y):
+        QObject.__init__(self)
+        self.DEM_layer = layer
+        self.cam_x = cam_x
+        self.cam_y = cam_y
+    
+    def run(self):
+        # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
+        ex = self.DEM_layer.extent() 
+        min_x = max([ex.xMinimum(),(self.cam_x - 25500)])
+        max_x = min([ex.xMaximum(),(self.cam_x + 25500)])
+        min_y = max([ex.yMinimum(),(self.cam_y - 25500)])
+        max_y = min([ex.yMaximum(),(self.cam_y + 25500)])
+
+        out = [min_x, max_x, min_y, max_y]
+        extents = ", ".join(str(e) for e in out)
+
+        parameters = {'INPUT':self.DEM_layer,
+                    'PROJWIN':extents,
+                    'OVERCRS':None,
+                    'NODATA':None,
+                    'OPTIONS':None,
+                    'DATA_TYPE':None,
+                    'EXTRA':None,
+                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+                }
+        
+        # f = QgsProcessingFeedback()
+        # f.progressChanged.connect(self.progress.emit(f.progress()))
+
+        clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
+    
+        clipDEM_path=clipped_DEM['OUTPUT']
+        clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
+
+        ret = (clipDEM_path, clipDEM_layer)
+
+        self.finished.emit()
+    
+    finished = pyqtSignal(object)
+    progress = pyqtSignal(float)
+    result = pyqtSignal(QgsRasterLayer)
+
+def startWorker(dlg, layer, cam_x, cam_y):
+    # create a new worker instance
+    worker = Worker(layer, cam_x, cam_y)
+
+    # dlg.progressDlg = QProgressDialog("Processing...","Cancel", 0, 100)
+    # dlg.progressDlg.setWindowModality(Qt.WindowModal)
+    # #progressDlg.setMinimumDuration(500)
+    # dlg.progressDlg.setValue(0)
+    # dlg.progressDlg.forceShow()
+
+    # start the worker in a new thread
+    thread = QThread(dlg)
+    worker.moveToThread(thread)
+    worker.finished.connect(workerFinished)
+    #worker.progress.connect(dlg.progressDlg.setValue)
+    thread.started.connect(worker.run)
+    thread.start()
+    dlg.thread = thread
+    dlg.worker = worker
+
+def workerFinished(dlg):
+    # clean up the worker and thread
+    dlg.worker.deleteLater()
+    dlg.thread.quit()
+    dlg.thread.wait()
+    dlg.thread.deleteLater()
+    # close the progress window
+    #dlg.progressDlg.close()  
 
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
@@ -200,41 +275,43 @@ def createHillshade(clipped_DEM):
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
     
     hillshade=processing.run("gdal:hillshade", parameters)
+    #qgis.utils.iface.messageBar().clearWidgets() # Clear the message bar when done
+
     hillshade_path=hillshade['OUTPUT']
     hillshade_layer = QgsRasterLayer(hillshade_path, "Hillshade")
 
     return hillshade_path, hillshade_layer   
 
 
-def clipDEM(DEM_layer, cam_x, cam_y):
-    """Clips DEM based on camera parameters"""
+# def clipDEM(DEM_layer, cam_x, cam_y):
+#     """Clips DEM based on camera parameters"""
 
-    # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
-    ex = DEM_layer.extent() 
-    min_x = max([ex.xMinimum(),(cam_x - 25500)])
-    max_x = min([ex.xMaximum(),(cam_x + 25500)])
-    min_y = max([ex.yMinimum(),(cam_y - 25500)])
-    max_y = min([ex.yMaximum(),(cam_y + 25500)])
+#     # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
+#     ex = DEM_layer.extent() 
+#     min_x = max([ex.xMinimum(),(cam_x - 25500)])
+#     max_x = min([ex.xMaximum(),(cam_x + 25500)])
+#     min_y = max([ex.yMinimum(),(cam_y - 25500)])
+#     max_y = min([ex.yMaximum(),(cam_y + 25500)])
 
-    out = [min_x, max_x, min_y, max_y]
-    extents = ", ".join(str(e) for e in out)
+#     out = [min_x, max_x, min_y, max_y]
+#     extents = ", ".join(str(e) for e in out)
 
-    parameters = {'INPUT':DEM_layer,
-                    'PROJWIN':extents,
-                    'OVERCRS':None,
-                    'NODATA':None,
-                    'OPTIONS':None,
-                    'DATA_TYPE':None,
-                    'EXTRA':None,
-                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
-            }
+#     parameters = {'INPUT':DEM_layer,
+#                     'PROJWIN':extents,
+#                     'OVERCRS':None,
+#                     'NODATA':None,
+#                     'OPTIONS':None,
+#                     'DATA_TYPE':None,
+#                     'EXTRA':None,
+#                     'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+#             }
 
-    clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
+#     clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
     
-    clipDEM_path=clipped_DEM['OUTPUT']
-    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM")  
+#     clipDEM_path=clipped_DEM['OUTPUT']
+#     clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
 
-    return clipDEM_path, clipDEM_layer
+#     return clipDEM_path, clipDEM_layer
 
 def reprojectDEM(DEM_layer):
     """Ensures DEM has appropriate CRS"""
@@ -308,15 +385,22 @@ def createVP(dlg):
     # Check that DEM has appropriate CRS
     source_crs = DEM_layer.crs() # get current CRS
     if source_crs.mapUnits() != 0:
+        # progressDlg.setLabelText("Reprojecting DEM")
+        # progressDlg.show()
         DEM_path, DEM_layer = reprojectDEM(DEM_layer)
 
     # generate new clipped DEM and hillshade on first round or when camera moves more than 500 m
     if dlg.lat_init is None or (cam_params['lat'] > (dlg.lat_init + 500)) or (cam_params['lat'] > (dlg.lon_init + 500)):
-        DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
+
+        # progressDlg.setLabelText("CLipping DEM")
+        #DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
+        startWorker(DEM_layer,  cam_params["lat"], cam_params["lon"])
+        # progressDlg.setLabelText("Generating hillshade")
         dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 
     
+    # progressDlg.setLabelText("Creating virtual photograph")
     DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
     HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
 
@@ -335,11 +419,18 @@ def createVP(dlg):
     img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
 
+    progressDlg = QProgressDialog("Creating virtual photograph...","Cancel", 0, img_w)
+    progressDlg.setWindowModality(Qt.WindowModal)
+    progressDlg.setValue(0)
+    progressDlg.forceShow()
+    progressDlg.show()  
 
     for img_x in range(0, img_w):
         # First, find all visible pixles
         # get the horizontal and vertical angles to the camera position
         # and find the corresponding greyscale values
+        
+        progressDlg.setValue(img_x)
 
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
@@ -386,8 +477,6 @@ def enableTools(dlg):
 
 def displaySaveVP(dlg, save):
     """Displays and saves virtual photo"""
-
-    # First check all inputs
 
     if save:
         # open save dialog and save vp

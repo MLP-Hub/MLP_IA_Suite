@@ -48,6 +48,36 @@ import subprocess
 #bat_path="C:\Thesis\QGIS_Plugin\pylc_env.bat"
 #subprocess.call([r"C:\Thesis\QGIS_Plugin\pylc_env.bat"]) #THIS SEEMS TO BE WORKING NOW
 
+class Worker(QObject):
+    '''Worker clips digital elevation model'''
+
+    def __init__(self, layer, alg, params, name):
+        QObject.__init__(self)
+        self.layer = layer
+        self.params = params
+        self.alg = alg
+        self.name = name
+    
+    def run(self):
+        # Run processing algorithm
+
+        # f = QgsProcessingFeedback()
+        # f.progressChanged.connect(self.progress.emit(f.progress()))
+
+        process_out = processing.run(self.alg, self.params) # run processing algorithm
+    
+        layer_path=process_out['OUTPUT']
+
+        layer_info = layer_path, self.name
+
+        self.result.emit(layer_info) # emit layer path and name to be added to project
+
+        self.finished.emit(process_out)
+    
+    finished = pyqtSignal(object)
+    progress = pyqtSignal(float)
+    result = pyqtSignal(object) 
+
 
 class MLP_IA_Suite:
     """QGIS Plugin Implementation."""
@@ -195,8 +225,70 @@ class MLP_IA_Suite:
                 self.tr(u'&MLP Image Analysis Suite'),
                 action)
             self.iface.removeToolBarIcon(action)
+    
 
+    def startWorker(self, layer, alg, params, name):
+        # create a new worker instance
+        worker = Worker(layer, alg, params, name)
 
+        # self.dlg.progressDlg = QProgressDialog("Processing...","Cancel", 0, 100)
+        # self.dlg.progressDlg.setWindowModality(Qt.WindowModal)
+        # #progressDlg.setMinimumDuration(500)
+        # aself.dlg.progressDlg.setValue(0)
+        # self.dlg.progressDlg.forceShow()
+
+        # start the worker in a new thread
+        thread = QThread(self.dlg)
+        worker.moveToThread(thread)
+        worker.finished.connect(self.workerFinished)
+        #worker.progress.connect(dlg.progressDlg.setValue)
+        worker.result.connect(self.processingResult)
+        thread.started.connect(worker.run)
+        thread.start()
+        self.dlg.thread = thread
+        self.dlg.worker = worker
+
+    def workerFinished(self):
+        # clean up the worker and thread
+        self.dlg.worker.deleteLater()
+        self.dlg.thread.quit()
+        self.dlg.thread.wait()
+        self.dlg.thread.deleteLater()
+        # close the progress window
+        #dlg.progressDlg.close() 
+
+    def processingResult(self, layer_info):
+
+        layer_path, layer_name = layer_info
+
+        # NEED TO IMPLEMENT CHECK HERE TO DELETE EXISTING DUPLICATE LAYERS
+
+        out_layer = QgsRasterLayer(layer_path, layer_name)
+        QgsProject.instance().addMapLayer(out_layer) # might need to use .clone() after out_layer
+
+    
+    def clipDEM(self):
+        
+        ex = self.DEM_layer.extent() 
+        min_x = max([ex.xMinimum(),(self.cam_x - 25500)])
+        max_x = min([ex.xMaximum(),(self.cam_x + 25500)])
+        min_y = max([ex.yMinimum(),(self.cam_y - 25500)])
+        max_y = min([ex.yMaximum(),(self.cam_y + 25500)])
+
+        out = [min_x, max_x, min_y, max_y]
+        extents = ", ".join(str(e) for e in out)
+
+        parameters = {'INPUT':self.DEM_layer,
+                    'PROJWIN':extents,
+                    'OVERCRS':None,
+                    'NODATA':None,
+                    'OPTIONS':None,
+                    'DATA_TYPE':None,
+                    'EXTRA':None,
+                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+                }
+    
+    
     def run(self):
         """Run method that performs all the real work"""
 
