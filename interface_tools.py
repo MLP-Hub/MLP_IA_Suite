@@ -142,7 +142,7 @@ def swipeTool(dlg, canvas, swipe_button):
         canvas.unsetMapTool(dlg.swipeTool)
 
 def zoomToExt(canvas_list):
-    """Zooms to provided canvas to extent of primary layer"""
+    """Zooms provided canvas to extent of primary layer"""
 
     for canvas in canvas_list:
         active_layer = canvas.layers()[0]

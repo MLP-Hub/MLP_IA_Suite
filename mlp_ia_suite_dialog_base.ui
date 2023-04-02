@@ -27,7 +27,7 @@
 </string>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="Home_tab">
     <property name="styleSheet">
@@ -2634,26 +2634,6 @@ border-radius: 4px;
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="SourceImg_graphic">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>120</y>
-       <width>671</width>
-       <height>501</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QGraphicsView" name="DestImg_graphic">
-     <property name="geometry">
-      <rect>
-       <x>710</x>
-       <y>120</y>
-       <width>671</width>
-       <height>501</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QTableWidget" name="CP_table">
      <property name="geometry">
       <rect>
@@ -2810,31 +2790,10 @@ border-radius: 4px;
       <string>Destination Image</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="SwipeAlign_button">
-     <property name="geometry">
-      <rect>
-       <x>1040</x>
-       <y>770</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(243, 243, 243);</string>
-     </property>
-     <property name="text">
-      <string>Swipe</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="SaveAlign_button">
      <property name="geometry">
       <rect>
-       <x>1140</x>
+       <x>1040</x>
        <y>770</y>
        <width>71</width>
        <height>22</height>
@@ -2873,7 +2832,7 @@ border-radius: 4px;
       <string>Align</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="addCP_button">
+    <widget class="QToolButton" name="addCP_button">
      <property name="geometry">
       <rect>
        <x>940</x>
@@ -2893,7 +2852,7 @@ border-radius: 4px;
        <normaloff>Icons/add_CP.png</normaloff>Icons/add_CP.png</iconset>
      </property>
     </widget>
-    <widget class="QPushButton" name="delCP_button">
+    <widget class="QToolButton" name="delCP_button">
      <property name="geometry">
       <rect>
        <x>980</x>
@@ -2982,6 +2941,26 @@ border-radius: 4px;
      </property>
      <property name="text">
       <string>Control Points</string>
+     </property>
+    </widget>
+    <widget class="QgsMapCanvas" name="SourceImg_canvas" native="true">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>110</y>
+       <width>671</width>
+       <height>501</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QgsMapCanvas" name="DestImg_canvas" native="true">
+     <property name="geometry">
+      <rect>
+       <x>710</x>
+       <y>110</y>
+       <width>671</width>
+       <height>501</height>
+      </rect>
      </property>
     </widget>
    </widget>
