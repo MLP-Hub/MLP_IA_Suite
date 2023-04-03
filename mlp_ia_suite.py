@@ -301,7 +301,7 @@ class MLP_IA_Suite:
         self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas))
         self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas))
         
-        self.dlg.addCP_button.clicked.connect(lambda: selectCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer"))
+        self.dlg.addCP_button.clicked.connect(lambda: selectCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
         
 
 

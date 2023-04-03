@@ -27,12 +27,11 @@ from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeome
 from PyQt5.QtCore import Qt, QVariant
 
 
-def createCPLayer(canvas, lyr_name):
+def createCPLayer(canvas, lyr_name, img_name):
     """Creates a temporary vector layer to receive CPs"""
 
-    img_layer = QgsProject.instance().mapLayersByName("Source Image")[0]
-
-    img_crs = img_layer.crs()
+    img_layer = QgsProject.instance().mapLayersByName(img_name)[0]
+    img_crs = img_layer.crs() # get CRS of underlying image so that points are in correct position
 
     vl = QgsVectorLayer("Point", lyr_name, "memory") # create new vector layer
     vl.setCrs(img_crs)
@@ -41,20 +40,22 @@ def createCPLayer(canvas, lyr_name):
     pr.addAttributes( [ QgsField("X", QVariant.Double), QgsField("Y",  QVariant.Double)] ) # add fields for X and Y coords
     vl.commitChanges() # commit changes
 
-    symbol = QgsMarkerSymbol.createSimple({'color': 'red'})
-    # apply symbol to layer renderer
+    # change layer symbology
+    if lyr_name == "Source CP Layer":
+        symbol = QgsMarkerSymbol.createSimple({'color': 'red'})
+    else:
+        symbol = QgsMarkerSymbol.createSimple({'color': 'orange'})
     vl.renderer().setSymbol(symbol)
 
     QgsProject.instance().addMapLayer(vl, False) # add vector layer to the registry (but don't load into main map)
 
     # add layer to the provided canvas
     layer_list = canvas.layers()
-    #layer_list.append(vl)
-    layer_list.insert(0, vl)
+    layer_list.insert(0, vl) # must add to front of layer list to ensure CPs are visible above image
     canvas.setLayers(layer_list)
     canvas.refreshAllLayers()
 
-def add_cp(point, canvas, name):
+def add_cp(dlg, point, canvas, name):
     """Adds CP (from mouse click) to vector layer"""
 
     vl = QgsProject.instance().mapLayersByName(name)[0] # get CP vector layer
@@ -64,30 +65,38 @@ def add_cp(point, canvas, name):
     pr = vl.dataProvider()
     fet = QgsFeature()
     fet.setGeometry(QgsGeometry.fromPointXY(point))
-    fet.setAttributes([point.x(),point.y()])
+    fet.setAttributes([point.x(),point.y()]) # add point with x,y coords where the user clicked
     pr.addFeatures([fet])
     vl.commitChanges() # commit changes
     vl.triggerRepaint() # repaint the layer
     canvas.refreshAllLayers()
-    #canvas.setExtent(vl.extent())
 
-def selectCP(dlg, canvas, name):
+    # ADD CP TO TABLE
+
+    # When done, switch canvases
+    canvas.unsetMapTool(dlg.CPtool)
+    dlg.CPtool = None
+    if name == "Source CP Layer":
+        selectCP(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
+    else:
+        selectCP(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
+
+def selectCP(dlg, canvas, name, img_name):
     """Allows user to select control point"""
 
     # check if vector layer of CPs exists, otherwise create one
     layer_list = canvas.layers()
-
     lyr_ids = {}
     for lyr in layer_list:
         lyr_ids[lyr.name()] = lyr.id()
     if name not in lyr_ids:
-       createCPLayer(canvas, name) 
+       createCPLayer(canvas, name, img_name) 
 
-    dlg.CPtool = QgsMapToolEmitPoint(canvas)
-    dlg.CPtool.canvasClicked.connect(lambda point: add_cp(point, canvas, name))
-    dlg.CPtool.setCursor(Qt.CrossCursor)
+    dlg.CPtool = QgsMapToolEmitPoint(canvas) # create control point tool
+    dlg.CPtool.canvasClicked.connect(lambda point: add_cp(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
+    dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
     #button.enable() # send to other function that makes sure only one tool is active
-    canvas.setMapTool(dlg.CPtool)
+    canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
 
 
 
