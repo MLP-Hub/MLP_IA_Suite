@@ -23,8 +23,9 @@
 """
 
 from qgis.gui import QgsMapToolEmitPoint
-from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol
+from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsSymbol, QgsFontMarkerSymbolLayer
 from PyQt5.QtCore import Qt, QVariant
+from qgis.PyQt.QtWidgets import QTableWidgetItem
 
 
 def createCPLayer(canvas, lyr_name, img_name):
@@ -40,11 +41,19 @@ def createCPLayer(canvas, lyr_name, img_name):
     pr.addAttributes( [ QgsField("X", QVariant.Double), QgsField("Y",  QVariant.Double)] ) # add fields for X and Y coords
     vl.commitChanges() # commit changes
 
-    # change layer symbology
+    # change layer symbology to cross
+    font_style = {}
+    font_style['font'] = 'Webdings'
+    font_style['chr'] = 'r' # Webdings r corresponds to cross
+    font_style['size'] = '6'
+    # color depends on source vs destination canvas
     if lyr_name == "Source CP Layer":
-        symbol = QgsMarkerSymbol.createSimple({'color': 'red'})
+        font_style['color'] = 'red'
     else:
-        symbol = QgsMarkerSymbol.createSimple({'color': 'orange'})
+        font_style['color'] = 'orange'
+    symbol = QgsMarkerSymbol.createSimple({'color': 'black'}) # iniate symbol
+    symbol_lyr = QgsFontMarkerSymbolLayer.create(font_style) # create marker
+    symbol.changeSymbolLayer(0,symbol_lyr) # swap symbol to cross
     vl.renderer().setSymbol(symbol)
 
     QgsProject.instance().addMapLayer(vl, False) # add vector layer to the registry (but don't load into main map)
@@ -71,7 +80,16 @@ def add_cp(dlg, point, canvas, name):
     vl.triggerRepaint() # repaint the layer
     canvas.refreshAllLayers()
 
-    # ADD CP TO TABLE
+    # add cp coordinates to table
+    # check destination or source layer
+    if name == "Source CP Layer":
+        col = 0
+    else:
+        col = 2
+    cp_list = vl.getFeatures() # get iterator of cps
+    row = len(list(cp_list))-1 # tells you which row to fill in data
+    dlg.CP_table.setItem(row, col, QTableWidgetItem(str(round(point.x(),2))))
+    dlg.CP_table.setItem(row, col+1, QTableWidgetItem(str(abs(round(point.y(),2)))))
 
     # When done, switch canvases
     canvas.unsetMapTool(dlg.CPtool)
