@@ -300,35 +300,35 @@ def getClipParams(DEM_layer, cam_x, cam_y):
     
     return parameters
 
-# def clipDEM(DEM_layer, cam_x, cam_y):
-#     """Clips DEM based on camera parameters"""
+def clipDEM(DEM_layer, cam_x, cam_y):
+    """Clips DEM based on camera parameters"""
 
-#     # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
-#     ex = DEM_layer.extent() 
-#     min_x = max([ex.xMinimum(),(cam_x - 25500)])
-#     max_x = min([ex.xMaximum(),(cam_x + 25500)])
-#     min_y = max([ex.yMinimum(),(cam_y - 25500)])
-#     max_y = min([ex.yMaximum(),(cam_y + 25500)])
+    # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
+    ex = DEM_layer.extent() 
+    min_x = max([ex.xMinimum(),(cam_x - 25500)])
+    max_x = min([ex.xMaximum(),(cam_x + 25500)])
+    min_y = max([ex.yMinimum(),(cam_y - 25500)])
+    max_y = min([ex.yMaximum(),(cam_y + 25500)])
 
-#     out = [min_x, max_x, min_y, max_y]
-#     extents = ", ".join(str(e) for e in out)
+    out = [min_x, max_x, min_y, max_y]
+    extents = ", ".join(str(e) for e in out)
 
-#     parameters = {'INPUT':DEM_layer,
-#                     'PROJWIN':extents,
-#                     'OVERCRS':None,
-#                     'NODATA':None,
-#                     'OPTIONS':None,
-#                     'DATA_TYPE':None,
-#                     'EXTRA':None,
-#                     'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
-#             }
+    parameters = {'INPUT':DEM_layer,
+                    'PROJWIN':extents,
+                    'OVERCRS':None,
+                    'NODATA':None,
+                    'OPTIONS':None,
+                    'DATA_TYPE':None,
+                    'EXTRA':None,
+                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+            }
 
-#     clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
+    clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
     
-#     clipDEM_path=clipped_DEM['OUTPUT']
-#     clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
+    clipDEM_path=clipped_DEM['OUTPUT']
+    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
 
-#     return clipDEM_path, clipDEM_layer
+    return clipDEM_path, clipDEM_layer
 
 def reprojectDEM(DEM_layer):
     """Ensures DEM has appropriate CRS"""
@@ -408,19 +408,23 @@ def createVP(dlg):
     if dlg.lat_init is None or (cam_params['lat'] > (dlg.lat_init + 500)) or (cam_params['lon'] > (dlg.lon_init + 500)):
 
         #DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
-        clipDEM_params = getClipParams(DEM_layer, cam_params['lat'], cam_params['lon'])
+        # clipDEM_params = getClipParams(DEM_layer, cam_params['lat'], cam_params['lon'])
 
-        dlg.progressDlg = QProgressDialog("Processing...","Cancel", 0, 100)
-        dlg.progressDlg.setWindowModality(Qt.WindowModal)
-        # #progressDlg.setMinimumDuration(500)
-        dlg.progressDlg.setValue(0)
-        dlg.progressDlg.forceShow()
-        dlg.progressDlg.show()
+        # dlg.progressDlg = QProgressDialog("Processing...","Cancel", 0, 100)
+        # dlg.progressDlg.setWindowModality(Qt.WindowModal)
+        # # #progressDlg.setMinimumDuration(500)
+        # dlg.progressDlg.setValue(0)
+        # dlg.progressDlg.forceShow()
+        # dlg.progressDlg.show()
 
-        startWorker(dlg, DEM_layer, "gdal:cliprasterbyextent", clipDEM_params, "Clipped DEM")
+        # startWorker(dlg, DEM_layer, "gdal:cliprasterbyextent", clipDEM_params, "Clipped DEM")
 
         # RUN PROGRESS BAR HERE??
-        clipDEM_layer = QgsProject.instance().mapLayersByName('Clipped DEM')[0]
+        #clipDEM_layer = QgsProject.instance().mapLayersByName('Clipped DEM')[0]
+
+        DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
+
+
         dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 

@@ -35,8 +35,8 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
 from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, changeTools, swipeTool, transparency, addImg
-from .img_alignment import selectCP
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, swipeTool, transparency, addImg
+from .img_alignment import newCP, selectCP, checkForImgs
 
 import sys
 import os.path
@@ -229,12 +229,11 @@ class MLP_IA_Suite:
         # Connect tools to appropriate functions (PyLC tab)
         canvas_list = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
         self.dlg.View_toolButton.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider]))
-        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton))
-        self.dlg.Pan_toolButton.clicked.connect(lambda: changeTools([self.dlg.Swipe_toolButton], self.dlg.Pan_toolButton))
-        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list)) # Zoom to mask extent
-        self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton))
-        self.dlg.Swipe_toolButton.clicked.connect(lambda: changeTools([self.dlg.Pan_toolButton], self.dlg.Swipe_toolButton))
-        self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
+        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
+        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list, "PyLC Mask")) # Zoom to mask extent
+        self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
+        #self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
+        self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), "PyLC Mask"))
         #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
 
         # VP TAB
@@ -290,10 +289,6 @@ class MLP_IA_Suite:
         self.dlg.Transparency_slider_2.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_2.value(), self.dlg.Full_mapCanvas_2))
 
         # Image Alignment Tab
-
-        # Initiate vector layers
-
-        source_cps = QgsVectorLayer()
         
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
@@ -301,8 +296,15 @@ class MLP_IA_Suite:
         self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas))
         self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas))
         
-        self.dlg.addCP_button.clicked.connect(lambda: selectCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
+        # check for both images --> enable tools if two images loaded
+        canvas_list = [self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas]
+        name_list = ["Source Image", "Destination Image"]
+        button_list = [self.dlg.addCP_button, self.dlg.delCP_button, self.dlg.loadCP_button, self.dlg.saveCP_button]
+        self.dlg.SourceImg_button.clicked.connect(lambda: checkForImgs(canvas_list, name_list, button_list))
+        self.dlg.DestImg_button.clicked.connect(lambda: checkForImgs(canvas_list, name_list, button_list))
         
+        self.dlg.addCP_button.clicked.connect(lambda: newCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
+        self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list))
 
 
         # SHOW THE DIALOG

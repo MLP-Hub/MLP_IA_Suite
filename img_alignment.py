@@ -22,11 +22,28 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapToolEmitPoint
-from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsSymbol, QgsFontMarkerSymbolLayer
+from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentifyFeature
+from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer
 from PyQt5.QtCore import Qt, QVariant
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 
+def checkForImgs(canvas_list, name_list, button_list):
+    """Ensures one image per canvas before enabling tool buttons"""
+    
+    # check for image layers
+    img_count = 0
+    for i, canvas in enumerate(canvas_list):
+        layer_list = canvas.layers()
+        lyr_ids = {}
+        for lyr in layer_list:
+            lyr_ids[lyr.name()] = lyr.id()
+        if name_list[i] in lyr_ids:
+            img_count +=1
+
+    # enable all cp buttons
+    if img_count == 2:
+        for button in button_list:
+            button.setEnabled(True)
 
 def createCPLayer(canvas, lyr_name, img_name):
     """Creates a temporary vector layer to receive CPs"""
@@ -88,6 +105,8 @@ def add_cp(dlg, point, canvas, name):
         col = 2
     cp_list = vl.getFeatures() # get iterator of cps
     row = len(list(cp_list))-1 # tells you which row to fill in data
+    if dlg.CP_table.rowCount() <= row:
+        dlg.CP_table.setRowCount(row+1) # add row if number of CPs exceeds table size
     dlg.CP_table.setItem(row, col, QTableWidgetItem(str(round(point.x(),2))))
     dlg.CP_table.setItem(row, col+1, QTableWidgetItem(str(abs(round(point.y(),2)))))
 
@@ -95,12 +114,12 @@ def add_cp(dlg, point, canvas, name):
     canvas.unsetMapTool(dlg.CPtool)
     dlg.CPtool = None
     if name == "Source CP Layer":
-        selectCP(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
+        newCP(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
     else:
-        selectCP(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
+        newCP(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
 
-def selectCP(dlg, canvas, name, img_name):
-    """Allows user to select control point"""
+def newCP(dlg, canvas, name, img_name):
+    """Allows user to create new control point"""
 
     # check if vector layer of CPs exists, otherwise create one
     layer_list = canvas.layers()
@@ -113,8 +132,48 @@ def selectCP(dlg, canvas, name, img_name):
     dlg.CPtool = QgsMapToolEmitPoint(canvas) # create control point tool
     dlg.CPtool.canvasClicked.connect(lambda point: add_cp(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
     dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
-    #button.enable() # send to other function that makes sure only one tool is active
     canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
+
+def deleteCP(f, vl_list, table):
+    """Deletes selected feature from layer and cp table"""
+    
+    id = f.id()
+    print(id)
+
+    table.selectRow(id)
+    row = table.currentRow()
+    if table.rowCount() > 1:
+        table.removeRow(row-1) # delete cp row from table
+    elif table.rowCount() == 1:
+        table.setRowCount(0) # if it is the last row, just remove all rows
+    else:
+        return # if there are no rows, nothing to delete
+
+    for vl in vl_list:
+        vl.startEditing() # enter editing mode
+        pr = vl.dataProvider()
+        pr.deleteFeatures([f]) # delete selected CP
+        vl.commitChanges()
+    
+
+def selectCP(dlg, canvas_list):
+    """Allows user to select control point from map"""
+
+    # should be able to delete from table or layer
+    # active on both canvases - must delete corresponding CP from other canvas
+    # check for vector layer type
+    vl1 = canvas_list[0].layers()[0] # get CP layer for canvas (should always be top layer)
+    dlg.delTool1 = QgsMapToolIdentifyFeature(canvas_list[0])
+    dlg.delTool1.setLayer(vl1)
+    canvas_list[0].setMapTool(dlg.delTool1)
+
+    vl2 = canvas_list[1].layers()[0] # get CP layer for canvas (should always be top layer)
+    dlg.delTool2 = QgsMapToolIdentifyFeature(canvas_list[1])
+    dlg.delTool2.setLayer(vl2)
+    canvas_list[1].setMapTool(dlg.delTool2)
+
+    dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
+    dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 
 
 

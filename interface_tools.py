@@ -62,10 +62,9 @@ def getFileFolder(lineEdit):
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.currentChanged.connect(_selected) #if selection changes from file to folder
         
-    dialog.exec_()
-
-    filepath = dialog.selectedFiles()
-    lineEdit.setText(filepath[0])
+    if dialog.exec_():
+        filepath = dialog.selectedFiles()
+        lineEdit.setText(filepath[0])
 
 def getFolder(lineEdit):
     """Select folder (usually output directory)"""
@@ -74,9 +73,9 @@ def getFolder(lineEdit):
     dialog.setFileMode(QFileDialog.Directory)
     dialog.setOption(dialog.DontUseNativeDialog)
 
-    dialog.exec_()
-    filepath = dialog.selectedFiles()[0]
-    lineEdit.setText(filepath)
+    if dialog.exec_():
+        filepath = dialog.selectedFiles()[0]
+        lineEdit.setText(filepath)
 
 def getFile(lineEdit, filter_string):
     """Select file"""
@@ -86,9 +85,9 @@ def getFile(lineEdit, filter_string):
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.setNameFilter(filter_string)
 
-    dialog.exec_()
-    filepath = dialog.selectedFiles()[0]
-    lineEdit.setText(filepath)
+    if dialog.exec_():
+        filepath = dialog.selectedFiles()[0]
+        lineEdit.setText(filepath)
 
 def addImg(filepath, name, canvas):
     """Adds provided image in map canvas"""
@@ -117,7 +116,7 @@ def updateExtents(canvas, ref_canvas):
         canvas.setExtent(ref_canvas.extent())
         canvas.refresh()
 
-def panCanvas(dlg, canvas_list, pan_button):
+def panCanvas(dlg, canvas_list, pan_button, swipe_button):
     """Enables/disables pan tool for provided map canvas(es)"""
     dlg.pan_tools = []
 
@@ -129,31 +128,36 @@ def panCanvas(dlg, canvas_list, pan_button):
     for i in range(len(canvas_list)):
         if pan_button.isChecked():
             canvas_list[i].setMapTool(dlg.pan_tools[i])
+            swipe_button.setChecked(False)
         else:
             canvas_list[i].unsetMapTool(dlg.pan_tools[i])
 
-def swipeTool(dlg, canvas, swipe_button):
+def swipeTool(dlg, canvas, swipe_button, pan_button):
     """Enables/disables swipe tool"""
 
     if swipe_button.isChecked():
         dlg.swipeTool = mapswipetool.MapSwipeTool(canvas)
         canvas.setMapTool(dlg.swipeTool)
+        pan_button.setChecked(False)
     else:
         canvas.unsetMapTool(dlg.swipeTool)
 
-def zoomToExt(canvas_list):
+def zoomToExt(canvas_list, lyr_name):
     """Zooms provided canvas to extent of primary layer"""
+    active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
 
     for canvas in canvas_list:
-        active_layer = canvas.layers()[0]
+        # active_layer = canvas.layers()[0]
         canvas.setExtent(active_layer.extent())
         canvas.refresh()
 
-def transparency(val, canvas):
+def transparency(val, lyr_name):
     """Changes top image transparency based on slider"""
     # not sure why this needs to be so complicated
 
-    active_layer = canvas.layers()[0]
+    #active_layer = canvas.layers()[0]
+    #active_layer = canvas.layer(0)
+    active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
 
     raster_transparency  = active_layer.renderer().rasterTransparency()
 
@@ -178,11 +182,6 @@ def changeView(full_canvas, exclusive_tools):
         full_canvas.hide()
         for tool in exclusive_tools:
             tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
-            tool.setChecked(False)
+        
+        exclusive_tools[0].setChecked(False) # changes swipe tool to not be checked
 
-def changeTools(tool_list, active_tool):
-    """Ensures only the active tool is checked"""
-
-    for tool_button in tool_list:
-        if tool_button != active_tool:
-            tool_button.setChecked(False)

@@ -2643,13 +2643,15 @@ border-radius: 4px;
        <height>161</height>
       </rect>
      </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
      <property name="rowCount">
-      <number>5</number>
+      <number>4</number>
      </property>
      <property name="columnCount">
       <number>7</number>
      </property>
-     <row/>
      <row/>
      <row/>
      <row/>
@@ -2833,6 +2835,9 @@ border-radius: 4px;
      </property>
     </widget>
     <widget class="QToolButton" name="addCP_button">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>940</x>
@@ -2853,6 +2858,9 @@ border-radius: 4px;
      </property>
     </widget>
     <widget class="QToolButton" name="delCP_button">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>980</x>
@@ -2873,6 +2881,9 @@ border-radius: 4px;
      </property>
     </widget>
     <widget class="QPushButton" name="loadCP_button">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>1020</x>
@@ -2893,6 +2904,9 @@ border-radius: 4px;
      </property>
     </widget>
     <widget class="QPushButton" name="saveCP_button">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>1060</x>
