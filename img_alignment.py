@@ -136,23 +136,34 @@ def newCP(dlg, canvas, name, img_name):
 
 def deleteCP(f, vl_list, table):
     """Deletes selected feature from layer and cp table"""
-    
-    id = f.id()
-    print(id)
 
-    table.selectRow(id)
+    # loop through both layers to find which cp was clicked on,
+    # but specifically, to find its position in the table
+    flag = False
+    for cp_layer in vl_list:
+        cp_features = cp_layer.getFeatures()
+        row_num = 0
+        for ft in cp_features:
+            if ft.id() is f.id():
+                flag = True # create flag to break outer loop
+                break
+            else:
+                row_num+=1
+        if flag:
+            break
+
+
+    table.selectRow(row_num)
     row = table.currentRow()
-    if table.rowCount() > 1:
-        table.removeRow(row-1) # delete cp row from table
-    elif table.rowCount() == 1:
-        table.setRowCount(0) # if it is the last row, just remove all rows
+    if table.rowCount() >= 1:
+        table.removeRow(row) # delete cp row from table
     else:
         return # if there are no rows, nothing to delete
 
     for vl in vl_list:
         vl.startEditing() # enter editing mode
         pr = vl.dataProvider()
-        pr.deleteFeatures([f]) # delete selected CP
+        pr.deleteFeatures([f.id()]) # delete selected CP
         vl.commitChanges()
     
 
