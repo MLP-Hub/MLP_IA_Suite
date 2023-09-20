@@ -36,7 +36,7 @@ from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
 from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, swipeTool, transparency, addImg
-from .img_alignment import newCP, selectCP, checkForImgs
+from .img_alignment import newCP, selectCP, checkForImgs, alignImgs
 
 import sys
 import os.path
@@ -305,6 +305,7 @@ class MLP_IA_Suite:
         
         self.dlg.addCP_button.clicked.connect(lambda: newCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
         self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list))
+        self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
 
 
         # SHOW THE DIALOG

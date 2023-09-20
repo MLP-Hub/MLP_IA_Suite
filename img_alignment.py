@@ -27,6 +27,9 @@ from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeome
 from PyQt5.QtCore import Qt, QVariant
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 
+import cv2
+import numpy as np
+
 def checkForImgs(canvas_list, name_list, button_list):
     """Ensures one image per canvas before enabling tool buttons"""
     
@@ -152,7 +155,6 @@ def deleteCP(f, vl_list, table):
         if flag:
             break
 
-
     table.selectRow(row_num)
     row = table.currentRow()
     if table.rowCount() >= 1:
@@ -163,7 +165,7 @@ def deleteCP(f, vl_list, table):
     for vl in vl_list:
         vl.startEditing() # enter editing mode
         pr = vl.dataProvider()
-        pr.deleteFeatures([f.id()]) # delete selected CP
+        pr.deleteFeatures([f.id()]) # delete selected CP from vector layer
         vl.commitChanges()
     
 
@@ -186,7 +188,28 @@ def selectCP(dlg, canvas_list):
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 
+def alignImgs(dlg, file_path, table):
+    """Aligns images using perspective transformation"""
+
+    img = cv2.imread(file_path)
+    (h, w, c) = img.shape[:3]
+
+    source_pts = []
+    dest_pts = []
+    x = 0
+    while x < 4:
+        source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
+        dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
+        source_pts.append(source_pt)
+        dest_pts.append(dest_pt)
+        x+=1
+
+    source_pts_array = np.float32(source_pts)
+    dest_pts_array = np.float32(dest_pts)
 
 
+    matrix = cv2.getPerspectiveTransform(source_pts_array, dest_pts_array)
+    result = cv2.warpPerspective(img, matrix, (w, h))
+    cv2.imwrite("C:\\Thesis\\test_align.png", result)
 
 
