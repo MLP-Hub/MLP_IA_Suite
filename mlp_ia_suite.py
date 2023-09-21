@@ -234,7 +234,6 @@ class MLP_IA_Suite:
         self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
         #self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
         self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), "PyLC Mask"))
-        #self.dlg.FullScrn_toolButton.clicked.connect(self.fullScrn)
 
         # VP TAB
         self.dlg.Full_mapCanvas_2.hide()
@@ -282,10 +281,8 @@ class MLP_IA_Suite:
         canvas_list = [self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas, self.dlg.Full_mapCanvas_2]
         self.dlg.View_toolButton_2.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas_2, [self.dlg.Swipe_toolButton_2, self.dlg.Transparency_slider_2]))
         self.dlg.Pan_toolButton_2.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton_2))
-        self.dlg.Pan_toolButton_2.clicked.connect(lambda: changeTools([self.dlg.Swipe_toolButton_2], self.dlg.Pan_toolButton_2))
         self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_2.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_2, self.dlg.Swipe_toolButton_2))
-        self.dlg.Swipe_toolButton_2.clicked.connect(lambda: changeTools([self.dlg.Pan_toolButton_2], self.dlg.Swipe_toolButton_2))
         self.dlg.Transparency_slider_2.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_2.value(), self.dlg.Full_mapCanvas_2))
 
         # Image Alignment Tab
