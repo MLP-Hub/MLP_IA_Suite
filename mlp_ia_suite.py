@@ -208,7 +208,7 @@ class MLP_IA_Suite:
             self.dlg = MLP_IA_SuiteDialog()
         
         # PYLC TAB 
-        self.dlg.Full_mapCanvas.hide() # hide the full map canvas (default side-by-side view)
+        #self.dlg.Full_mapCanvas.hide() # hide the full map canvas (default side-by-side view)
         mod_dict = modelMenu(self.dlg) # set up model menu
 
         # Set up image scale slider
@@ -227,10 +227,10 @@ class MLP_IA_Suite:
         self.dlg.Img_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Mask_mapCanvas, self.dlg.Img_mapCanvas))
 
         # Connect tools to appropriate functions (PyLC tab)
-        canvas_list = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
-        self.dlg.View_toolButton.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider]))
-        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
-        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list, "PyLC Mask")) # Zoom to mask extent
+        canvas_list_1 = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
+        self.dlg.View_toolButton.clicked.connect(lambda: changeView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider]))
+        self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_1, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
+        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list_1, "PyLC Mask")) # Zoom to mask extent
         self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
         #self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
         self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), "PyLC Mask"))
@@ -278,10 +278,10 @@ class MLP_IA_Suite:
         self.dlg.Img_mapCanvas_2.extentsChanged.connect(lambda: updateExtents(self.dlg.VP_mapCanvas, self.dlg.Img_mapCanvas_2))
 
         # Connect tools to appropriate functions (VP tab)
-        canvas_list = [self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas, self.dlg.Full_mapCanvas_2]
+        canvas_list_2 = [self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas, self.dlg.Full_mapCanvas_2]
         self.dlg.View_toolButton_2.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas_2, [self.dlg.Swipe_toolButton_2, self.dlg.Transparency_slider_2]))
-        self.dlg.Pan_toolButton_2.clicked.connect(lambda: panCanvas(self.dlg, canvas_list, self.dlg.Pan_toolButton_2))
-        self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list)) # Zoom to mask extent
+        self.dlg.Pan_toolButton_2.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_2, self.dlg.Pan_toolButton_2))
+        self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list_2)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_2.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_2, self.dlg.Swipe_toolButton_2))
         self.dlg.Transparency_slider_2.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_2.value(), self.dlg.Full_mapCanvas_2))
 
@@ -290,19 +290,26 @@ class MLP_IA_Suite:
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         self.dlg.DestImg_button.clicked.connect(lambda: getFile(self.dlg.DestImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas))
-        self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas))
+        self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas, True))
+        self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas, True))
         
-        # check for both images --> enable tools if two images loaded
-        canvas_list = [self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas]
+        # Check for both images --> enable control point tools if two images loaded
+        canvas_list_3 = [self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas]
         name_list = ["Source Image", "Destination Image"]
         button_list = [self.dlg.addCP_button, self.dlg.delCP_button, self.dlg.loadCP_button, self.dlg.saveCP_button]
-        self.dlg.SourceImg_button.clicked.connect(lambda: checkForImgs(canvas_list, name_list, button_list))
-        self.dlg.DestImg_button.clicked.connect(lambda: checkForImgs(canvas_list, name_list, button_list))
+        self.dlg.SourceImg_button.clicked.connect(lambda: checkForImgs(canvas_list_3, name_list, button_list))
+        self.dlg.DestImg_button.clicked.connect(lambda: checkForImgs(canvas_list_3, name_list, button_list))
         
         self.dlg.addCP_button.clicked.connect(lambda: newCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
-        self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list))
+        self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list_3))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
+
+        # Connect tools to appropriate functions (VP tab)
+        self.dlg.View_toolButton_3.clicked.connect(lambda: changeView(self.dlg.Full_mapCanvas_2, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3]))
+        self.dlg.Pan_toolButton_3.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_3, self.dlg.Pan_toolButton_2))
+        self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_3)) # Zoom to mask extent
+        self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_2, self.dlg.Swipe_toolButton_2))
+        self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_2))
 
 
         # SHOW THE DIALOG

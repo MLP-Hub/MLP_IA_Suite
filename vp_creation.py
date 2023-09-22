@@ -502,7 +502,6 @@ def enableTools(dlg):
     dlg.View_toolButton_2.setEnabled(True)
     dlg.Fit_toolButton_2.setEnabled(True)
     dlg.Pan_toolButton_2.setEnabled(True)
-    dlg.FullScrn_toolButton_2.setEnabled(True)
 
 def displaySaveVP(dlg, save):
     """Displays and saves virtual photo"""
@@ -521,10 +520,10 @@ def displaySaveVP(dlg, save):
         return
     cv2.imwrite(vp_path, vp)
 
-    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2) # show input image in side-by-side
-    addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas) # show output mask in side-by-side
-    addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2) # show output mask in fullview
-    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2) # show input image in full view
+    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2, True) # show input image in side-by-side
+    addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas, True) # show output mask in side-by-side
+    addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2, False) # show output mask in fullview
+    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2, False) # show input image in full view
 
     dlg.VP_mapCanvas.refresh()
     dlg.Img_mapCanvas_2.refresh()

@@ -89,7 +89,25 @@ def getFile(lineEdit, filter_string):
         filepath = dialog.selectedFiles()[0]
         lineEdit.setText(filepath)
 
-def addImg(filepath, name, canvas):
+def remove_layer(canvas, img_lyr):
+    """Removes provided layer from map canvas"""
+    
+    layer_list = canvas.layers()
+    layer_list.remove(img_lyr)
+    canvas.setLayers(layer_list)
+
+
+def load_layer(canvas, img_lyr):
+    """Loads provided layer into map canvas"""
+ 
+    canvas.enableAntiAliasing(True)
+    canvas.setExtent(img_lyr.extent()) # set extent to the extent of the image layer
+    layer_list = canvas.layers()
+    layer_list.append(img_lyr)
+    canvas.setLayers(layer_list)
+
+
+def addImg(filepath, name, canvas, visible):
     """Adds provided image in map canvas"""
 
     layer_list = canvas.layers()
@@ -101,13 +119,11 @@ def addImg(filepath, name, canvas):
         QgsProject.instance().removeMapLayer(lyr_ids[name]) # if the layer already exists, remove it from the canvas
         
     img_lyr= QgsRasterLayer(filepath, name)
-    # Load mask as layer into mask map canvas
     QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
-    canvas.enableAntiAliasing(True)
-    canvas.setExtent(img_lyr.extent()) # set extent to the extent of the image layer
-    layer_list = canvas.layers()
-    layer_list.append(img_lyr)
-    canvas.setLayers(layer_list)
+
+    if visible:
+        load_layer(canvas, img_lyr)
+
 
 def updateExtents(canvas, ref_canvas):
     """Updates the extent of a map canvas to match a reference canvas"""
@@ -171,15 +187,33 @@ def transparency(val, lyr_name):
     raster_transparency.setTransparentSingleValuePixelList(tr_list)
     active_layer.triggerRepaint()
         
-def changeView(full_canvas, exclusive_tools):
+def changeView(canvas_list, exclusive_tools):
     """Changes display from side-by-side to one window or v-v"""
 
-    if not full_canvas.isVisible():
-        full_canvas.show()
+    if canvas_list[0].isVisible():
+        # first hide the two side-by-side canvases
+        canvas_list[0].hide()
+        canvas_list[1].hide()
+        
+        # make the layers on the main canvas visible
+        lyr_list = canvas_list[1].layers()
+        lyr_list.extend(canvas_list[0].layers())
+        for lyr in lyr_list:
+            load_layer(canvas_list[2],lyr)
+        
         for tool in exclusive_tools:
             tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)
+
     else:
-        full_canvas.hide()
+        canvas_list[0].show()
+        canvas_list[1].show()
+        
+        # hide the layers on the main canvas
+        lyr_list = canvas_list[0].layers()
+        lyr_list.extend(canvas_list[1].layers())
+        for lyr in lyr_list:
+            remove_layer(canvas_list[2],lyr)
+        
         for tool in exclusive_tools:
             tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
         

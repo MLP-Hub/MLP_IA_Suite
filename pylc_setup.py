@@ -82,7 +82,6 @@ def enableTools(dlg):
     dlg.View_toolButton.setEnabled(True)
     dlg.Fit_toolButton.setEnabled(True)
     dlg.Pan_toolButton.setEnabled(True)
-    dlg.FullScrn_toolButton.setEnabled(True)
 
 def runPylc(dlg, mod_dict):
     """Runs pylc and displays outputs"""
@@ -97,9 +96,9 @@ def runPylc(dlg, mod_dict):
     scale_val = dlg.Scale_lineEdit.text()
     outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
 
-    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas) # show input image in side-by-side
-    addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas) # show output mask in side-by-side
-    addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas) # show output mask in fullview
-    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas) # show input image in full view
+    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
+    addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side
+    addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas, False) # show output mask in fullview
+    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas, False) # show input image in full view
 
     enableTools(dlg)
