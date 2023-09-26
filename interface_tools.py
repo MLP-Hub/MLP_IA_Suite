@@ -160,10 +160,12 @@ def swipeTool(dlg, canvas, swipe_button, pan_button):
 
 def zoomToExt(canvas_list, lyr_name):
     """Zooms provided canvas to extent of primary layer"""
-    active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
+    
+    #active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
+
+    active_layer = canvas_list[2].layer(0)
 
     for canvas in canvas_list:
-        # active_layer = canvas.layers()[0]
         canvas.setExtent(active_layer.extent())
         canvas.refresh()
 
@@ -186,36 +188,52 @@ def transparency(val, lyr_name):
 
     raster_transparency.setTransparentSingleValuePixelList(tr_list)
     active_layer.triggerRepaint()
-        
-def changeView(canvas_list, exclusive_tools):
-    """Changes display from side-by-side to one window or v-v"""
 
-    if canvas_list[0].isVisible():
-        # first hide the two side-by-side canvases
-        canvas_list[0].hide()
-        canvas_list[1].hide()
-        
-        # make the layers on the main canvas visible
-        lyr_list = canvas_list[1].layers()
-        lyr_list.extend(canvas_list[0].layers())
-        for lyr in lyr_list:
-            load_layer(canvas_list[2],lyr)
-        
-        for tool in exclusive_tools:
-            tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)
+def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+    """Changes display to side-by-side canvases"""
 
-    else:
-        canvas_list[0].show()
-        canvas_list[1].show()
+    # change which canvases are visible
+    canvas_list[0].raise_()
+    canvas_list[1].raise_()
+    canvas_list[2].lower()
         
-        # hide the layers on the main canvas
-        lyr_list = canvas_list[0].layers()
-        lyr_list.extend(canvas_list[1].layers())
-        for lyr in lyr_list:
-            remove_layer(canvas_list[2],lyr)
+    # hide the layers on the main canvas
+    lyr_list = canvas_list[0].layers()
+    lyr_list.extend(canvas_list[1].layers())
+    for lyr in lyr_list:
+        remove_layer(canvas_list[2],lyr)
         
-        for tool in exclusive_tools:
-            tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
-        
+    for tool in exclusive_tools:
+        tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
+    
+    # deactivate swipe tool
+    if exclusive_tools[0].isChecked:
         exclusive_tools[0].setChecked(False) # changes swipe tool to not be checked
+        canvas_list[2].unsetMapTool(exclusive_tools[0])
 
+    # change which display button is visible
+    ss_view_button.hide()
+    single_view_button.show()
+
+
+
+def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+    """Changes dsipaly to single canvas"""
+    
+    # change which canvases are visible
+    canvas_list[2].raise_()
+    canvas_list[0].lower()
+    canvas_list[1].lower()
+        
+    # make the layers on the main canvas visible
+    lyr_list = canvas_list[1].layers()
+    lyr_list.extend(canvas_list[0].layers())
+    for lyr in lyr_list:
+        load_layer(canvas_list[2],lyr)
+        
+    for tool in exclusive_tools:
+        tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)
+    
+    # change which display button is visible
+    single_view_button.hide()
+    ss_view_button.show()

@@ -79,7 +79,8 @@ def pylcArgs(dlg, mod_dict):
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with mask and image"""
 
-    dlg.View_toolButton.setEnabled(True)
+    dlg.SideBySide_pushButton.setEnabled(True)
+    dlg.SingleView_pushButton.setEnabled(True)
     dlg.Fit_toolButton.setEnabled(True)
     dlg.Pan_toolButton.setEnabled(True)
 
@@ -95,6 +96,8 @@ def runPylc(dlg, mod_dict):
     maskExt = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
     scale_val = dlg.Scale_lineEdit.text()
     outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
+
+    # NEED TO SCALE IMAGE HERE
 
     addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
     addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side

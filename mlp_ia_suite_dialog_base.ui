@@ -323,11 +323,15 @@ padding: 15px 15px 15px 15px;
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">border-color: rgb(255, 255, 255);</string>
+          <string notr="true">border: 0px;
+highlightthickness: 0px;</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
             <item>
              <widget class="QgsMapCanvas" name="Img_mapCanvas" native="true"/>
             </item>
@@ -479,7 +483,7 @@ padding: 15px 15px 15px 15px;
            <bool>true</bool>
           </property>
          </widget>
-         <widget class="QToolButton" name="View_toolButton">
+         <widget class="QPushButton" name="SideBySide_pushButton">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -516,13 +520,16 @@ padding: 15px 15px 15px 15px;
           <property name="checkable">
            <bool>false</bool>
           </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonIconOnly</enum>
+          <property name="autoDefault">
+           <bool>false</bool>
           </property>
-          <property name="autoRaise">
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
@@ -613,6 +620,56 @@ border-radius: 4px;
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="SingleView_pushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>7</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>View</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </widget>

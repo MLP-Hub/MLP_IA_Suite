@@ -35,7 +35,7 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
 from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, changeView, swipeTool, transparency, addImg
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .img_alignment import newCP, selectCP, checkForImgs, alignImgs
 
 import sys
@@ -228,7 +228,8 @@ class MLP_IA_Suite:
 
         # Connect tools to appropriate functions (PyLC tab)
         canvas_list_1 = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
-        self.dlg.View_toolButton.clicked.connect(lambda: changeView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider]))
+        self.dlg.SideBySide_pushButton.clicked.connect(lambda: sideBySide(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
+        self.dlg.SingleView_pushButton.clicked.connect(lambda: singleView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
         self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_1, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
         self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list_1, "PyLC Mask")) # Zoom to mask extent
         self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
