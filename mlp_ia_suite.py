@@ -231,10 +231,9 @@ class MLP_IA_Suite:
         self.dlg.SideBySide_pushButton.clicked.connect(lambda: sideBySide(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
         self.dlg.SingleView_pushButton.clicked.connect(lambda: singleView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
         self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_1, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
-        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list_1, "PyLC Mask")) # Zoom to mask extent
+        self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list_1)) # Zoom to mask extent
         self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
-        #self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
-        self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), "PyLC Mask"))
+        self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
 
         # VP TAB
         self.dlg.Full_mapCanvas_2.hide()

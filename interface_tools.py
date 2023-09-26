@@ -158,35 +158,38 @@ def swipeTool(dlg, canvas, swipe_button, pan_button):
     else:
         canvas.unsetMapTool(dlg.swipeTool)
 
-def zoomToExt(canvas_list, lyr_name):
+def zoomToExt(canvas_list):
     """Zooms provided canvas to extent of primary layer"""
     
-    #active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
-
-    active_layer = canvas_list[2].layer(0)
+    active_layer = canvas_list[1].layer(0)
 
     for canvas in canvas_list:
         canvas.setExtent(active_layer.extent())
         canvas.refresh()
 
-def transparency(val, lyr_name):
+def transparency(val, canvas):
     """Changes top image transparency based on slider"""
     # not sure why this needs to be so complicated
 
-    #active_layer = canvas.layers()[0]
-    #active_layer = canvas.layer(0)
-    active_layer = QgsProject.instance().mapLayersByName(lyr_name)[0]
+    active_layer = canvas.layer(0)
+
+    # raster_transparency  = active_layer.renderer().rasterTransparency()
+    # ltr = QgsRasterTransparency.TransparentSingleValuePixel()
+    # tr_list = []
+    # ltr.min = 0
+    # ltr.max = 255
+    # ltr.percentTransparent = val # set transparency based on slider value
+    # tr_list.append(ltr)
+
+    # raster_transparency.setTransparentSingleValuePixelList(tr_list)
 
     raster_transparency  = active_layer.renderer().rasterTransparency()
-
-    ltr = QgsRasterTransparency.TransparentSingleValuePixel()
+    ltr = QgsRasterTransparency.TransparentThreeValuePixel()
     tr_list = []
-    ltr.min = 0
-    ltr.max = 255
-    ltr.percentTransparent = val # set transparency based on slider value
+    ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 0, 0, 0, val
     tr_list.append(ltr)
-
-    raster_transparency.setTransparentSingleValuePixelList(tr_list)
+    raster_transparency.setTransparentThreeValuePixelList(tr_list)
+    
     active_layer.triggerRepaint()
 
 def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button):
@@ -198,8 +201,7 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     canvas_list[2].lower()
         
     # hide the layers on the main canvas
-    lyr_list = canvas_list[0].layers()
-    lyr_list.extend(canvas_list[1].layers())
+    lyr_list = canvas_list[2].layers()
     for lyr in lyr_list:
         remove_layer(canvas_list[2],lyr)
         
