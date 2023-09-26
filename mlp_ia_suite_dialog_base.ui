@@ -23,7 +23,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -34,12 +34,12 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="Home_Tab_MainLayout">
          <property name="sizeConstraint">
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout" stretch="1,3,3">
+          <layout class="QVBoxLayout" name="Home_Tab_Text_VL" stretch="1,3,3">
            <property name="spacing">
             <number>15</number>
            </property>
@@ -47,7 +47,7 @@
             <enum>QLayout::SetDefaultConstraint</enum>
            </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <layout class="QVBoxLayout" name="Home_Tab_Title_VL">
              <property name="spacing">
               <number>14</number>
              </property>
@@ -161,7 +161,7 @@ padding: 15px 15px 15px 15px;
             </widget>
            </item>
            <item>
-            <layout class="QFormLayout" name="formLayout_3">
+            <layout class="QFormLayout" name="Home_Tab_Help_FL">
              <property name="sizeConstraint">
               <enum>QLayout::SetFixedSize</enum>
              </property>
@@ -323,12 +323,11 @@ padding: 15px 15px 15px 15px;
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">border: 0px;
-highlightthickness: 0px;</string>
+          <string notr="true">QgsMapCanvas#Full_mapCanvas {highlightthickness: 0px;border: 0px;}</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <layout class="QHBoxLayout" name="PyLC_Tab_Canvas_HL">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
@@ -344,7 +343,7 @@ highlightthickness: 0px;</string>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="Toolbar_frame_1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -698,7 +697,7 @@ border-radius: 4px;
         </widget>
        </item>
        <item row="3" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <layout class="QVBoxLayout" name="PyLC_Tab_description_VL">
          <property name="sizeConstraint">
           <enum>QLayout::SetFixedSize</enum>
          </property>
@@ -747,7 +746,7 @@ border-radius: 4px;
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="PyLC_Tab_legend_VL">
            <item>
             <widget class="QLabel" name="legend_title">
              <property name="font">
@@ -769,7 +768,7 @@ border-radius: 4px;
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout" name="PyLC_Tab_Legend_GL">
              <property name="horizontalSpacing">
               <number>4</number>
              </property>
@@ -1087,7 +1086,7 @@ border-color: rgb(255, 255, 255);</string>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
+          <layout class="QVBoxLayout" name="PyLC_Tab_Buttons_VL">
            <property name="spacing">
             <number>19</number>
            </property>
@@ -1115,7 +1114,7 @@ border-color: rgb(255, 255, 255);</string>
             </spacer>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="10,0,0">
+            <layout class="QHBoxLayout" name="PyLC_Tab_Input_HL" stretch="10,0,0">
              <item>
               <widget class="QLineEdit" name="InputImg_lineEdit">
                <property name="styleSheet">
@@ -1166,7 +1165,7 @@ border-color: rgb(255, 255, 255);</string>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="PyLC_Tab_Model_HL">
              <item>
               <widget class="QComboBox" name="Model_comboBox">
                <property name="styleSheet">
@@ -1189,7 +1188,7 @@ border-color: rgb(255, 255, 255);</string>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="PyLC_Tab_Scale_HL">
              <item>
               <widget class="QSlider" name="Scale_slider">
                <property name="layoutDirection">
@@ -1268,7 +1267,7 @@ margin-bottom: -6px;
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <layout class="QHBoxLayout" name="PyLC_Tab_Output_HL">
              <item>
               <widget class="QLineEdit" name="OutputImg_lineEdit">
                <property name="styleSheet">
@@ -1356,1030 +1355,1180 @@ margin-bottom: -6px;
       <attribute name="title">
        <string>VP Creation</string>
       </attribute>
-      <widget class="QLabel" name="VP_title">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>10</y>
-         <width>781</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Virtual Photograph Production</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="VP_description">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>60</y>
-         <width>371</width>
-         <height>111</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a ray tracing algorithm to create a virtual photograph given camera parameters and digital elevation model. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignJustify|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="InputDEM_label">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>240</y>
-         <width>151</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>DEM</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="InputDEM_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>240</y>
-         <width>161</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="InputDEM_button">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>240</y>
-         <width>31</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="InputRefImg_button">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>280</y>
-         <width>31</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="RefImg_label">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>280</y>
-         <width>151</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Reference Image</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="InputRefImg_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>280</y>
-         <width>161</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="Line" name="camParam_line">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>320</y>
-         <width>331</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QLabel" name="CamParams_label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>340</y>
-         <width>171</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Camera Parameters</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="Easting_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>390</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Easting_label">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>390</y>
-         <width>55</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Easting</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Northing_label">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>390</y>
-         <width>55</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Northing</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="Northing_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>390</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Elev_label">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>430</y>
-         <width>81</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Elevation (m)</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="Elev_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>430</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Azi_label">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>470</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Azimuth (°)</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="Azi_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>470</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Forward_button">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>600</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Move forward</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_up.png</normaloff>Icons/arrow_up.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Left_button">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>640</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Move left</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_left.png</normaloff>Icons/arrow_left.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Backward_button">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>680</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Move backward</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_down.png</normaloff>Icons/arrow_down.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Right_button">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>640</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Move right</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_right.png</normaloff>Icons/arrow_right.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Up_button">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>600</y>
-         <width>31</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Increase camera height</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_up_blue.png</normaloff>Icons/arrow_up_blue.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Down_button">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>660</y>
-         <width>31</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Decrease camera height</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_down_blue.png</normaloff>Icons/arrow_down_blue.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="CountClckwis_button">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>600</y>
-         <width>51</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Rotate counterclockwise</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_rotate_left.png</normaloff>Icons/arrow_rotate_left.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Clckwis_button">
-       <property name="geometry">
-        <rect>
-         <x>280</x>
-         <y>600</y>
-         <width>51</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Rotate clockwise</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/arrow_rotate_right.png</normaloff>Icons/arrow_rotate_right.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Position_label">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>570</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Position</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Height_label">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>570</y>
-         <width>55</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Height</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Rotation_label">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>570</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Rotation</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="StepSizeM_label">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>650</y>
-         <width>81</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Step size (m)</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="StepSizeM_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>650</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="StepSizeDeg_label">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>680</y>
-         <width>81</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Step size (°)</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="StepSizeDeg_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>680</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="GenerateVP_button">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>750</y>
-         <width>91</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Generate temporary VP</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>Generate</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="SaveVP_button">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>750</y>
-         <width>71</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Save VP to file</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string>Save</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="LoadCamParam_button">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>330</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Load camera position</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="SaveCamParam_button">
-       <property name="geometry">
-        <rect>
-         <x>310</x>
-         <y>330</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Save camera position</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
-       </property>
-      </widget>
-      <widget class="QLabel" name="horFOV_label">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>470</y>
-         <width>111</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Horizontal FOV (°)</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="horFOV_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>470</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="CamHgt_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>430</y>
-         <width>41</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="CamHgt_label">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>430</y>
-         <width>111</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Camera height (m)</string>
-       </property>
-      </widget>
-      <widget class="Line" name="camParam_line_2">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>510</y>
-         <width>331</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QgsMapCanvas" name="Full_mapCanvas_2" native="true">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>100</y>
-         <width>981</width>
-         <height>681</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
-       <property name="geometry">
-        <rect>
-         <x>900</x>
-         <y>100</y>
-         <width>481</width>
-         <height>681</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>100</y>
-         <width>481</width>
-         <height>681</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QFrame" name="frame_2">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>60</y>
-         <width>231</width>
-         <height>33</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(240, 240, 240);</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>1</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <widget class="QToolButton" name="Pan_toolButton_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>80</x>
-          <y>4</y>
-          <width>31</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="cursor">
-         <cursorShape>ArrowCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>Pan</string>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>Icons/pan.png</normaloff>Icons/pan.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>25</width>
-          <height>25</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>false</bool>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="Fit_toolButton_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>4</y>
-          <width>31</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>Zoom to Extent</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>Icons/zoom-extent.png</normaloff>Icons/zoom-extent.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="Swipe_toolButton_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>115</x>
-          <y>4</y>
-          <width>31</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>Swipe</string>
-        </property>
-        <property name="text">
-         <string notr="true"/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>Icons/mapswipetool.png</normaloff>Icons/mapswipetool.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>false</bool>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QToolButton" name="View_toolButton_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>5</x>
-          <y>4</y>
-          <width>31</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="cursor">
-         <cursorShape>ArrowCursor</cursorShape>
-        </property>
-        <property name="toolTip">
-         <string>View</string>
-        </property>
-        <property name="whatsThis">
-         <string/>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>25</width>
-          <height>25</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="Line" name="line_3">
-        <property name="geometry">
-         <rect>
-          <x>75</x>
-          <y>4</y>
-          <width>5</width>
-          <height>27</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-       <widget class="QSlider" name="Transparency_slider_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>155</x>
-          <y>10</y>
-          <width>61</width>
-          <height>15</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>Transparency</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QSlider::groove:horizontal {
+      <layout class="QGridLayout" name="gridLayout" rowstretch="0,40" columnstretch="0,20" rowminimumheight="40,0" columnminimumwidth="0,1000">
+       <item row="1" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QgsMapCanvas" name="Full_mapCanvas_2" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <layout class="QVBoxLayout" name="VP_Tab_Text_VL">
+         <item>
+          <widget class="QLabel" name="VP_description">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a ray tracing algorithm to create a virtual photograph given camera parameters and digital elevation model. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignJustify|Qt::AlignTop</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="camParam_line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="VP_Tab_RefDat_HL">
+           <item>
+            <widget class="QLabel" name="RefData_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Reference Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="LoadDEM_button">
+             <property name="toolTip">
+              <string>Load reference data</string>
+             </property>
+             <property name="whatsThis">
+              <string/>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="SaveDEM_button">
+             <property name="toolTip">
+              <string>Save reference data</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="VP_Tab_DEM_HL">
+           <item>
+            <widget class="QLineEdit" name="InputDEM_lineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>160</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="InputDEM_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>31</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="InputDEM_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>DEM</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="VP_Tab_RefImg_HL">
+           <item>
+            <widget class="QLineEdit" name="InputRefImg_lineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>160</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="InputRefImg_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>21</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="RefImg_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Reference Image</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="camParam_line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="VP_Tab_CamParam_HL">
+           <item>
+            <widget class="QLabel" name="CamParams_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Camera Parameters</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="LoadCamParam_button">
+             <property name="toolTip">
+              <string>Load camera position</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="SaveCamParam_button">
+             <property name="toolTip">
+              <string>Save camera position</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="VP_Tab_CamPos_GL">
+           <property name="verticalSpacing">
+            <number>18</number>
+           </property>
+           <item row="0" column="1">
+            <widget class="QLabel" name="Easting_label">
+             <property name="text">
+              <string>Easting</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLineEdit" name="Northing_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="Elev_label">
+             <property name="text">
+              <string>Elevation (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="Azi_label">
+             <property name="text">
+              <string>Azimuth (°)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="Northing_label">
+             <property name="text">
+              <string>Northing</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="CamHgt_label">
+             <property name="text">
+              <string>Camera height (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="CamHgt_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="Elev_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="horFOV_label">
+             <property name="text">
+              <string>Horizontal FOV (°)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="horFOV_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLineEdit" name="Azi_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLineEdit" name="Easting_lineEdit">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="camParam_line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="CamAdj_label">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Camera Adjustments</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="VP_Tab_CamAdj_GL" columnstretch="3,1,4">
+           <item row="0" column="2">
+            <widget class="QLabel" name="Rotation_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Rotation</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="Height_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Height</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <layout class="QGridLayout" name="VP_Tab_Pos_GL">
+             <item row="0" column="1">
+              <widget class="QPushButton" name="Forward_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>29</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Move forward</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_up.png</normaloff>Icons/arrow_up.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="Left_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>29</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Move left</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_left.png</normaloff>Icons/arrow_left.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="Backward_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>29</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Move backward</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_down.png</normaloff>Icons/arrow_down.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QPushButton" name="Right_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>29</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Move right</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_right.png</normaloff>Icons/arrow_right.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="1">
+            <layout class="QVBoxLayout" name="VP_Tab_Hgt_VL">
+             <item alignment="Qt::AlignHCenter">
+              <widget class="QPushButton" name="Up_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Increase camera height</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_up_blue.png</normaloff>Icons/arrow_up_blue.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>23</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item alignment="Qt::AlignHCenter">
+              <widget class="QPushButton" name="Down_button">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Decrease camera height</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(243, 243, 243);</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Icons/arrow_down_blue.png</normaloff>Icons/arrow_down_blue.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="Position_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Position</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <layout class="QVBoxLayout" name="VP_Tab_Rot_VL">
+             <item>
+              <layout class="QHBoxLayout" name="VP_Tab_Rot_HL">
+               <item>
+                <widget class="QPushButton" name="CountClckwis_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>70</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Rotate counterclockwise</string>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(243, 243, 243);</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>Icons/arrow_rotate_left.png</normaloff>Icons/arrow_rotate_left.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>30</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="Clckwis_button">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>70</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Rotate clockwise</string>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(243, 243, 243);</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>Icons/arrow_rotate_right.png</normaloff>Icons/arrow_rotate_right.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>30</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="VP_Tab_StepSize_GL">
+               <item row="0" column="1">
+                <widget class="QLabel" name="StepSizeM_label">
+                 <property name="text">
+                  <string>Step size (m)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLineEdit" name="StepSizeM_lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>50</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(243, 243, 243);</string>
+                 </property>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLineEdit" name="StepSizeDeg_lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>50</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(243, 243, 243);</string>
+                 </property>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="StepSizeDeg_label">
+                 <property name="text">
+                  <string>Step size (°)</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="camParam_line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="VP_Tab_Generate_HL">
+           <item>
+            <widget class="QPushButton" name="GenerateVP_button">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Generate temporary VP</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string>Generate</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="SaveVP_button">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Save VP to file</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="VP_title">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Virtual Photograph Production</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QFrame" name="Toolbar_frame_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(240, 240, 240);</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="midLineWidth">
+          <number>0</number>
+         </property>
+         <widget class="QToolButton" name="Pan_toolButton_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>80</x>
+            <y>5</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>Pan</string>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/pan.png</normaloff>Icons/pan.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonIconOnly</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="Fit_toolButton_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>40</x>
+            <y>5</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Zoom to Extent</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/zoom-extent.png</normaloff>Icons/zoom-extent.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="Swipe_toolButton_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>115</x>
+            <y>5</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Swipe</string>
+          </property>
+          <property name="text">
+           <string notr="true"/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/mapswipetool.png</normaloff>Icons/mapswipetool.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="View_toolButton_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>5</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>View</string>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonIconOnly</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="Line" name="line_3">
+          <property name="geometry">
+           <rect>
+            <x>75</x>
+            <y>4</y>
+            <width>5</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgba(255, 255, 255, 0);</string>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+         <widget class="QSlider" name="Transparency_slider_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>155</x>
+            <y>12</y>
+            <width>61</width>
+            <height>15</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>Transparency</string>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QSlider::groove:horizontal {
 border: 1px solid #bbb;
 background: white;
 height: 4px;
@@ -2416,190 +2565,29 @@ background: #eee;
 border: 1px solid #aaa;
 border-radius: 4px;
 }</string>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="singleStep">
-         <number>1</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>0</number>
-        </property>
-        <property name="sliderPosition">
-         <number>0</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </widget>
-      <widget class="Line" name="camParam_line_3">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>720</y>
-         <width>331</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="Line" name="camParam_line_4">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>180</y>
-         <width>331</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="LoadDEM_button">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>190</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Load reference data</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="SaveDEM_button">
-       <property name="geometry">
-        <rect>
-         <x>310</x>
-         <y>190</y>
-         <width>31</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Save reference data</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(243, 243, 243);</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
-       </property>
-      </widget>
-      <widget class="QLabel" name="RefData_label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>200</y>
-         <width>171</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Reference Data</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="RefData_label_2">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>530</y>
-         <width>171</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Camera Adjustments</string>
-       </property>
-      </widget>
-      <zorder>VP_title</zorder>
-      <zorder>VP_description</zorder>
-      <zorder>InputDEM_label</zorder>
-      <zorder>InputDEM_lineEdit</zorder>
-      <zorder>InputDEM_button</zorder>
-      <zorder>InputRefImg_button</zorder>
-      <zorder>RefImg_label</zorder>
-      <zorder>InputRefImg_lineEdit</zorder>
-      <zorder>camParam_line</zorder>
-      <zorder>CamParams_label</zorder>
-      <zorder>Easting_lineEdit</zorder>
-      <zorder>Easting_label</zorder>
-      <zorder>Northing_label</zorder>
-      <zorder>Northing_lineEdit</zorder>
-      <zorder>Elev_label</zorder>
-      <zorder>Elev_lineEdit</zorder>
-      <zorder>Azi_label</zorder>
-      <zorder>Azi_lineEdit</zorder>
-      <zorder>Forward_button</zorder>
-      <zorder>Left_button</zorder>
-      <zorder>Backward_button</zorder>
-      <zorder>Right_button</zorder>
-      <zorder>Up_button</zorder>
-      <zorder>Down_button</zorder>
-      <zorder>CountClckwis_button</zorder>
-      <zorder>Clckwis_button</zorder>
-      <zorder>Position_label</zorder>
-      <zorder>Height_label</zorder>
-      <zorder>Rotation_label</zorder>
-      <zorder>StepSizeM_label</zorder>
-      <zorder>StepSizeM_lineEdit</zorder>
-      <zorder>StepSizeDeg_label</zorder>
-      <zorder>StepSizeDeg_lineEdit</zorder>
-      <zorder>GenerateVP_button</zorder>
-      <zorder>SaveVP_button</zorder>
-      <zorder>LoadCamParam_button</zorder>
-      <zorder>SaveCamParam_button</zorder>
-      <zorder>horFOV_label</zorder>
-      <zorder>horFOV_lineEdit</zorder>
-      <zorder>CamHgt_lineEdit</zorder>
-      <zorder>CamHgt_label</zorder>
-      <zorder>camParam_line_2</zorder>
-      <zorder>VP_mapCanvas</zorder>
-      <zorder>Img_mapCanvas_2</zorder>
-      <zorder>Full_mapCanvas_2</zorder>
-      <zorder>frame_2</zorder>
-      <zorder>camParam_line_3</zorder>
-      <zorder>camParam_line_4</zorder>
-      <zorder>LoadDEM_button</zorder>
-      <zorder>SaveDEM_button</zorder>
-      <zorder>RefData_label</zorder>
-      <zorder>RefData_label_2</zorder>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+          <property name="pageStep">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="sliderPosition">
+           <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="Align_tab">
       <attribute name="title">

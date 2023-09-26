@@ -173,16 +173,6 @@ def transparency(val, canvas):
 
     active_layer = canvas.layer(0)
 
-    # raster_transparency  = active_layer.renderer().rasterTransparency()
-    # ltr = QgsRasterTransparency.TransparentSingleValuePixel()
-    # tr_list = []
-    # ltr.min = 0
-    # ltr.max = 255
-    # ltr.percentTransparent = val # set transparency based on slider value
-    # tr_list.append(ltr)
-
-    # raster_transparency.setTransparentSingleValuePixelList(tr_list)
-
     raster_transparency  = active_layer.renderer().rasterTransparency()
     ltr = QgsRasterTransparency.TransparentThreeValuePixel()
     tr_list = []

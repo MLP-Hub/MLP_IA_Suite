@@ -208,7 +208,6 @@ class MLP_IA_Suite:
             self.dlg = MLP_IA_SuiteDialog()
         
         # PYLC TAB 
-        #self.dlg.Full_mapCanvas.hide() # hide the full map canvas (default side-by-side view)
         mod_dict = modelMenu(self.dlg) # set up model menu
 
         # Set up image scale slider
@@ -236,7 +235,6 @@ class MLP_IA_Suite:
         self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
 
         # VP TAB
-        self.dlg.Full_mapCanvas_2.hide()
 
         # Set up line edits (to take appropriate data type)
         numValidator = QDoubleValidator(bottom = 0, notation=QDoubleValidator.StandardNotation) # only allow positive float
