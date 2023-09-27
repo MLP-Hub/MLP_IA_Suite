@@ -23,7 +23,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -1463,10 +1463,13 @@ margin-bottom: -6px;
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <layout class="QHBoxLayout" name="VP_Tab_SideBySide_HL">
+              <property name="spacing">
+               <number>6</number>
+              </property>
               <item>
                <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1476,7 +1479,7 @@ margin-bottom: -6px;
               <item>
                <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -2543,7 +2546,7 @@ margin-bottom: -6px;
            <bool>true</bool>
           </property>
          </widget>
-         <widget class="QToolButton" name="View_toolButton_2">
+         <widget class="QToolButton" name="SideBySide_pushButton_2">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -2683,6 +2686,56 @@ border-radius: 4px;
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QToolButton" name="SingleView_pushButton_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>5</x>
+            <y>5</y>
+            <width>31</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="toolTip">
+           <string>View</string>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonIconOnly</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
           </property>
          </widget>
         </widget>

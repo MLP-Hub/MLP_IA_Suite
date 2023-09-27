@@ -124,7 +124,6 @@ def addImg(filepath, name, canvas, visible):
     if visible:
         load_layer(canvas, img_lyr)
 
-
 def updateExtents(canvas, ref_canvas):
     """Updates the extent of a map canvas to match a reference canvas"""
 
@@ -201,7 +200,7 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     # deactivate swipe tool
     if exclusive_tools[0].isChecked:
         exclusive_tools[0].setChecked(False) # changes swipe tool to not be checked
-        canvas_list[2].unsetMapTool(exclusive_tools[0])
+        # canvas_list[2].unsetMapTool(exclusive_tools[0]) # do I need to disable? Would have to pass the tool itself, not the button
 
     # change which display button is visible
     ss_view_button.hide()

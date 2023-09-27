@@ -499,7 +499,8 @@ def createVP(dlg):
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with mask and image"""
 
-    dlg.View_toolButton_2.setEnabled(True)
+    dlg.SideBySide_pushButton_2.setEnabled(True)
+    dlg.SingleView_pushButton_2.setEnabled(True)
     dlg.Fit_toolButton_2.setEnabled(True)
     dlg.Pan_toolButton_2.setEnabled(True)
 
@@ -510,7 +511,8 @@ def displaySaveVP(dlg, save):
         # open save dialog and save vp
         dialog = QFileDialog()
         dialog.setOption(dialog.DontUseNativeDialog)
-        vp_path = dialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
+        if dialog.exec_():
+            vp_path = dialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
     else:
         # save vp to temp path
         vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')
@@ -524,9 +526,5 @@ def displaySaveVP(dlg, save):
     addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas, True) # show output mask in side-by-side
     addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2, False) # show output mask in fullview
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2, False) # show input image in full view
-
-    dlg.VP_mapCanvas.refresh()
-    dlg.Img_mapCanvas_2.refresh()
-    dlg.Full_mapCanvas_2.refresh()
     
     enableTools(dlg)
