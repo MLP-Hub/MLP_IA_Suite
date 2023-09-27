@@ -24,6 +24,8 @@
 
 from .interface_tools import addImg
 
+import cv2
+import tempfile
 import sys
 import os.path
 
@@ -97,9 +99,23 @@ def runPylc(dlg, mod_dict):
     scale_val = dlg.Scale_lineEdit.text()
     outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
 
-    # NEED TO SCALE IMAGE HERE
+    # Resize reference image if PyLC was scaled
+    scale = float(scale_val)
+    if scale != 1.0:
+        ref_img = cv2.imread(dlg.InputImg_lineEdit.text()) # load referenc image
+        height, width = ref_img.shape[:2]
+        dim = (int(scale * width), int(scale * height))
+        resized_img = cv2.resize(ref_img, dim, interpolation=cv2.INTER_AREA) # for downscaling an image
+        img_path = os.path.join(tempfile.mkdtemp(), 'resizedImg.tiff')
+        if os.path.isfile(img_path):
+            # check if the temporary file already exists
+            os.remove(img_path)
+        cv2.imwrite(img_path, resized_img)
 
-    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
+    else:
+        img_path = dlg.InputImg_lineEdit.text()
+             
+    addImg(img_path,"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
     addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side
     addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas, False) # show output mask in fullview
     addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas, False) # show input image in full view
