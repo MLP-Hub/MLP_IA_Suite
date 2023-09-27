@@ -19,6 +19,9 @@ from utils.extract import Extractor
 from utils.evaluate import Evaluator
 from models.model import Model
 
+from qgis.PyQt.QtWidgets import QProgressDialog
+from qgis.PyQt.QtCore import Qt
+
 
 def tester(args):
     """
@@ -78,14 +81,19 @@ def tester(args):
         with torch.no_grad():
             # get model outputs
             model_outputs = []
-            #for i, (tile, _) in tqdm(enumerate(img_loader), total=n_batches, desc="Segmentation: ", unit=' batches'):
-            #    logits = model.test(tile)
-            #    model_outputs += logits
-            #    model.iter += 1
+            print("n_batches",n_batches)
+            progressDlg = QProgressDialog("Running classification...","Cancel", 0, n_batches)
+            progressDlg.setWindowModality(Qt.WindowModal)
+            progressDlg.setValue(0)
+            progressDlg.forceShow()
+            progressDlg.show()  
+
             for i, (tile, _) in enumerate(img_loader):
+                progressDlg.setValue(i)
                 logits = model.test(tile)
                 model_outputs += logits
                 model.iter += 1
+            print("i",i)
 
         # load results into evaluator
         results = utils.reconstruct(model_outputs, extractor.get_meta())

@@ -182,7 +182,7 @@ def transparency(val, canvas):
         raster_transparency.setTransparentSingleValuePixelList(tr_list)
     else:
         ltr = QgsRasterTransparency.TransparentThreeValuePixel()
-        ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 0, 0, 0, val
+        ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 255, 255, 255, val
         tr_list.append(ltr)
         raster_transparency.setTransparentThreeValuePixelList(tr_list)
     
