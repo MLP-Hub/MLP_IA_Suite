@@ -171,13 +171,20 @@ def transparency(val, canvas):
     # not sure why this needs to be so complicated
 
     active_layer = canvas.layer(0)
+    raster_transparency  = active_layer.renderer().rasterTransparency() # initiate raster transparency object
+    num_bands = active_layer.bandCount() # check if raster is single band or multi-band
 
-    raster_transparency  = active_layer.renderer().rasterTransparency()
-    ltr = QgsRasterTransparency.TransparentThreeValuePixel()
     tr_list = []
-    ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 0, 0, 0, val
-    tr_list.append(ltr)
-    raster_transparency.setTransparentThreeValuePixelList(tr_list)
+    if num_bands == 1:
+        ltr = QgsRasterTransparency.TransparentSingleValuePixel()
+        ltr.min, ltr.max, ltr.percentTransparent = 0, 255, val
+        tr_list.append(ltr)
+        raster_transparency.setTransparentSingleValuePixelList(tr_list)
+    else:
+        ltr = QgsRasterTransparency.TransparentThreeValuePixel()
+        ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 0, 0, 0, val
+        tr_list.append(ltr)
+        raster_transparency.setTransparentThreeValuePixelList(tr_list)
     
     active_layer.triggerRepaint()
 
