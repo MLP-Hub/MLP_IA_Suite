@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from .interface_tools import addImg, removeLayer
 
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentifyFeature
 from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer
@@ -29,6 +30,8 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem
 
 import cv2
 import numpy as np
+import tempfile
+import os
 
 def checkForImgs(canvas_list, name_list, button_list):
     """Ensures one image per canvas before enabling tool buttons"""
@@ -188,12 +191,21 @@ def selectCP(dlg, canvas_list):
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 
+def enableTools(dlg):
+    """Enables canvas tools once canvas is populated with aligned image"""
+
+    dlg.SideBySide_pushButton_3.setEnabled(True)
+    dlg.SingleView_pushButton_3.setEnabled(True)
+    dlg.Fit_toolButton_3.setEnabled(True)
+    dlg.Pan_toolButton_3.setEnabled(True)
+
 def alignImgs(dlg, file_path, table):
     """Aligns images using perspective transformation"""
 
     img = cv2.imread(file_path)
-    (h, w, c) = img.shape[:3]
+    (h, w) = img.shape[:2]
 
+    # find first four CPs
     source_pts = []
     dest_pts = []
     x = 0
@@ -207,9 +219,30 @@ def alignImgs(dlg, file_path, table):
     source_pts_array = np.float32(source_pts)
     dest_pts_array = np.float32(dest_pts)
 
-
+    # align image using perspective transform
     matrix = cv2.getPerspectiveTransform(source_pts_array, dest_pts_array)
-    result = cv2.warpPerspective(img, matrix, (w, h))
-    cv2.imwrite("C:\\Thesis\\test_align.png", result)
+    aligned_img = cv2.warpPerspective(img, matrix, (w, h))
+
+    # save aligned image to temporary file
+    img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
+    if os.path.isfile(img_path):
+        # check if the temporary file already exists
+        os.remove(img_path)
+    
+    cv2.imwrite(img_path, aligned_img)
+
+    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
+    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
+    removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
+
+    addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
+    addImg(img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
+    addImg(img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
+
+    # re-center VP
+    dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
+    dlg.DestImg_canvas.refresh()
+
+    enableTools(dlg)
 
 

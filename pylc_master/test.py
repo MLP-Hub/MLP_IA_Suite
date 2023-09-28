@@ -81,7 +81,6 @@ def tester(args):
         with torch.no_grad():
             # get model outputs
             model_outputs = []
-            print("n_batches",n_batches)
             progressDlg = QProgressDialog("Running classification...","Cancel", 0, n_batches)
             progressDlg.setWindowModality(Qt.WindowModal)
             progressDlg.setValue(0)
@@ -93,7 +92,6 @@ def tester(args):
                 logits = model.test(tile)
                 model_outputs += logits
                 model.iter += 1
-            print("i",i)
 
         # load results into evaluator
         results = utils.reconstruct(model_outputs, extractor.get_meta())

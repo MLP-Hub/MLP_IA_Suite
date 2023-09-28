@@ -89,15 +89,14 @@ def getFile(lineEdit, filter_string):
         filepath = dialog.selectedFiles()[0]
         lineEdit.setText(filepath)
 
-def remove_layer(canvas, img_lyr):
+def removeLayer(canvas, img_lyr):
     """Removes provided layer from map canvas"""
     
     layer_list = canvas.layers()
     layer_list.remove(img_lyr)
     canvas.setLayers(layer_list)
 
-
-def load_layer(canvas, img_lyr):
+def loadLayer(canvas, img_lyr):
     """Loads provided layer into map canvas"""
  
     canvas.enableAntiAliasing(True)
@@ -105,7 +104,6 @@ def load_layer(canvas, img_lyr):
     layer_list = canvas.layers()
     layer_list.append(img_lyr)
     canvas.setLayers(layer_list)
-
 
 def addImg(filepath, name, canvas, visible):
     """Adds provided image in map canvas"""
@@ -122,7 +120,7 @@ def addImg(filepath, name, canvas, visible):
     QgsProject.instance().addMapLayer(img_lyr, False) # add layer to the registry (but don't load into main map)
 
     if visible:
-        load_layer(canvas, img_lyr)
+        loadLayer(canvas, img_lyr)
 
 def updateExtents(canvas, ref_canvas):
     """Updates the extent of a map canvas to match a reference canvas"""
@@ -168,24 +166,10 @@ def zoomToExt(canvas_list):
 
 def transparency(val, canvas):
     """Changes top image transparency based on slider"""
-    # not sure why this needs to be so complicated
 
     active_layer = canvas.layer(0)
-    raster_transparency  = active_layer.renderer().rasterTransparency() # initiate raster transparency object
-    num_bands = active_layer.bandCount() # check if raster is single band or multi-band
-
-    tr_list = []
-    if num_bands == 1:
-        ltr = QgsRasterTransparency.TransparentSingleValuePixel()
-        ltr.min, ltr.max, ltr.percentTransparent = 0, 255, val
-        tr_list.append(ltr)
-        raster_transparency.setTransparentSingleValuePixelList(tr_list)
-    else:
-        ltr = QgsRasterTransparency.TransparentThreeValuePixel()
-        ltr.red, ltr.green, ltr.blue, ltr.percentTransparent = 255, 255, 255, val
-        tr_list.append(ltr)
-        raster_transparency.setTransparentThreeValuePixelList(tr_list)
-    
+    opacity = (100 - val)/100.0
+    active_layer.renderer().setOpacity(opacity) 
     active_layer.triggerRepaint()
 
 def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button):
@@ -199,7 +183,7 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     # hide the layers on the main canvas
     lyr_list = canvas_list[2].layers()
     for lyr in lyr_list:
-        remove_layer(canvas_list[2],lyr)
+        removeLayer(canvas_list[2],lyr)
         
     for tool in exclusive_tools:
         tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
@@ -213,8 +197,6 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     ss_view_button.hide()
     single_view_button.show()
 
-
-
 def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button):
     """Changes dsipaly to single canvas"""
     
@@ -227,7 +209,7 @@ def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     lyr_list = canvas_list[1].layers()
     lyr_list.extend(canvas_list[0].layers())
     for lyr in lyr_list:
-        load_layer(canvas_list[2],lyr)
+        loadLayer(canvas_list[2],lyr)
         
     for tool in exclusive_tools:
         tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)

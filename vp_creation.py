@@ -25,8 +25,8 @@
 from .interface_tools import addImg
 
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
-from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject, QThread
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback, QgsProject
+from qgis.PyQt.QtCore import Qt
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback, QgsFeedback
 from qgis.gui import QgsProjectionSelectionDialog 
 from qgis import processing
 
@@ -38,76 +38,6 @@ import scipy
 import numpy as np
 import math
 from functools import partial
-
-class Worker(QObject):
-    '''Worker clips digital elevation model'''
-
-    def __init__(self, dlg, layer, alg, params, name):
-        QObject.__init__(self)
-        self.dlg = dlg
-        self.layer = layer
-        self.params = params
-        self.alg = alg
-        self.name = name
-    
-    def run(self):
-        # Run processing algorithm
-
-        f = QgsProcessingFeedback()
-        f.progressChanged.connect(self.progress.emit([self.dlg, f.progress()]))
-
-        process_out = processing.run(self.alg, self.params, feedback = f) # run processing algorithm
-    
-        layer_path=process_out['OUTPUT']
-
-        layer_info = layer_path, self.name
-
-        self.result.emit(layer_info) # emit layer path and name to be added to project
-
-        self.finished.emit(self.dlg)
-    
-    finished = pyqtSignal(object)
-    progress = pyqtSignal(object)
-    result = pyqtSignal(object) 
-
-
-def startWorker(dlg, layer, alg, params, name):
-    # create a new worker instance
-    worker = Worker(dlg, layer, alg, params, name)
-
-    # start the worker in a new thread
-    thread = QThread(dlg)
-    worker.moveToThread(thread)
-    worker.finished.connect(workerFinished)
-    worker.progress.connect(setProgress)
-    worker.result.connect(processingResult)
-    thread.started.connect(worker.run)
-    thread.start()
-    dlg.thread = thread
-    dlg.worker = worker
-
-def setProgress(obj):
-
-    dlg, prog = obj
-    dlg.progressDlg.setValue(prog)
-
-
-def workerFinished(dlg):
-    # clean up the worker and thread
-    dlg.worker.deleteLater()
-    dlg.thread.quit()
-    # dlg.thread.wait()
-    # dlg.thread.deleteLater()
-    # close the progress window
-    dlg.progressDlg.close() 
-
-def processingResult(layer_info):
-
-    layer_path, layer_name = layer_info
-    # NEED TO IMPLEMENT CHECK HERE TO DELETE EXISTING DUPLICATE LAYERS
-    out_layer = QgsRasterLayer(layer_path, layer_name)
-    QgsProject.instance().addMapLayer(out_layer.clone()) # might need to use .clone() after out_layer
-
 
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
@@ -142,7 +72,6 @@ def readCamParams(dlg):
 
     return cam_params
         
-
 def loadCamParam(dlg):
     """This function loads camera parameters from a text file"""
         
@@ -174,7 +103,6 @@ def loadCamParam(dlg):
         dlg.Elev_lineEdit.setText("")
     else:
         dlg.Elev_lineEdit.setText(cam_params["elev"])
-
 
 def saveCamParam(dlg):
     """This function saves current camera parameters to a text file"""
@@ -217,7 +145,6 @@ def moveCam(dlg, dir):
     dlg.Easting_lineEdit.setText(str(round(cam_x,3)))
     dlg.Northing_lineEdit.setText(str(round(cam_y,3)))
         
-
 def camHeight(dlg, dir):
     """Changes camera height"""
 
@@ -252,7 +179,7 @@ def getImgDimensions(dlg):
     h, w, *_ = ref_img.shape # get image dimensions
     
     return h, w
-
+    
 def createHillshade(clipped_DEM):
     """Converts DEM to hillshade"""
 
@@ -268,9 +195,8 @@ def createHillshade(clipped_DEM):
                     'ALTITUDE': 45,
                     'MULTIDIRECTIONAL': False,
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
-    
+
     hillshade=processing.run("gdal:hillshade", parameters)
-    #qgis.utils.iface.messageBar().clearWidgets() # Clear the message bar when done
 
     hillshade_path=hillshade['OUTPUT']
     hillshade_layer = QgsRasterLayer(hillshade_path, "Hillshade")
@@ -368,8 +294,7 @@ def reprojectDEM(DEM_layer):
     projDEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
 
     return projDEM_path, projDEM_layer
-
-    
+   
 def camXY(hillshade_layer, lat, lon):
     """Determines pixel coordinates of camera position"""
 
@@ -405,31 +330,15 @@ def createVP(dlg):
         DEM_path, DEM_layer = reprojectDEM(DEM_layer)
 
     # generate new clipped DEM and hillshade on first round or when camera moves more than 500 m
-    if dlg.lat_init is None or (cam_params['lat'] > (dlg.lat_init + 500)) or (cam_params['lon'] > (dlg.lon_init + 500)):
-
-        #DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params["lat"], cam_params["lon"]) # generate clipped DEM
-        # clipDEM_params = getClipParams(DEM_layer, cam_params['lat'], cam_params['lon'])
-
-        # dlg.progressDlg = QProgressDialog("Processing...","Cancel", 0, 100)
-        # dlg.progressDlg.setWindowModality(Qt.WindowModal)
-        # # #progressDlg.setMinimumDuration(500)
-        # dlg.progressDlg.setValue(0)
-        # dlg.progressDlg.forceShow()
-        # dlg.progressDlg.show()
-
-        # startWorker(dlg, DEM_layer, "gdal:cliprasterbyextent", clipDEM_params, "Clipped DEM")
-
-        # RUN PROGRESS BAR HERE??
-        #clipDEM_layer = QgsProject.instance().mapLayersByName('Clipped DEM')[0]
+    og_lat, og_lon = cam_params['lat'], cam_params['lon']
+    if dlg.lat_init is None or (abs(dlg.lat_init - og_lat) > 500) or (abs(dlg.lon_init - og_lon) > 500):
 
         DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
-
 
         dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 
     
-    # progressDlg.setLabelText("Creating virtual photograph")
     DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
     HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
 
