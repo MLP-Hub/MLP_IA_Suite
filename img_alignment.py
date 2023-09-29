@@ -202,42 +202,95 @@ def enableTools(dlg):
 def alignImgs(dlg, file_path, table):
     """Aligns images using perspective transformation"""
 
-    img = cv2.imread(file_path)
-    (h, w) = img.shape[:2]
+    # img = cv2.imread(file_path)
+    # (h, w) = img.shape[:2]
 
-    # find first four CPs
-    source_pts = []
-    dest_pts = []
-    x = 0
-    while x < 4:
-        source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
-        dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
-        source_pts.append(source_pt)
-        dest_pts.append(dest_pt)
-        x+=1
+    # # find first four CPs
+    # source_pts = []
+    # dest_pts = []
+    # x = 0
+    # while x < 4:
+    #     source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
+    #     dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
+    #     source_pts.append(source_pt)
+    #     dest_pts.append(dest_pt)
+    #     x+=1
 
-    source_pts_array = np.float32(source_pts)
-    dest_pts_array = np.float32(dest_pts)
+    # source_pts_array = np.float32(source_pts)
+    # dest_pts_array = np.float32(dest_pts)
 
     # align image using perspective transform
-    matrix = cv2.getPerspectiveTransform(source_pts_array, dest_pts_array)
-    aligned_img = cv2.warpPerspective(img, matrix, (w, h))
+    # matrix = cv2.getPerspectiveTransform(source_pts_array, dest_pts_array)
+    # aligned_img = cv2.warpPerspective(img, matrix, (w, h))
 
-    # save aligned image to temporary file
-    img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
-    if os.path.isfile(img_path):
-        # check if the temporary file already exists
-        os.remove(img_path)
+    MIN_MATCH_COUNT = 10
+
+    # img1 = cv2.imread(dlg.SourceImg_lineEdit.text(), cv2.IMREAD_GRAYSCALE) # queryImage
+    # img2 = cv2.imread(dlg.DestImg_lineEdit.text(), cv2.IMREAD_GRAYSCALE) # trainImage
+    img1 = cv2.imread(dlg.SourceImg_lineEdit.text()) # queryImage
+    img2 = cv2.imread(dlg.DestImg_lineEdit.text()) # trainImage
     
-    cv2.imwrite(img_path, aligned_img)
+    
+    # Initiate SIFT detector
+    sift = cv2.SIFT_create()
+    # find the keypoints and descriptors with SIFT
+    kp1, des1 = sift.detectAndCompute(img1,None)
+    kp2, des2 = sift.detectAndCompute(img2,None)
+    
+    FLANN_INDEX_KDTREE = 1
+    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+    search_params = dict(checks = 50)
+    flann = cv2.FlannBasedMatcher(index_params, search_params)
+    matches = flann.knnMatch(des1,des2,k=2)
+    
+    # store all the good matches as per Lowe's ratio test.
+    good = []
+    for m,n in matches:
+        if m.distance < 0.7*n.distance:
+            good.append(m)
 
-    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
-    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
-    removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
+    if len(good)>MIN_MATCH_COUNT:
+        src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+        dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+    
+        matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+        h,w = img2.shape[:2]
 
-    addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
-    addImg(img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
+        aligned_img = cv2.warpPerspective(img1, matrix, (w, h))
+        
+        # save aligned image to temporary file
+        img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
+        if os.path.isfile(img_path):
+            # check if the temporary file already exists
+            os.remove(img_path)
+    
+        cv2.imwrite(img_path, aligned_img)
+        
+        removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the original image
+        addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
+        addImg(img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
+        addImg(img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
+
+    else:
+        print( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
+
+    # # save aligned image to temporary file
+    # img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
+    # if os.path.isfile(img_path):
+    #     # check if the temporary file already exists
+    #     os.remove(img_path)
+    
+    # cv2.imwrite(img_path, aligned_img)
+
+
+
+    # removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
+    # removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
+    # removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
+
+    # addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
+    # addImg(img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
+    # addImg(img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
 
     # re-center VP
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
