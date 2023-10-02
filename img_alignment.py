@@ -254,6 +254,11 @@ def saveAlign(dlg):
     # open save dialog and save vp
     dialog = QFileDialog()
     dialog.setOption(dialog.DontUseNativeDialog)
-    align_path = dialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
+    dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")
+    dialog.setDefaultSuffix("tiff")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        align_path = dialog.selectedFiles()[0]
 
     cv2.imwrite(align_path, aligned_img)
