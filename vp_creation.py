@@ -413,27 +413,44 @@ def enableTools(dlg):
     dlg.Fit_toolButton_2.setEnabled(True)
     dlg.Pan_toolButton_2.setEnabled(True)
 
-def displaySaveVP(dlg, save):
-    """Displays and saves virtual photo"""
+def displayVP(dlg):
+    """Creates and displays virtual photo"""
 
-    if save:
-        # open save dialog and save vp
-        dialog = QFileDialog()
-        dialog.setOption(dialog.DontUseNativeDialog)
-        if dialog.exec_():
-            vp_path = dialog.getSaveFileName(filter = "TIFF format (*.tiff *.TIFF)")[0]
-    else:
-        # save vp to temp path
-        vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')
-
-    vp = createVP(dlg) # creates virtual photo
+    vp = createVP(dlg) # create virtual photo
+    
     if vp is None:
+        # break if create VP did not work
         return
-    cv2.imwrite(vp_path, vp)
+    
+    # save vp to temp path
+    dlg.vp_path = os.path.join(tempfile.mkdtemp(), 'tempVP.tiff')
+    if os.path.isfile(dlg.vp_path):
+        # check if the temporary file already exists
+        os.remove(dlg.vp_path)
+    
+    cv2.imwrite(dlg.vp_path, vp)
 
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2, True) # show input image in side-by-side
-    addImg(vp_path,"Virtual Photo",dlg.VP_mapCanvas, True) # show output mask in side-by-side
-    addImg(vp_path,"Virtual Photo",dlg.Full_mapCanvas_2, False) # show output mask in fullview
+    addImg(dlg.vp_path,"Virtual Photo",dlg.VP_mapCanvas, True) # show output mask in side-by-side
+    addImg(dlg.vp_path,"Virtual Photo",dlg.Full_mapCanvas_2, False) # show output mask in fullview
     addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2, False) # show input image in full view
     
     enableTools(dlg)
+
+def saveVP(dlg):
+    """Saves virtual photograph to specified location"""
+
+    vp = cv2.imread(dlg.vp_path)
+    save_vp_path = None
+
+    # open save dialog and save aligned image
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")
+    dialog.setDefaultSuffix("tiff")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        save_vp_path = dialog.selectedFiles()[0]
+
+    cv2.imwrite(save_vp_path, vp)

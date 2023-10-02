@@ -34,7 +34,7 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
-from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
+from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .img_alignment import newCP, selectCP, checkForImgs, alignImgs, saveAlign
 
@@ -237,6 +237,8 @@ class MLP_IA_Suite:
 
         # VP TAB
 
+        self.dlg.vp_path = None # initiate variable to hold path to VP (for temp file)
+
         # Set up line edits (to take appropriate data type)
         numValidator = QDoubleValidator(bottom = 0, notation=QDoubleValidator.StandardNotation) # only allow positive float
         self.dlg.Easting_lineEdit.setValidator(numValidator)
@@ -255,8 +257,8 @@ class MLP_IA_Suite:
         # Generate hillshade and VP
         self.dlg.lat_init = None # initial lat and long for DEM clipping
         self.dlg.lon_init = None
-        self.dlg.GenerateVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, False))
-        self.dlg.SaveVP_button.clicked.connect(lambda: displaySaveVP(self.dlg, True))
+        self.dlg.GenerateVP_button.clicked.connect(lambda: displayVP(self.dlg))
+        self.dlg.SaveVP_button.clicked.connect(lambda: saveVP(self.dlg))
 
         # Load or save camera parameters
         self.dlg.LoadCamParam_button.clicked.connect(lambda: loadCamParam(self.dlg))
@@ -288,7 +290,7 @@ class MLP_IA_Suite:
 
         # Image Alignment Tab
 
-        self.dlg.aligned_img_path = None
+        self.dlg.aligned_img_path = None # initiate variable to hold path to aligned image (for temp file)
         
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
