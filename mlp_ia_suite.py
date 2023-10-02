@@ -36,7 +36,7 @@ from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
 from .vp_creation import displaySaveVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
-from .img_alignment import newCP, selectCP, checkForImgs, alignImgs
+from .img_alignment import newCP, selectCP, checkForImgs, alignImgs, saveAlign
 
 import sys
 import os.path
@@ -287,6 +287,8 @@ class MLP_IA_Suite:
         self.dlg.Transparency_slider_2.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_2.value(), self.dlg.Full_mapCanvas_2))
 
         # Image Alignment Tab
+
+        self.dlg.aligned_img_path = None
         
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
@@ -304,7 +306,8 @@ class MLP_IA_Suite:
         self.dlg.addCP_button.clicked.connect(lambda: newCP(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
         self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list_3))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
-
+        self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))
+        
         # Link the extent of the image to the extent of the VP and v.v.
         self.dlg.DestImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas))
         self.dlg.SourceImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.DestImg_canvas, self.dlg.SourceImg_canvas))
