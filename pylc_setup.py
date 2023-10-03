@@ -71,10 +71,7 @@ def pylcArgs(dlg, mod_dict):
             'aggregate_metrics':None,
             'output_dir':out_path}
 
-    # # Check for optional model arguments (decided to get rid of this for V1)
-    # mask_path = dlg.InputMsk_lineEdit.text()
-    # if mask_path:
-    #     args['mask'] = mask_path
+    # Check for optional model arguments (decided to get rid of this for V1)
     
     return args
 
