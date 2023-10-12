@@ -312,8 +312,8 @@ class MLP_IA_Suite:
         self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))
         
         # Link the extent of the image to the extent of the VP and v.v.
-        self.dlg.DestImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas))
-        self.dlg.SourceImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.DestImg_canvas, self.dlg.SourceImg_canvas))
+        # self.dlg.DestImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas))
+        # self.dlg.SourceImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.DestImg_canvas, self.dlg.SourceImg_canvas))
 
         # Connect tools to appropriate functions (Alignment tab)
         self.dlg.SideBySide_pushButton_3.hide() # hide side by side view button to start

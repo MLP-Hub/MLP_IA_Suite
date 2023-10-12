@@ -219,17 +219,18 @@ def alignImgs(dlg, source_img_path, table):
     source_pts_array = np.float32(source_pts)
     dest_pts_array = np.float32(dest_pts)
 
-    # align image using perspective transform
+    # get best control points based on homography and RANSAC method
     homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
     mask = mask.flatten()
 
     index = np.nonzero(mask)
     
     source_pts_good = source_pts_array[index]
-    print(source_pts_good)
     dest_pts_good = dest_pts_array[index]
-
-    h,w = img.shape[:2]
+    
+    # align image using perspective transform
+    dest_img = cv2.imread(dlg.DestImg_lineEdit.text())
+    h,w = dest_img.shape[:2] # automatically clip to the destination image
     matrix = cv2.getPerspectiveTransform(source_pts_good, dest_pts_good)
     aligned_img = cv2.warpPerspective(img, matrix, (w, h))
 
