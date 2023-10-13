@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency, QgsRasterFileWriter, QgsRasterPipe
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem
 from qgis.PyQt.QtGui import QImage, QPixmap
 from qgis.PyQt.QtCore import Qt
@@ -262,7 +262,7 @@ def displayVS(dlg):
 def saveVS(dlg):
     """Saves viewshed to specified location"""
 
-    vs = cv2.imread(dlg.vs_path)
+    vs = QgsRasterLayer(dlg.vs_path)
     save_vs_path = None
 
     # open save dialog and save aligned image
@@ -275,4 +275,16 @@ def saveVS(dlg):
     if dialog.exec_():
         save_vs_path = dialog.selectedFiles()[0]
 
-    cv2.imwrite(save_vs_path, vs)
+    file_writer = QgsRasterFileWriter(save_vs_path)
+    pipe = QgsRasterPipe()
+    provider = vs.dataProvider()
+
+    if not pipe.set(provider.clone()):
+        print ("Cannot set pipe provider")
+
+    file_writer.writeRaster(
+        pipe,
+        provider.xSize(),
+        provider.ySize(),
+        provider.extent(),
+        provider.crs())
