@@ -23,7 +23,7 @@
 """
 
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsRasterLayer, QgsProject, QgsRasterTransparency
+from qgis.core import QgsRasterLayer, QgsProject
 from qgis.gui import QgsMapToolPan
 
 from .swipe_tool import mapswipetool

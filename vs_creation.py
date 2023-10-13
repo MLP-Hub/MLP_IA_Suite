@@ -22,11 +22,12 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsRasterLayer 
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem
 from qgis.PyQt.QtGui import QImage, QPixmap
+from qgis import processing
 
-from .interface_tools import addImg
+from .interface_tools import addImg, loadLayer
 
 import skimage
 import numpy as np
@@ -158,18 +159,54 @@ def drawViewshed(dlg):
             
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
-    return vs
+    return vs, DEM_layer
+
+def createVSLayer(vs_path, DEM_lyr):
+    """Converts viewshed image to useable layer"""
+
+    ext = DEM_lyr.extent() 
+    ext_list = ["-a_ullr",str(ext.xMinimum()),str(ext.yMaximum()),str(ext.xMaximum()), str(ext.yMinimum())]
+    ullr = " ".join(ext_list)
+
+
+    PARAMS = { 'COPY_SUBDATASETS' : False, 
+              'DATA_TYPE' : 0, 
+              'EXTRA' : ullr, 
+              'INPUT' : vs_path, 
+              'NODATA' : None, 
+              'OPTIONS' : '', 
+              'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT, 
+              'TARGET_CRS' : None }
+
+    vs_ref=processing.run("gdal:translate", PARAMS)
+
+    vs_ref_path=vs_ref['OUTPUT']
+    vs_layer = QgsRasterLayer(vs_ref_path, "Viewshed")
+
+    return vs_ref_path, vs_layer  
+
+def setVSTransparency(vs_layer):
+    """Sets black (no data) areas to  transparent"""
+    
+    raster_transparency  = vs_layer.renderer().rasterTransparency()
+    pixel = QgsRasterTransparency.TransparentThreeValuePixel()
+    pixel.red, pixel.green, pixel.blue, pixel.percentTransparent = 0, 0, 0, 100
+    raster_transparency.setTransparentThreeValuePixelList([pixel])
+    vs_layer.triggerRepaint()
+
 
 def showMask(dlg):
     """Adds aligned mask to QGraphics View"""
+
     scene = QGraphicsScene()
     dlg.Mask_graphic.setScene(scene)
     mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     aligned_mask = QImage(mask_path)
+    rect = aligned_mask.rect() # get mask dimensions
 
     pic = QGraphicsPixmapItem()
     pic.setPixmap(QPixmap.fromImage(aligned_mask))
-    scene.setSceneRect(0, 0, 400, 400)
+    scene.setSceneRect(rect)
     scene.addItem(pic)
 
 def enableTools(dlg):
@@ -183,7 +220,7 @@ def enableTools(dlg):
 def displayVS(dlg):
     """Creates and displays viewshed"""
 
-    vs = drawViewshed(dlg) # create viewshed using ray tracing
+    vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
     
     if vs is None:
         # break if create VP did not work
@@ -195,14 +232,19 @@ def displayVS(dlg):
         # check if the temporary file already exists
         os.remove(dlg.vs_path)
     
-    cv2.imwrite(dlg.vs_path, vs)
+    cv2.imwrite(dlg.vs_path, vs) # write viewshed to image
 
-    DEM_path = os.path.realpath(dlg.DEM_lineEdit.text())
+    dlg.vs_path, vs_ref_layer = createVSLayer(dlg.vs_path, DEM_layer) # convert viewshed from image to referenced raster layer, update path to VS layer
 
-    showMask(dlg) # show input image in side-by-side
-    addImg(DEM_path,"DEM",dlg.VS_mapCanvas, False) # show DEM on map
-    addImg(dlg.vs_path,"Viewshed",dlg.VS_mapCanvas, True) # show output viewshed on map
+    QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
+    QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
+    setVSTransparency(vs_ref_layer) # set black to transparent
     
+    loadLayer(dlg.VS_mapCanvas, vs_ref_layer)
+    loadLayer(dlg.VS_mapCanvas, DEM_layer)
+    
+    showMask(dlg) # show input image in side-by-side
+
     enableTools(dlg)
 
 def saveVS(dlg):
