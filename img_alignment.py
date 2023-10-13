@@ -171,7 +171,6 @@ def deleteCP(f, vl_list, table):
         pr.deleteFeatures([f.id()]) # delete selected CP from vector layer
         vl.commitChanges()
     
-
 def selectCP(dlg, canvas_list):
     """Allows user to select control point from map"""
 
@@ -190,6 +189,12 @@ def selectCP(dlg, canvas_list):
 
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
+
+def saveCPs(dlg):
+    """Allows user to save set of control points"""
+
+def loadCPs(dlg):
+    """Allows user to load a set of saved control points"""
 
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with aligned image"""
