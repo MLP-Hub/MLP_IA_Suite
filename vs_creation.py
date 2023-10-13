@@ -22,19 +22,28 @@
  ***************************************************************************/
 """
 
+from qgis.core import QgsRasterLayer 
+from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem
+from qgis.PyQt.QtGui import QImage, QPixmap
+
+from .interface_tools import addImg
+
 import skimage
 import numpy as np
 import math
 import scipy
 import cv2
+import tempfile
+import os
 
-def initCamParams():
+def initCamParams(dlg):
     """Read initial camera parameters from text file"""
 
-    cam_filepath = "C:\Thesis\WLNP_test_cam_params.txt"
+    cam_filepath = dlg.CamParam_lineEdit.text() # get filepath to text file with camera parameters
 
     cam_file = open(cam_filepath, "r")
 
+    # read camera parameters from file
     cam_params = {}
 
     for line in cam_file:
@@ -43,12 +52,32 @@ def initCamParams():
         if cam_params[key] != 'None\n':
             cam_params[key] = float(val)
         else:
-            cam_params[key]=None # set elevation to None
+            cam_params[key]=None # set elevation to None if not provided
 
     return cam_params
 
+def camXY(DEM_layer, lat, lon):
+    """Determines pixel coordinates of camera position"""
+
+    # get hillshade extents and spatial resolution
+    ex = DEM_layer.extent() 
+    pixelSizeX = DEM_layer.rasterUnitsPerPixelX()
+    pixelSizeY = DEM_layer.rasterUnitsPerPixelY()
+    
+    # get top left coordinate
+    ymax = ex.yMaximum()
+    xmin = ex.xMinimum()
+
+    # get camera position in pixel coordinates
+    cam_x = int((lat - xmin)/pixelSizeX)
+    cam_y = int((ymax - lon)/pixelSizeY)
+
+    return cam_x, cam_y, pixelSizeX, pixelSizeY
+
+
 def closest_argmin(A, B):
     """Finds closest matches between two arrays"""
+
     L = B.size
     sidx_B = B.argsort()
     sorted_B = B[sidx_B]
@@ -56,29 +85,35 @@ def closest_argmin(A, B):
     sorted_idx[sorted_idx==L] = L-1
     mask = (sorted_idx > 0) & \
     ((np.abs(A - sorted_B[sorted_idx-1]) < np.abs(A - sorted_B[sorted_idx])) )
+
     return sorted_idx-mask
 
-def drawViewshed():
+def drawViewshed(dlg):
     """Get real world coordinates for each pixel in the mask"""
 
-    cam_params = initCamParams()
-
-    DEM_path = "C:\Thesis\dem_5m_mtblakiston.tiff"
+    # read DEM from user input
+    DEM_path = os.path.realpath(dlg.DEM_lineEdit.text())
+    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
     DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
-    dem_h, dem_w, *_ = DEM_img.shape
 
-    mask_path = "C:\Thesis\mask_test.png"
+    # read mask from user input
+    mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     mask = cv2.imread(mask_path)
 
-    img_h, img_w, *_ = mask.shape
-    #cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg.hs_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
-    cam_x, cam_y, pixelSizeX, pixelSizeY = 943, 2486, 5.0, 5.0
-    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
-    
-    if cam_params["elev"] is None:
-        cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
+    # read the camera parameters from provided text file
+    cam_params = initCamParams(dlg) 
 
-    vs = np.zeros((dem_h,dem_w, 3),dtype=np.uint8) # create blank viewshed (same size as DEM)
+    img_h, img_w, *_ = mask.shape # get height and width of mask
+    cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(DEM_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
+    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
+
+    # get elevation from DEM if not provided by user
+    if cam_params["elev"] is None:
+        cam_params["elev"] = DEM_img[cam_y, cam_x]
+    
+    # create blank viewshed (same size as DEM)
+    dem_h, dem_w, *_ = DEM_img.shape
+    vs = np.zeros((dem_h,dem_w, 3),dtype=np.uint8) 
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
@@ -86,9 +121,8 @@ def drawViewshed():
     img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
 
     for img_x in range(0, img_w):
-        # First, find all visible pixles
-        # get the horizontal and vertical angles to the camera position
-        # and find the corresponding greyscale values
+        # First, find all visible pixels on DEM and match to image coordinates based on angles
+        # then, load mask colors (landcover) into empty array at cooresponding positions
 
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
@@ -124,9 +158,67 @@ def drawViewshed():
             
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
-    #vs = np.rot90(vs, 2)
-    cv2.imwrite("C:\\Thesis\\test_vs.tiff", vs)
+    return vs
 
+def showMask(dlg):
+    """Adds aligned mask to QGraphics View"""
+    scene = QGraphicsScene()
+    dlg.Mask_graphic.setScene(scene)
+    mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
+    aligned_mask = QImage(mask_path)
 
-if __name__ == "__main__":
-    drawViewshed()
+    pic = QGraphicsPixmapItem()
+    pic.setPixmap(QPixmap.fromImage(aligned_mask))
+    scene.setSceneRect(0, 0, 400, 400)
+    scene.addItem(pic)
+
+def enableTools(dlg):
+    """Enables canvas tools once canvas is populated with mask and image"""
+
+    dlg.Transparency_slider_4.setEnabled(True)
+    dlg.Swipe_toolButton_4.setEnabled(True)
+    dlg.Fit_toolButton_4.setEnabled(True)
+    dlg.Pan_toolButton_4.setEnabled(True)
+
+def displayVS(dlg):
+    """Creates and displays viewshed"""
+
+    vs = drawViewshed(dlg) # create viewshed using ray tracing
+    
+    if vs is None:
+        # break if create VP did not work
+        return
+    
+    # save vs to temp path
+    dlg.vs_path = os.path.join(tempfile.mkdtemp(), 'tempVS.tiff')
+    if os.path.isfile(dlg.vs_path):
+        # check if the temporary file already exists
+        os.remove(dlg.vs_path)
+    
+    cv2.imwrite(dlg.vs_path, vs)
+
+    DEM_path = os.path.realpath(dlg.DEM_lineEdit.text())
+
+    showMask(dlg) # show input image in side-by-side
+    addImg(DEM_path,"DEM",dlg.VS_mapCanvas, False) # show DEM on map
+    addImg(dlg.vs_path,"Viewshed",dlg.VS_mapCanvas, True) # show output viewshed on map
+    
+    enableTools(dlg)
+
+def saveVS(dlg):
+    """Saves viewshed to specified location"""
+
+    vs = cv2.imread(dlg.vs_path)
+    save_vs_path = None
+
+    # open save dialog and save aligned image
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")
+    dialog.setDefaultSuffix("tiff")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        save_vs_path = dialog.selectedFiles()[0]
+
+    cv2.imwrite(save_vs_path, vs)

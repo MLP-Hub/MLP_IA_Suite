@@ -1100,7 +1100,7 @@ border-color: rgb(255, 255, 255);</string>
          <item>
           <layout class="QVBoxLayout" name="PyLC_Tab_Buttons_VL">
            <property name="spacing">
-            <number>19</number>
+            <number>15</number>
            </property>
            <item>
             <widget class="Line" name="line_5">
@@ -1434,6 +1434,13 @@ margin-bottom: -6px;
               </spacer>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <spacer name="verticalSpacer_2">
@@ -3660,7 +3667,7 @@ border-radius: 4px;
           </property>
           <property name="geometry">
            <rect>
-            <x>80</x>
+            <x>45</x>
             <y>7</y>
             <width>31</width>
             <height>28</height>
@@ -3707,7 +3714,7 @@ border-radius: 4px;
           </property>
           <property name="geometry">
            <rect>
-            <x>40</x>
+            <x>5</x>
             <y>7</y>
             <width>31</width>
             <height>28</height>
@@ -3739,7 +3746,7 @@ border-radius: 4px;
           </property>
           <property name="geometry">
            <rect>
-            <x>115</x>
+            <x>80</x>
             <y>7</y>
             <width>31</width>
             <height>28</height>
@@ -3765,60 +3772,10 @@ border-radius: 4px;
            <bool>true</bool>
           </property>
          </widget>
-         <widget class="QPushButton" name="SideBySide_pushButton_4">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>5</x>
-            <y>7</y>
-            <width>31</width>
-            <height>28</height>
-           </rect>
-          </property>
-          <property name="cursor">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="toolTip">
-           <string>View</string>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>25</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
          <widget class="Line" name="line_9">
           <property name="geometry">
            <rect>
-            <x>75</x>
+            <x>40</x>
             <y>7</y>
             <width>5</width>
             <height>27</height>
@@ -3837,7 +3794,7 @@ border-radius: 4px;
           </property>
           <property name="geometry">
            <rect>
-            <x>155</x>
+            <x>120</x>
             <y>12</y>
             <width>61</width>
             <height>15</height>
@@ -3904,56 +3861,6 @@ border-radius: 4px;
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
-         <widget class="QPushButton" name="SingleView_pushButton_4">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>5</x>
-            <y>7</y>
-            <width>31</width>
-            <height>28</height>
-           </rect>
-          </property>
-          <property name="cursor">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="toolTip">
-           <string>View</string>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>Icons/view.png</normaloff>Icons/view.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>25</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
         </widget>
        </item>
        <item row="1" column="0">
@@ -3983,6 +3890,13 @@ border-radius: 4px;
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line_12">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer_12">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -3993,13 +3907,13 @@ border-radius: 4px;
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="Align_Tab_legend_VL">
+          <layout class="QVBoxLayout" name="VS_Tab_legend_VL">
            <item>
             <widget class="QLabel" name="legend_title_4">
              <property name="font">
@@ -4021,7 +3935,7 @@ border-radius: 4px;
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="Align_Tab_Legend_GL">
+            <layout class="QGridLayout" name="VS_Tab_Legend_GL">
              <property name="horizontalSpacing">
               <number>4</number>
              </property>
@@ -4339,6 +4253,13 @@ border-color: rgb(255, 255, 255);</string>
           </layout>
          </item>
          <item>
+          <widget class="Line" name="line_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer_11">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -4349,7 +4270,7 @@ border-color: rgb(255, 255, 255);</string>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>20</height>
             </size>
            </property>
           </spacer>
@@ -4405,6 +4326,12 @@ border-color: rgb(255, 255, 255);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>160</width>
@@ -4426,6 +4353,12 @@ border-color: rgb(255, 255, 255);</string>
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
              </property>
              <property name="maximumSize">
               <size>
@@ -4517,6 +4450,12 @@ border-color: rgb(255, 255, 255);</string>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>160</width>
@@ -4567,6 +4506,13 @@ border-color: rgb(255, 255, 255);</string>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer name="verticalSpacer_10">
@@ -4636,7 +4582,14 @@ border-color: rgb(255, 255, 255);</string>
           <widget class="QGraphicsView" name="Mask_graphic"/>
          </item>
          <item>
-          <widget class="QGraphicsView" name="VS_graphic"/>
+          <widget class="QgsMapCanvas" name="VS_mapCanvas" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

@@ -26,8 +26,6 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon, QDoubleValidator
 from qgis.PyQt.QtWidgets import QAction
 
-from qgis.core import QgsVectorLayer
-
 # Initialize Qt resources from file resources.py
 from .resources import *
 
@@ -35,8 +33,9 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .img_alignment import newCP, selectCP, checkForImgs, alignImgs, saveAlign, automatedAlignment
+from .vs_creation import displayVS, saveVS
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 
 import sys
 import os.path
@@ -310,10 +309,6 @@ class MLP_IA_Suite:
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
         #self.dlg.Align_button.clicked.connect(lambda: automatedAlignment(self.dlg))
         self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))
-        
-        # Link the extent of the image to the extent of the VP and v.v.
-        # self.dlg.DestImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas))
-        # self.dlg.SourceImg_canvas.extentsChanged.connect(lambda: updateExtents(self.dlg.DestImg_canvas, self.dlg.SourceImg_canvas))
 
         # Connect tools to appropriate functions (Alignment tab)
         self.dlg.SideBySide_pushButton_3.hide() # hide side by side view button to start
@@ -324,6 +319,27 @@ class MLP_IA_Suite:
         self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_4)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
         self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_3))
+
+        # VS TAB
+
+        self.dlg.vs_path = None # initiate variable to hold path to VP (for temp file)
+        
+        # Get file/folder inputs
+        self.dlg.DEM_button.clicked.connect(lambda: getFile(self.dlg.DEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.AlignMask_button.clicked.connect(lambda: getFile(self.dlg.AlignMask_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.CamParam_button.clicked.connect(lambda: getFile(self.dlg.CamParam_lineEdit, "Text files (*.txt)"))
+
+        # Generate VS
+        self.dlg.VS_Run_pushButton.clicked.connect(lambda: displayVS(self.dlg))
+        self.dlg.VS_Save_pushButton.clicked.connect(lambda: saveVS(self.dlg))
+
+        # Connect tools to appropriate functions (VP tab)
+        self.dlg.SideBySide_pushButton_2.hide() # hide side by side view button to start
+        canvas_list_5 = [self.dlg.VS_mapCanvas]
+        self.dlg.Pan_toolButton_4.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_5, self.dlg.Pan_toolButton_4, self.dlg.Swipe_toolButton_4))
+        self.dlg.Fit_toolButton_4.clicked.connect(lambda: zoomToExt(canvas_list_5)) # Zoom to viewshed extent
+        self.dlg.Swipe_toolButton_4.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.VS_mapCanvas, self.dlg.Swipe_toolButton_4, self.dlg.Pan_toolButton_4))
+        self.dlg.Transparency_slider_4.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_4.value(), self.dlg.VS_mapCanvas))
 
         # SHOW THE DIALOG
         self.dlg.show()
