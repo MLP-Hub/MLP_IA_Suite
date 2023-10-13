@@ -25,6 +25,7 @@
 from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem
 from qgis.PyQt.QtGui import QImage, QPixmap
+from qgis.PyQt.QtCore import Qt
 from qgis import processing
 
 from .interface_tools import addImg, loadLayer
@@ -202,12 +203,15 @@ def showMask(dlg):
     dlg.Mask_graphic.setScene(scene)
     mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     aligned_mask = QImage(mask_path)
-    rect = aligned_mask.rect() # get mask dimensions
+    w,h = aligned_mask.width(), aligned_mask.height() # get mask dimensions
+    #rect = aligned_mask.rect()
 
     pic = QGraphicsPixmapItem()
     pic.setPixmap(QPixmap.fromImage(aligned_mask))
-    scene.setSceneRect(rect)
+    #scene.setSceneRect(0,0,w,h)
     scene.addItem(pic)
+
+    dlg.Mask_graphic.fitInView(0,0,w,h, Qt.KeepAspectRatio)
 
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with mask and image"""
