@@ -122,9 +122,17 @@ def drawViewshed(dlg):
     img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
 
+    progressDlg = QProgressDialog("Creating viewshed...","Cancel", 0, img_w)
+    progressDlg.setWindowModality(Qt.WindowModal)
+    progressDlg.setValue(0)
+    progressDlg.forceShow()
+    progressDlg.show()  
+
     for img_x in range(0, img_w):
         # First, find all visible pixels on DEM and match to image coordinates based on angles
         # then, load mask colors (landcover) into empty array at cooresponding positions
+
+        progressDlg.setValue(img_x)
 
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
