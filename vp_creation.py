@@ -79,8 +79,8 @@ def loadCamParam(dlg):
     dialog.setFileMode(QFileDialog.ExistingFile)
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.setNameFilter("Text files (*.txt)")
-    dialog.exec_()
-    cam_filepath = dialog.selectedFiles()[0]
+    if dialog.exec_():
+        cam_filepath = dialog.selectedFiles()[0]
 
     cam_file = open(cam_filepath, "r")
 
@@ -111,8 +111,11 @@ def saveCamParam(dlg):
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.setAcceptMode(QFileDialog.AcceptSave)
     dialog.setNameFilter("Text files (*.txt)")
-    dialog.exec_()
-    cam_filepath = dialog.selectedFiles()[0]
+    dialog.setDefaultSuffix("txt")
+
+    if dialog.exec_():
+        cam_filepath = dialog.selectedFiles()[0]
+    
     cam_file = open(cam_filepath, "w")
 
     cam_params = readCamParams(dlg)

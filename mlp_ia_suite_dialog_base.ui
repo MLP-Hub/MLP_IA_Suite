@@ -2872,7 +2872,7 @@ border-radius: 4px;
               </font>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is used to align a mask to virtual photograph (or align two images). Use the + button to add a control point and the - button to select and delete a point. The first four control points will be used in alignment.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is used to align a mask to virtual photograph (or align two images). Use the + button to add a control point and the - button to select and delete a point. The best four control points will be used in alignment.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignJustify|Qt::AlignTop</set>

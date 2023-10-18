@@ -24,7 +24,7 @@
 from .interface_tools import addImg, removeLayer
 
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentifyFeature
-from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer
+from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer, QgsPointXY
 from PyQt5.QtCore import Qt, QVariant
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QFileDialog
 
@@ -87,17 +87,14 @@ def createCPLayer(canvas, lyr_name, img_name):
     canvas.setLayers(layer_list)
     canvas.refreshAllLayers()
 
-def add_cp(dlg, point, canvas, name):
-    """Adds CP (from mouse click) to vector layer"""
-
-    vl = QgsProject.instance().mapLayersByName(name)[0] # get CP vector layer
-
-    # add new cp to vector layer
+def addCP(canvas, vl, x, y, table, name):
+    """Adds CP to vector layer and table"""
+    
     vl.startEditing() # enter editing mode
     pr = vl.dataProvider()
     fet = QgsFeature()
-    fet.setGeometry(QgsGeometry.fromPointXY(point))
-    fet.setAttributes([point.x(),point.y()]) # add point with x,y coords where the user clicked
+    fet.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x,y))) # add point with x,y coords
+    fet.setAttributes([x,y]) 
     pr.addFeatures([fet])
     vl.commitChanges() # commit changes
     vl.triggerRepaint() # repaint the layer
@@ -109,22 +106,31 @@ def add_cp(dlg, point, canvas, name):
         col = 0
     else:
         col = 2
+    
     cp_list = vl.getFeatures() # get iterator of cps
     row = len(list(cp_list))-1 # tells you which row to fill in data
-    if dlg.CP_table.rowCount() <= row:
-        dlg.CP_table.setRowCount(row+1) # add row if number of CPs exceeds table size
-    dlg.CP_table.setItem(row, col, QTableWidgetItem(str(round(point.x(),2))))
-    dlg.CP_table.setItem(row, col+1, QTableWidgetItem(str(abs(round(point.y(),2)))))
+    if table.rowCount() <= row:
+        table.setRowCount(row+1) # add row if number of CPs exceeds table size
+    table.setItem(row, col, QTableWidgetItem(str(round(x,2))))
+    table.setItem(row, col+1, QTableWidgetItem(str(abs(round(y,2)))))
+
+def addCPfromClick(dlg, point, canvas, name):
+    """Adds CP (from mouse click) to vector layer and table"""
+
+    vl = QgsProject.instance().mapLayersByName(name)[0] # get CP vector layer
+
+    # add cp to vector layer and table
+    addCP(canvas, vl, point.x(), point.y(), dlg.CP_table, name)
 
     # When done, switch canvases
     canvas.unsetMapTool(dlg.CPtool)
     dlg.CPtool = None
     if name == "Source CP Layer":
-        newCP(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
+        newCPfromClick(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
     else:
-        newCP(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
+        newCPfromClick(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
 
-def newCP(dlg, canvas, name, img_name):
+def newCPfromClick(dlg, canvas, name, img_name):
     """Allows user to create new control point"""
 
     # check if vector layer of CPs exists, otherwise create one
@@ -136,7 +142,7 @@ def newCP(dlg, canvas, name, img_name):
        createCPLayer(canvas, name, img_name) 
 
     dlg.CPtool = QgsMapToolEmitPoint(canvas) # create control point tool
-    dlg.CPtool.canvasClicked.connect(lambda point: add_cp(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
+    dlg.CPtool.canvasClicked.connect(lambda point: addCPfromClick(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
     dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
     canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
 
@@ -190,11 +196,92 @@ def selectCP(dlg, canvas_list):
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 
-def saveCPs(dlg):
+def readCPsfromTable(table):
+    """Reads control points from table"""
+
+    source_pts = []
+    dest_pts = []
+    x = 0
+    while x < table.rowCount():
+        source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
+        dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
+        source_pts.append(source_pt)
+        dest_pts.append(dest_pt)
+        x+=1
+
+    return source_pts, dest_pts
+
+def saveCPs(table):
     """Allows user to save set of control points"""
 
-def loadCPs(dlg):
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("Text files (*.txt)")
+    dialog.setDefaultSuffix("txt")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        cp_filepath = dialog.selectedFiles()[0]
+
+    cp_file = open(cp_filepath, "w")
+
+    source_pts, dest_pts = readCPsfromTable(table)
+    for cp in source_pts: 
+        for coord in cp:
+            cp_file.write('%s ' % (coord))
+    cp_file.write('\n') # add new line for destination points
+    for cp in dest_pts: 
+        for coord in cp:
+            cp_file.write('%s ' % (coord))
+
+    cp_file.close()
+
+def addCPfromFile(cps_list, layer_names, canvases, img_names, table):
+    """Adds CPs (from file) to vector layer and table"""
+
+    x = 0
+    for x in range(0, 2):
+        # check if vector layer of CPs exists, otherwise create one
+        layer_list = canvases[x].layers()
+        lyr_ids = {}
+        for lyr in layer_list:
+            lyr_ids[lyr.name()] = lyr.id()
+        if layer_names[0] not in lyr_ids:
+            createCPLayer(canvases[x], layer_names[x], img_names[x]) 
+
+        vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
+
+        for point in cps_list[x]:
+            addCP(canvases[x], vl, point[0], -point[1], table, layer_names[x])
+
+def loadCPs(layer_names, canvases, img_names, table):
     """Allows user to load a set of saved control points"""
+    
+    # first, get user specified text file containing previously saved CPs
+    dialog = QFileDialog()
+    dialog.setFileMode(QFileDialog.ExistingFile)
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("Text files (*.txt)")
+    if dialog.exec_():
+        cp_filepath = dialog.selectedFiles()[0]
+
+    cp_file = open(cp_filepath, "r")
+
+    source_pts_list = cp_file.readline().strip().split() # read first line (source coordinates)
+    dest_pts_list = cp_file.readline().strip().split() # read seconf line (destination coordinates)
+    source_pts = []
+    dest_pts = []
+    pt_count = 0
+    # iterate over list of coordinates to create new list with paired [x,y] float coordinates
+    while pt_count < len(source_pts_list):
+        source_pts.append([float(source_pts_list[pt_count]), float(source_pts_list[pt_count+1])])
+        dest_pts.append([float(dest_pts_list[pt_count]), float(dest_pts_list[pt_count+1])])
+        pt_count+=2
+
+    cp_file.close()
+
+    cps_list = [source_pts, dest_pts]
+    addCPfromFile(cps_list, layer_names, canvases, img_names, table) # add all CPs to vector layers and table
 
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with aligned image"""
@@ -210,16 +297,7 @@ def alignImgs(dlg, source_img_path, table):
     img = cv2.imread(source_img_path)
     (h, w) = img.shape[:2]
 
-    # read control points from table
-    source_pts = []
-    dest_pts = []
-    x = 0
-    while x < table.rowCount():
-        source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
-        dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
-        source_pts.append(source_pt)
-        dest_pts.append(dest_pt)
-        x+=1
+    source_pts, dest_pts = readCPsfromTable(table) # read control points from table
 
     source_pts_array = np.float32(source_pts)
     dest_pts_array = np.float32(dest_pts)
