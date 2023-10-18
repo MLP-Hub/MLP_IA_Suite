@@ -275,9 +275,17 @@ def saveVS(dlg):
     if dialog.exec_():
         save_vs_path = dialog.selectedFiles()[0]
 
+    # get CRS from DEM
+    DEM_path = os.path.realpath(dlg.DEM_lineEdit.text())
+    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+    dest_crs = DEM_layer.crs()
+
+
+    # write vs to raster file
     file_writer = QgsRasterFileWriter(save_vs_path)
     pipe = QgsRasterPipe()
     provider = vs.dataProvider()
+    ctc=QgsProject.instance().transformContext()
 
     if not pipe.set(provider.clone()):
         print ("Cannot set pipe provider")
@@ -287,4 +295,4 @@ def saveVS(dlg):
         provider.xSize(),
         provider.ySize(),
         provider.extent(),
-        provider.crs())
+        dest_crs, ctc)
