@@ -22,6 +22,8 @@
  ***************************************************************************/
 """
 
+from qgis.PyQt.QtWidgets import QFileDialog
+
 from .interface_tools import addImg
 
 import cv2
@@ -58,7 +60,10 @@ def pylcArgs(dlg, mod_dict):
     model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
 
     img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
-    out_path = os.path.normpath(dlg.OutputImg_lineEdit.text())
+    dlg.PyLC_path = os.path.join(tempfile.mkdtemp(), 'tempMask.png')
+    if os.path.isfile(dlg.PyLC_path):
+        # check if the temporary file already exists
+        os.remove(dlg.PyLC_path)
     scale_val = float(dlg.Scale_lineEdit.text())
         
     # Set up model arguments
@@ -69,7 +74,7 @@ def pylcArgs(dlg, mod_dict):
             'scale':scale_val, 
             'save_logits':None, 
             'aggregate_metrics':None,
-            'output_dir':out_path}
+            'mask_path':dlg.PyLC_path}
 
     # Check for optional model arguments (decided to get rid of this for V1)
     
@@ -90,11 +95,7 @@ def runPylc(dlg, mod_dict):
     pylc.main(pylc_args) # run pylc
     
     # Display output
-    outputDir = dlg.OutputImg_lineEdit.text()
-    maskName = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[0]
-    maskExt = os.path.basename(dlg.InputImg_lineEdit.text()).rsplit('.', 1)[1]
     scale_val = dlg.Scale_lineEdit.text()
-    outputMsk = os.path.join(outputDir,maskName+"_"+maskExt+"_scale_"+scale_val+".png")
 
     # Resize reference image if PyLC was scaled
     scale = float(scale_val)
@@ -113,8 +114,26 @@ def runPylc(dlg, mod_dict):
         img_path = dlg.InputImg_lineEdit.text()
              
     addImg(img_path,"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
-    addImg(outputMsk,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side
-    addImg(outputMsk,"PyLC Mask",dlg.Full_mapCanvas, False) # show output mask in fullview
+    addImg(dlg.PyLC_path,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side
+    addImg(dlg.PyLC_path,"PyLC Mask",dlg.Full_mapCanvas, False) # show output mask in fullview
     addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas, False) # show input image in full view
 
     enableTools(dlg)
+
+def saveMask(dlg):
+    """Saves mask to file"""
+
+    mask = cv2.imread(dlg.PyLC_path)
+    mask_path = None
+
+    # open save dialog and save aligned image
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("PNG format (*.png)")
+    dialog.setDefaultSuffix("png")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        mask_path = dialog.selectedFiles()[0]
+
+    cv2.imwrite(mask_path, mask)

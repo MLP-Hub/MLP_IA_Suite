@@ -90,6 +90,8 @@ def loadCamParam(dlg):
        (key, val) = line.split(":")
        cam_params[key] = val
 
+    cam_file.close()
+
     # Read camera parameters into corresponding fields on interface
     dlg.Easting_lineEdit.setText(cam_params["lat"])
     dlg.Northing_lineEdit.setText(cam_params["lon"])

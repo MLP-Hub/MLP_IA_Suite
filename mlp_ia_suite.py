@@ -31,7 +31,7 @@ from .resources import *
 
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
-from .pylc_setup import modelMenu, runPylc
+from .pylc_setup import modelMenu, runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP
 from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, automatedAlignment
 from .vs_creation import displayVS, saveVS
@@ -207,6 +207,8 @@ class MLP_IA_Suite:
             self.dlg = MLP_IA_SuiteDialog()
         
         # PYLC TAB 
+        self.dlg.PyLC_path = None # initiate variable to hold path to mask (for temp file)
+
         mod_dict = modelMenu(self.dlg) # set up model menu
 
         # Set up image scale slider
@@ -215,10 +217,10 @@ class MLP_IA_Suite:
 
         # Get file/folder inputs
         self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
-        self.dlg.OutputImg_button.clicked.connect(lambda: getFolder(self.dlg.OutputImg_lineEdit))
 
         # Run PyLC and display outputs
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
+        self.dlg.PyLC_Save_pushButton.clicked.connect(lambda: saveMask(self.dlg))
         
         # Link the extent of the image to the extent of the mask and v.v.
         self.dlg.Mask_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas))

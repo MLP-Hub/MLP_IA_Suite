@@ -269,8 +269,7 @@ class Evaluator:
         """
 
         # Build mask file path
-        masks_dir = args["output_dir"]
-        mask_file = os.path.join(masks_dir, self.fid + '.png')
+        mask_file = args["mask_path"]
 
         if self.mask_pred is None:
             print("Mask has not been reconstructed. Image save cancelled.")

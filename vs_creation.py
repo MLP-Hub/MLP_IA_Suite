@@ -56,6 +56,8 @@ def initCamParams(dlg):
         else:
             cam_params[key]=None # set elevation to None if not provided
 
+    cam_file.close()
+
     return cam_params
 
 def camXY(DEM_layer, lat, lon):
