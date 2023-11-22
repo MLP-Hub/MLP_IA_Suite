@@ -299,17 +299,20 @@ def alignImgs(dlg, source_img_path, table):
 
     source_pts, dest_pts = readCPsfromTable(table) # read control points from table
 
-    source_pts_array = np.float32(source_pts)
-    dest_pts_array = np.float32(dest_pts)
+    # source_pts_array = np.float32(source_pts)
+    # dest_pts_array = np.float32(dest_pts)
 
-    # get best control points based on homography and RANSAC method
-    homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
-    mask = mask.flatten()
+    source_pts_good = np.float32(source_pts)
+    dest_pts_good = np.float32(dest_pts)
 
-    index = np.nonzero(mask)
+    # # get best control points based on homography and RANSAC method
+    # homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
+    # mask = mask.flatten()
+
+    # index = np.nonzero(mask)
     
-    source_pts_good = source_pts_array[index]
-    dest_pts_good = dest_pts_array[index]
+    # source_pts_good = source_pts_array[index]
+    # dest_pts_good = dest_pts_array[index]
     
     # align image using perspective transform
     dest_img = cv2.imread(dlg.DestImg_lineEdit.text())
