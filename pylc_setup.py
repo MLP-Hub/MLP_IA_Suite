@@ -58,8 +58,12 @@ def pylcArgs(dlg, mod_dict):
     dir_path = os.path.dirname(__file__)
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
     model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
+    if not os.exists(model_path):
+        errorMessage("Could not find specified model")
+        return
 
     img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
+
     dlg.PyLC_path = os.path.join(tempfile.mkdtemp(), 'tempMask.png')
     if os.path.isfile(dlg.PyLC_path):
         # check if the temporary file already exists
