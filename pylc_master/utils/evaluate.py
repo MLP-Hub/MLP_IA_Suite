@@ -21,6 +21,8 @@ import utils.tools as utils
 from config import defaults, Parameters
 from utils.metrics import Metrics
 
+from mlp_ia_suite.interface_tools import errorMessage
+
 
 class Evaluator:
     """
@@ -272,13 +274,13 @@ class Evaluator:
         mask_file = args["mask_path"]
 
         if self.mask_pred is None:
-            print("Mask has not been reconstructed. Image save cancelled.")
+            errorMessage("Mask has not been reconstructed. Image save cancelled.")
+            #print("Mask has not been reconstructed. Image save cancelled.")
 
         if utils.confirm_write_file(mask_file):
             # Reconstruct seg-mask from predicted tiles and write to file
             cv2.imwrite(mask_file, cv2.cvtColor(self.mask_pred, cv2.COLOR_RGB2BGR))
-
-            print("Output mask saved to: \n\t{}.".format(mask_file))
+            #print("Output mask saved to: \n\t{}.".format(mask_file))
 
             return mask_file
         return

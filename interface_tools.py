@@ -36,6 +36,10 @@ def errorMessage(txt):
     msg.setText(txt)
     msg.setIcon(QMessageBox.Critical)
     msg.exec()
+    # returnValue = msg.exec_()
+    # if returnValue == QMessageBox.Ok:
+    #     return
+    
 
 def setScaleBoxVal(dlg, val):
     """Changes scale box value based on slider"""

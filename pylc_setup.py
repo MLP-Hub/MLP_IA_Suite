@@ -58,17 +58,30 @@ def pylcArgs(dlg, mod_dict):
     dir_path = os.path.dirname(__file__)
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
     model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
-    if not os.exists(model_path):
+    
+    if not os.path.exists(model_path):
         errorMessage("Could not find specified model")
         return
 
-    img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
+    if dlg.InputImg_lineEdit.text() is "":
+        errorMessage("Input image cannot be empty")
+        return
+    else:
+        img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
 
     dlg.PyLC_path = os.path.join(tempfile.mkdtemp(), 'tempMask.png')
     if os.path.isfile(dlg.PyLC_path):
         # check if the temporary file already exists
         os.remove(dlg.PyLC_path)
-    scale_val = float(dlg.Scale_lineEdit.text())
+    
+    try:
+        scale_val = float(dlg.Scale_lineEdit.text())
+    except ValueError:
+        errorMessage("Scale must be between 0.1 and 1.0")
+        return
+    if scale_val < 0.1 or scale_val > 1.0:
+        errorMessage("Scale must be between 0.1 and 1.0")
+        return
         
     # Set up model arguments
     args = {'schema':None, 
@@ -96,6 +109,8 @@ def runPylc(dlg, mod_dict):
     """Runs pylc and displays outputs"""
 
     pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
+    if pylc_args is None:
+        return # exit if there was an error getting the arguments
     pylc.main(pylc_args) # run pylc
     
     # Display output

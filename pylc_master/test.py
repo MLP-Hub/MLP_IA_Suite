@@ -74,7 +74,7 @@ def tester(args):
         )
 
         # if not input("\nContinue with segmentation? (Enter \'Y\' or \'y\' for Yes): ") in ['Y', 'y']:
-        #     print('Stopped.')
+        #     #print('Stopped.')
         #     exit(0)
 
         # apply model to input tiles
@@ -107,7 +107,7 @@ def tester(args):
             # Evaluate prediction against ground-truth
             # - skip if only global/aggregated requested
             if not params.aggregate_metrics:
-                print("\nStarting evaluation ... ")
+                #print("\nStarting evaluation ... ")
                 evaluator.evaluate().save_metrics()
         else:
             evaluator.load(results, extractor.get_meta()).save_image(args)

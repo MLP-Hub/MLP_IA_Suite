@@ -82,8 +82,8 @@ class DB(object):
                 self.mask_shape = f['mask'].shape
                 f.close()
         except Exception as e:
-            print('Error loading database:\n\t{}'.format(data.shape if data is not None else path))
-            print(e)
+            #print('Error loading database:\n\t{}'.format(data.shape if data is not None else path))
+            #print(e)
 
         # partition database for dataset
         self.start = int(math.ceil(self.partition[0] * self.size))
@@ -206,10 +206,10 @@ class DB(object):
         assert file_path is not None, "File path must be specified to save data to database."
 
         if len(self.data['img']) == 0 or len(self.data['mask']) == 0:
-            print('\n --- Note: Image or mask data is empty.\n')
+            #print('\n --- Note: Image or mask data is empty.\n')
 
         n_samples = len(self.data['img'])
-        print('\nSaving buffer to database ... ')
+        #print('\nSaving buffer to database ... ')
 
         if confirm_write_file(file_path):
             print('\nCopying {} samples to:\n\t{}  '.format(n_samples, file_path))

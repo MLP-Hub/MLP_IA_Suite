@@ -296,7 +296,7 @@ class Parameters:
 
         # Get schema settings from local JSON file
         if not os.path.isfile(schema_path):
-            print('Schema file not found:\n\t{}'.format(schema_path))
+            #print('Schema file not found:\n\t{}'.format(schema_path))
             exit(1)
 
         class Schema(object):
@@ -324,7 +324,7 @@ class Parameters:
             readout += '\n{:20s}{:20s}'.format(str(key), str(value))
         readout += '\n------\n'
 
-        print(readout)
+        #print(readout)
 
 
 # Create parameters instance

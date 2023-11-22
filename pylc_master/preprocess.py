@@ -40,7 +40,7 @@ def extract(args):
     # save database to file
     tile_dset.save()
 
-    print('Extraction done.')
+    #print('Extraction done.')
 
 
 def augment(args):
@@ -54,11 +54,11 @@ def augment(args):
         User-defined options.
     """
 
-    print('\nStarting augmentation on database:\n\t{}'.format(args.db))
+    #print('\nStarting augmentation on database:\n\t{}'.format(args.db))
 
     # Load db into augmentor, show database metadata
     augmentor = Augmentor().load(args.db)
-    print_meta(augmentor.input_meta)
+    #print_meta(augmentor.input_meta)
 
     # optimize oversample parameters
     augmentor.optimize()
@@ -66,7 +66,7 @@ def augment(args):
     # oversample dataset by optimized parameters
     augmentor.oversample()
 
-    # print profile metadata to console
+    # #print profile metadata to console
     aug_dset = augmentor.print_settings().get_data()
     print_meta(augmentor.output_meta)
 
@@ -101,7 +101,7 @@ def merge(args):
         User-defined options.
     """
 
-    print('Merging databases')
+    #print('Merging databases')
 
     dset = Augmentor(args).merge_dbs(args.dbs).get_data()
     dset.save()
