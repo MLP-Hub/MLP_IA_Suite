@@ -24,7 +24,7 @@
 
 from qgis.PyQt.QtWidgets import QFileDialog
 
-from .interface_tools import addImg
+from .interface_tools import addImg, errorMessage
 
 import cv2
 import tempfile

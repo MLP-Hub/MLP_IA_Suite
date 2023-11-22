@@ -22,13 +22,20 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 from qgis.core import QgsRasterLayer, QgsProject
 from qgis.gui import QgsMapToolPan
 
 from .swipe_tool import mapswipetool
 
 import os.path
+
+def errorMessage(txt):
+    """Displays error message to user"""
+    msg = QMessageBox()
+    msg.setText(txt)
+    msg.setIcon(QMessageBox.Critical)
+    msg.exec()
 
 def setScaleBoxVal(dlg, val):
     """Changes scale box value based on slider"""
