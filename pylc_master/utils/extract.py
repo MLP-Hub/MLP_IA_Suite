@@ -19,7 +19,9 @@ import cv2
 from config import Parameters, defaults
 from db.dataset import MLPDataset
 import utils.tools as utils
-from utils.profile import get_profile, print_meta
+from utils.profile import get_profile
+
+from mlp_ia_suite.interface_tools import errorMessage
 
 
 class Extractor(object):
@@ -81,8 +83,8 @@ class Extractor(object):
         self.n_files = len(self.files)
 
         if self.n_files == 0:
-            print('File list is empty. Extraction stopped.')
-            exit(1)
+            errorMessage("File list is empty. Extraction stopped.")
+            return
 
         # create image tile buffer
         self.imgs = np.empty(
@@ -126,12 +128,8 @@ class Extractor(object):
         # rescale image to fit tile dimensions
         self.fit = fit
 
-        # print extraction settings to console and confirm
-        self.print_settings()
-
         # Extract over defined scaling factors
         for scale in self.meta.scales:
-            print('\nExtraction --- Scaling Factor: {}'.format(scale))
             for i, fpair in enumerate(self.files):
 
                 # get image and associated mask data
@@ -170,13 +168,10 @@ class Extractor(object):
                     'offset': offset
                 }
 
-                # print results to console and store in metadata
-                self.print_result("Image", img_path, self.meta.extract)
-
                 # check generated tiles against size of buffer
                 if n_tiles > self.imgs_capacity:
-                    print('Data array reached capacity. Increase the number of tiles per image.')
-                    exit(1)
+                    errorMessage('Data array reached capacity. Increase the number of tiles per image.')
+                    return
 
                 # copy tiles to main data arrays
                 np.copyto(self.imgs[self.img_idx:self.img_idx + n_tiles, ...], img_tiles)
@@ -194,19 +189,6 @@ class Extractor(object):
                     # extract tiles
                     mask_tiles, n_tiles = self.__split(mask)
 
-                    # print results to console
-                    self.print_result("Mask", mask_path, {
-                        'fid': os.path.basename(mask_path.replace('.', '_')) + '_scale_' + str(scale),
-                        'n': n_tiles,
-                        'w_full': w_full,
-                        'h_full': h_full,
-                        'w_scaled': w_scaled,
-                        'h_scaled': h_scaled,
-                        'w_fitted': w_fitted,
-                        'h_fitted': h_fitted,
-                        'offset': offset
-                    })
-
                     # Encode masks to class encoding [NWH format] using configured palette
                     mask_tiles = utils.class_encode(mask_tiles, self.meta.palette_rgb)
 
@@ -220,13 +202,6 @@ class Extractor(object):
             self.masks = self.masks[:self.mask_idx]
 
         self.meta.n_tiles = len(self.imgs)
-
-        # print extraction totals
-        print()
-        print('{:30s}{}'.format('Total image tiles generated:', self.meta.n_tiles))
-        if self.mask_path:
-            print('{:30s}{}'.format('Total mask tiles generated:', len(self.masks)))
-        print()
 
         return self
 
@@ -265,7 +240,6 @@ class Extractor(object):
          """
         dset = self.get_data()
         self.meta = get_profile(dset)
-        print_meta(self.meta)
         return self
 
     def coshuffle(self):
@@ -328,58 +302,3 @@ class Extractor(object):
         return MLPDataset(
             input_data={'img': self.imgs, 'mask': self.masks, 'meta': self.meta}
         )
-
-    def print_settings(self):
-        """
-        Prints extraction settings to console
-         """
-        hline = '-' * 40
-        print('\nExtraction Configuration')
-        print(hline)
-        print('{:30s} {}'.format('ID', self.meta.id))
-        print('{:30s} {}'.format('Image(s) path', self.img_path))
-        print('{:30s} {}'.format('Masks(s) path', self.mask_path))
-        print('{:30s} {}'.format('Output path', self.meta.output_dir))
-        print('{:30s} {}'.format('Number of files', self.n_files))
-        print('{:30s} {}'.format('Scaling', self.meta.scales))
-        print('{:30s} {} ({})'.format('Channels', self.meta.ch, 'Grayscale' if self.meta.ch == 1 else 'Colour'))
-        print('{:30s} {}px'.format('Stride', self.meta.stride))
-        print('{:30s} {}px x {}px'.format('Tile size (WxH)', self.meta.tile_size, self.meta.tile_size))
-        print('{:30s} {}'.format('Maximum tiles/image', self.meta.tiles_per_image))
-        print(hline)
-
-    def print_result(self, img_type, img_path, md):
-        """
-        Prints extraction results to console
-
-        Parameters
-        ------
-        img_type: str
-            Image or mask.
-        img_path: str
-            Image path.
-        md: dict
-            Extraction metadata.
-         """
-        n = md['n']
-        w_full = md['w_full']
-        h_full = md['h_full']
-        w_scaled = md['w_scaled']
-        h_scaled = md['h_scaled']
-        w_fitted = md['w_fitted']
-        h_fitted = md['h_fitted']
-        offset = md['offset']
-
-        print()
-        print('{:30s} {}'.format('{} File'.format(img_type), os.path.basename(img_path)))
-        print('- {:28s} {}px x {}px'.format(
-            'W x H Original', w_full, h_full))
-        if (type(w_scaled) == int or type(h_scaled) == int) and (w_scaled != w_full or h_scaled != h_full):
-            print('- {:28s} {}px x {}px'.format(
-                'W x H Scaled ({})'.format(round(w_scaled/w_full, 2)), w_scaled, h_scaled))
-        if (type(w_fitted) == int or type(h_fitted) == int) and (w_fitted != w_scaled or h_fitted != h_scaled):
-            print('- {:28s} {}px x {}px'.format(
-                'W x H Fitted for Tiling', w_fitted, h_fitted))
-        if offset:
-            print('- {:28s} {}px'.format('Crop (offset)', offset))
-        print('- {:28s} {}'.format('Number of Tiles', n))

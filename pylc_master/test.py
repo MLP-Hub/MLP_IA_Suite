@@ -12,7 +12,6 @@ Module: Model Test
 File: test.py
 """
 import torch
-from tqdm import tqdm
 import utils.tools as utils
 from config import defaults, Parameters
 from utils.extract import Extractor
@@ -61,11 +60,17 @@ def tester(args):
             mask_file = None
 
         # extract image tiles (image is resized and cropped to fit tile size)
-        img_tiles = extractor.load(img_file).extract(
+        img_tiles = extractor.load(img_file)
+        if img_tiles is None:
+            return
+        img_tiles = img_tiles.extract(
             fit=True,
             stride=defaults.tile_size // 2,
             scale=params.scale
-        ).get_data()
+        )
+        if img_tiles is None:
+            return
+        img_tiles = img_tiles.get_data()
 
         # get data loader
         img_loader, n_batches = img_tiles.loader(
@@ -107,7 +112,6 @@ def tester(args):
             # Evaluate prediction against ground-truth
             # - skip if only global/aggregated requested
             if not params.aggregate_metrics:
-                #print("\nStarting evaluation ... ")
                 evaluator.evaluate().save_metrics()
         else:
             evaluator.load(results, extractor.get_meta()).save_image(args)
