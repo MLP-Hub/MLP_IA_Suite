@@ -36,14 +36,19 @@ def tester(args):
 
     # load parameters
     params = Parameters(args)
+    if params is None:
+        return
 
     # Load model for testing/evaluation
     model = Model(args).load(model_path)
-    model.print_settings()
+    if model is None:
+        return
     model.net.eval()
 
     # get test file(s) - returns list of filenames
     files = utils.collate(args['img'], args['mask'])
+    if files is None:
+        return
 
     # initialize extractor, evaluator
     extractor = Extractor(model.meta)
@@ -77,10 +82,6 @@ def tester(args):
             batch_size=8,
             drop_last=False
         )
-
-        # if not input("\nContinue with segmentation? (Enter \'Y\' or \'y\' for Yes): ") in ['Y', 'y']:
-        #     #print('Stopped.')
-        #     exit(0)
 
         # apply model to input tiles
         with torch.no_grad():

@@ -19,6 +19,8 @@ import numpy as np
 from config import defaults
 from utils.tools import confirm_write_file
 
+from mlp_ia_suite.interface_tools import errorMessage
+
 
 class DB(object):
     """
@@ -82,8 +84,8 @@ class DB(object):
                 self.mask_shape = f['mask'].shape
                 f.close()
         except Exception as e:
-            print('Error loading database:\n\t{}'.format(data.shape if data is not None else path))
-            print(e)
+            errorMessage('Error loading database:\n\t{}'.format(data.shape if data is not None else path))
+            errorMessage(e)
 
         # partition database for dataset
         self.start = int(math.ceil(self.partition[0] * self.size))
@@ -206,13 +208,11 @@ class DB(object):
         assert file_path is not None, "File path must be specified to save data to database."
 
         if len(self.data['img']) == 0 or len(self.data['mask']) == 0:
-            print('\n --- Note: Image or mask data is empty.\n')
+            errorMessage('\n --- Note: Image or mask data is empty.\n')
 
         n_samples = len(self.data['img'])
-        print('\nSaving buffer to database ... ')
 
         if confirm_write_file(file_path):
-            print('\nCopying {} samples to:\n\t{}  '.format(n_samples, file_path))
             with h5py.File(file_path, 'w') as f:
                 # create image dataset partition
                 f.create_dataset(
@@ -234,9 +234,8 @@ class DB(object):
                 # - store metadata as JSON string
                 f.attrs['meta'] = json.dumps(vars(self.data['meta']))
                 f.close()
-                print('File saved.')
         else:
-            print('Database was not saved.')
+            errorMessage('Database was not saved.')
 
     def print_meta(self):
         """

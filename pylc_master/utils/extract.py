@@ -80,6 +80,8 @@ class Extractor(object):
 
         # collate image/mask file paths
         self.files = utils.collate(img_path, mask_path)
+        if self.files is None:
+            return
         self.n_files = len(self.files)
 
         if self.n_files == 0:
@@ -147,6 +149,8 @@ class Extractor(object):
                     scale=scale,
                     interpolate=cv2.INTER_AREA
                 )
+                if img is None:
+                    return
 
                 # adjust image size to fit tile size (optional)
                 img, w_fitted, h_fitted, offset = utils.adjust_to_tile(
@@ -191,6 +195,8 @@ class Extractor(object):
 
                     # Encode masks to class encoding [NWH format] using configured palette
                     mask_tiles = utils.class_encode(mask_tiles, self.meta.palette_rgb)
+                    if mask_tiles is None:
+                        return
 
                     # copy tiles to main data arrays
                     np.copyto(self.masks[self.mask_idx:self.mask_idx + n_tiles, ...], mask_tiles)

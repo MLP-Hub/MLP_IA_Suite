@@ -95,12 +95,15 @@ class Evaluator:
                 interpolate=cv2.INTER_NEAREST
             )
 
+            if mask_true is None:
+                return
+
             # check dimensions of ground truth mask and predicted mask
             if not (w_scaled == self.meta.extract['w_scaled'] and h_scaled == self.meta.extract['h_scaled']):
-                print("Ground truth mask dims ({}px X {}px) do not match predicted mask dims ({}px X {}px).".format(
+                errorMessage("Ground truth mask dims ({}px X {}px) do not match predicted mask dims ({}px X {}px).".format(
                     w_scaled, h_scaled, self.meta.extract['w_scaled'], self.meta.extract['h_scaled']
                 ))
-                exit(1)
+                return
 
             self.y_true = torch.as_tensor(torch.tensor(mask_true), dtype=torch.uint8).permute(2, 0, 1).unsqueeze(0)
             self.y_pred = torch.as_tensor(self.mask_pred, dtype=torch.uint8).permute(2, 0, 1).unsqueeze(0)
@@ -108,6 +111,8 @@ class Evaluator:
             # Class encode input predicted data
             self.y_pred = utils.class_encode(self.y_pred, self.meta.palette_rgb)
             self.y_true = utils.class_encode(self.y_true, self.meta.palette_rgb)
+            if self.y_pred is None or self.y_true is None:
+                return
 
             # Verify same size of target == input
             assert self.y_pred.shape == self.y_true.shape, "Input dimensions {} not same as target {}.".format(

@@ -25,6 +25,8 @@ from numpy import random
 from config import defaults, Parameters
 from utils.tools import get_fname
 
+from mlp_ia_suite.interface_tools import errorMessage
+
 
 class Model:
     """
@@ -86,10 +88,8 @@ class Model:
         """
 
         if not model_path:
-            print("\nModel path is empty. Use \'--model\' option to specify path.")
-            exit(1)
-        else:
-            print('\nLoading model:\n\t{}'.format(model_path))
+            errorMessage("\nModel path is empty. Use \'--model\' option to specify path.")
+            return
 
         if os.path.exists(model_path):
             self.model_path = model_path
@@ -99,9 +99,9 @@ class Model:
             try:
                 model_data = torch.load(self.model_path, map_location=self.device)
             except Exception as err:
-                print('An error occurred loading model:\n\t{}.'.format(model_path))
-                print(err)
-                exit()
+                errorMessage('An error occurred loading model:\n\t{}.'.format(model_path))
+                errorMessage(err)
+                return
 
             # build model from metadata
             assert 'meta' in model_data, '\nLoaded model missing metadata attribute.'
@@ -115,8 +115,8 @@ class Model:
             self.net.load_state_dict(model_data["model"])
 
         else:
-            print('Model file does not exist.')
-            exit()
+            errorMessage('Model file does not exist.')
+            return
 
         return self
 
@@ -175,22 +175,8 @@ class Model:
 
         # Unknown model requested
         else:
-            print('Model {} not available.'.format(self.meta.arch))
-            exit(1)
-
-        # Enable CUDA
-        if torch.cuda.is_available():
-            print("\n --- CUDA enabled.")
-
-        # Parallelize model on multiple GPUs (disabled)
-        if torch.cuda.device_count() > 1:
-            print("\t{} GPUs in use.".format(torch.cuda.device_count()))
-            # self.net = torch.nn.DataParallel(self.net)
-
-        # Check multiprocessing enabled
-        if torch.utils.data.get_worker_info():
-            print('\tPooled data loading: {} workers enabled.'.format(
-                torch.utils.data.get_worker_info().num_workers))
+            errorMessage('Model {} not available.'.format(self.meta.arch))
+            return
 
         # initialize network loss calculators, etc.
         self.crit = MultiLoss(
@@ -216,6 +202,8 @@ class Model:
         # initialize optimizer and optimizer scheduler
         self.optim = self.init_optim()
         self.sched = self.init_sched()
+        if self.optim is None or self.sched is None:
+            return
 
         return self
 
@@ -250,8 +238,8 @@ class Model:
                 momentum=self.meta.momentum
             )
         else:
-            print('Optimizer is not defined.')
-            exit()
+            errorMessage('Optimizer is not defined.')
+            return
 
     def init_sched(self):
         """(Optional) Scheduled learning rate step"""
@@ -276,8 +264,8 @@ class Model:
             # )
 
         else:
-            print('Optimizer scheduler is not defined.')
-            exit()
+            errorMessage('Optimizer scheduler is not defined.')
+            return
 
     def train(self, x, y):
 
@@ -443,41 +431,6 @@ class Model:
                 px_std = torch.tensor(self.meta.px_std)
             return ((img - px_mean[None, :, None, None]) /
                     px_std[None, :, None, None]) / 255
-
-    def print_settings(self):
-        """
-        Prints model configuration settings to screen.
-        """
-        hline = '_' * 40
-        print("\nModel Configuration")
-        print(hline)
-        print('{:30s} {}'.format('ID', self.meta.id))
-        if self.model_path is not None:
-            print('{:30s} {}'.format('Model File', os.path.basename(self.model_path)))
-        print('{:30s} {}'.format('Architecture', self.meta.arch))
-        # show encoder backbone for Deeplab
-        if self.meta.arch == 'deeplab':
-            print('   - {:25s} {}'.format('Backbone', self.meta.backbone))
-            print('   - {:25s} {}'.format('Pretrained model', self.meta.pretrained))
-        print('{:30s} {}'.format('Input channels', self.meta.ch))
-        print('{:30s} {}'.format('Output channels', self.meta.n_classes))
-        print('{:30s} {}{}'.format('Px mean', self.meta.px_mean,
-                                   '*' if self.meta.normalize_default else ''))
-        print('{:30s} {}{}'.format('Px std-dev', self.meta.px_std,
-                                   '*' if self.meta.normalize_default else ''))
-        print('{:30s} {}'.format('Batch size', self.meta.batch_size))
-        print('{:30s} {}'.format('Activation function', self.meta.activ_type))
-        print('{:30s} {}'.format('Optimizer', self.meta.optim_type))
-        print('{:30s} {}'.format('Scheduler', self.meta.sched_type))
-        print('{:30s} {}'.format('Learning rate (default)', self.meta.lr))
-        print('{:30s} {}'.format('Resume checkpoint', self.resume_checkpoint))
-        print()
-        # use default pixel normalization (if requested)
-        if self.meta.normalize_default:
-            print('* Normalized default settings')
-
-        # print model loss settings
-        self.crit.print_settings()
 
     def gen_id(self):
         """

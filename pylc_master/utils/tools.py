@@ -20,6 +20,8 @@ import cv2
 
 from config import defaults
 
+from mlp_ia_suite.interface_tools import errorMessage
+
 
 def rgb2hex(color):
     """
@@ -69,9 +71,9 @@ def grayscale(img):
     if img.shape[2] == 3:
         return np.mean(img, axis=2)
     elif img.shape[2] == 1:
-        print("Grayscaling skipped: Image is already single-channel.")
+        errorMessage("Grayscaling skipped: Image is already single-channel.")
     else:
-        print("Grayscaling stopped: Image channel is invalid.")
+        errorMessage("Grayscaling stopped: Image channel is invalid.")
 
 
 def get_image(img_path, ch=3, scale=None, tile_size=None, interpolate=cv2.INTER_AREA):
@@ -116,8 +118,8 @@ def get_image(img_path, ch=3, scale=None, tile_size=None, interpolate=cv2.INTER_
     # verify image channel number
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     if is_grayscale(img) and ch == 3:
-        print('\nInput image is grayscale but process expects colour (RGB).\n\tApplication stopped.')
-        exit(1)
+        errorMessage('\nInput image is grayscale but process expects colour (RGB).\n\tApplication stopped.')
+        return
     elif not is_grayscale(img) and ch == 1:
         if input("\nInput image is in colour (RGB) but process expects grayscale. "
                  "Apply grayscale filter? (Enter \'Y\' or \'y\' for Yes): ") in ['Y', 'y']:
@@ -442,8 +444,8 @@ def class_encode(img_array, palette):
             bool_idx = np.all(bool_idx, axis=1)
             encoded_data[bool_idx] = idx
     except Exception as inst:
-        print(inst)
-        print('Mask cannot be encoded by selected palette. Please check schema settings.')
+        errorMessage(inst)
+        errorMessage('Mask cannot be encoded by selected palette. Please check schema settings.')
         exit(1)
     return torch.tensor(encoded_data.reshape(n, w, h), dtype=torch.uint8)
 
@@ -610,8 +612,8 @@ def load_files(path, exts):
          List of file names.
      """
     if not os.path.exists(path):
-        print('File not found:\n\t{} .'.format(path))
-        exit(1)
+        errorMessage('File not found:\n\t{} .'.format(path))
+        return
 
     files = []
     if os.path.isfile(path):
@@ -646,6 +648,8 @@ def collate(img_dir, mask_dir=None):
 
     # load file paths and names
     img_files = load_files(img_dir, ['.tif', '.tiff', '.jpg', '.jpeg'])
+    if img_files is None:
+        return
     img_paths = {os.path.splitext(os.path.basename(f))[0]: f for f in img_files}
 
     # no masks provided
@@ -668,13 +672,13 @@ def collate(img_dir, mask_dir=None):
             img_files.remove(img_path)
             mask_files.remove(mask_path)
         else:
-            print('\nMask not found for image {}.'.format(img_fname))
-            exit(1)
+            errorMessage('\nMask not found for image {}.'.format(img_fname))
+            return
 
     # validate image-to-mask correspondence
     if len(mask_files) > 0:
-        print('\nImage not found for mask(s):\n\t{}.'.format("\n\t".join(mask_files)))
-        exit(1)
+        errorMessage('\nImage not found for mask(s):\n\t{}.'.format("\n\t".join(mask_files)))
+        return
 
     return files
 

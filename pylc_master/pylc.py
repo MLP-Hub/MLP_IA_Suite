@@ -15,6 +15,8 @@ import os
 from test import tester
 from config import defaults
 
+from mlp_ia_suite.interface_tools import errorMessage
+
 
 def main(args):
     """

@@ -18,6 +18,7 @@ import sys
 import numpy as np
 import torch
 
+from mlp_ia_suite.interface_tools import errorMessage
 
 class Parameters:
     """
@@ -111,6 +112,8 @@ class Parameters:
 
         # Get schema palettes, labels, categories
         schema = self.get_schema(self.schema)
+        if schema is None:
+            return
         self.class_labels = schema.class_labels
         self.class_codes = schema.class_codes
         self.palette_hex = schema.palette_hex
@@ -296,8 +299,8 @@ class Parameters:
 
         # Get schema settings from local JSON file
         if not os.path.isfile(schema_path):
-            #print('Schema file not found:\n\t{}'.format(schema_path))
-            exit(1)
+            errorMessage('Schema file not found:\n\t{}'.format(schema_path))
+            return
 
         class Schema(object):
             pass
