@@ -39,6 +39,14 @@ import numpy as np
 import math
 from functools import partial
 
+from .interface_tools import errorMessage
+
+def resetCam(dlg):
+    """Resets the initial lat/lon of the camera when DEM reloaded"""
+
+    dlg.lat_init = None
+    dlg.lon_init = None
+
 def readCamParams(dlg):
     """Reads user input camera parameters as dictionary"""
 
@@ -51,8 +59,6 @@ def readCamParams(dlg):
     cam_params["hgt"] = dlg.CamHgt_lineEdit.text()
 
     # Convert camera parameters to float (checks if left blank)
-    errorMsg = QMessageBox()
-    errorMsg.setIcon(QMessageBox.Critical)
     msgFields = ["Easting", "Northing", "Azimuth", "Field of view", "Camera height"]
     i = 0
 
@@ -60,8 +66,7 @@ def readCamParams(dlg):
         try:
             cam_params[param] = float(val)
         except ValueError:
-            errorMsg.setText("Error: {} cannot be blank".format(msgFields[i]))
-            errorMsg.exec_()
+            errorMessage("Error: {} cannot be blank".format(msgFields[i]))
             return
         i+=1
     
@@ -129,10 +134,22 @@ def saveCamParam(dlg):
 def moveCam(dlg, dir):
     """Moves camera in space relative to azimuth"""
 
-    cam_x = float(dlg.Easting_lineEdit.text())
-    cam_y = float(dlg.Northing_lineEdit.text())
-    azi = float(dlg.Azi_lineEdit.text())
-    step_size_m = float(dlg.StepSizeM_lineEdit.text())
+    params = {'cam_x':dlg.Easting_lineEdit.text(), 'cam_y':dlg.Northing_lineEdit.text(), 'azi':dlg.Azi_lineEdit.text(), 'step_size_m':dlg.StepSizeM_lineEdit.text()}
+    msgFields = ['Easting', 'Northing', 'Azimuth', 'Step Size (m)']
+    i = 0
+
+    for param, val in params.items():
+        try:
+            params[param] = float(val)
+        except ValueError:
+            errorMessage("Error: {} cannot be blank".format(msgFields[i]))
+            return
+        i+=1
+    
+    cam_x = params['cam_x']
+    cam_y = params['cam_x']
+    azi = params['azi']
+    step_size_m = params['step_size_m']
 
     if dir == "Forward":
         cam_y = cam_y + np.cos(np.radians(azi))*step_size_m
@@ -154,7 +171,11 @@ def camHeight(dlg, dir):
     """Changes camera height"""
 
     cam_hgt = float(dlg.CamHgt_lineEdit.text())
-    step_size_m = float(dlg.StepSizeM_lineEdit.text())
+    try:
+        step_size_m = float(dlg.StepSizeM_lineEdit.text())
+    except ValueError:
+        errorMessage("Step size (m) cannot be blank")
+        return
 
     if dir == "Up":
         cam_hgt = cam_hgt + step_size_m
@@ -167,7 +188,11 @@ def rotateCam(dlg, dir):
     """Changes camera rotation"""
 
     azi = float(dlg.Azi_lineEdit.text())
-    step_size_deg = float(dlg.StepSizeDeg_lineEdit.text())
+    try:
+        step_size_deg = float(dlg.StepSizeDeg_lineEdit.text())
+    except ValueError:
+        errorMessage("Step size (°) cannot be blank")
+        return
 
     if dir == "Clckwise":
         azi = azi + step_size_deg
@@ -201,35 +226,15 @@ def createHillshade(clipped_DEM):
                     'MULTIDIRECTIONAL': False,
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
 
-    hillshade=processing.run("gdal:hillshade", parameters)
+    try:
+        hillshade=processing.run("gdal:hillshade", parameters)
 
-    hillshade_path=hillshade['OUTPUT']
-    hillshade_layer = QgsRasterLayer(hillshade_path, "Hillshade")
-
+        hillshade_path=hillshade['OUTPUT']
+        hillshade_layer = QgsRasterLayer(hillshade_path, "Hillshade")
+    except:
+        errorMessage("Hillshade creation failed")
+        return
     return hillshade_path, hillshade_layer   
-
-def getClipParams(DEM_layer, cam_x, cam_y):
-        
-    ex = DEM_layer.extent() 
-    min_x = max([ex.xMinimum(),(cam_x - 25500)])
-    max_x = min([ex.xMaximum(),(cam_x + 25500)])
-    min_y = max([ex.yMinimum(),(cam_y - 25500)])
-    max_y = min([ex.yMaximum(),(cam_y + 25500)])
-
-    out = [min_x, max_x, min_y, max_y]
-    extents = ", ".join(str(e) for e in out)
-
-    parameters = {'INPUT':DEM_layer,
-                    'PROJWIN':extents,
-                    'OVERCRS':None,
-                    'NODATA':None,
-                    'OPTIONS':None,
-                    'DATA_TYPE':None,
-                    'EXTRA':None,
-                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
-                }
-    
-    return parameters
 
 def clipDEM(DEM_layer, cam_x, cam_y):
     """Clips DEM based on camera parameters"""
@@ -254,10 +259,14 @@ def clipDEM(DEM_layer, cam_x, cam_y):
                     'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
             }
 
-    clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
+    try:
+        clipped_DEM = processing.run("gdal:cliprasterbyextent", parameters)
     
-    clipDEM_path=clipped_DEM['OUTPUT']
-    clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
+        clipDEM_path=clipped_DEM['OUTPUT']
+        clipDEM_layer = QgsRasterLayer(clipDEM_path, "Clipped DEM") 
+    except:
+        errorMessage("DEM Clip failed")
+        return
 
     return clipDEM_path, clipDEM_layer
 
@@ -293,10 +302,14 @@ def reprojectDEM(DEM_layer):
                         'EXTRA':'',
                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
             }
-        
-    proj_DEM = processing.run("gdal:warpreproject", parameters)
-    projDEM_path=proj_DEM['OUTPUT']
-    projDEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
+
+    try:    
+        proj_DEM = processing.run("gdal:warpreproject", parameters)
+        projDEM_path=proj_DEM['OUTPUT']
+        projDEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
+    except:
+        errorMessage("DEM reprojection failed")
+        return
 
     return projDEM_path, projDEM_layer
    
@@ -328,19 +341,37 @@ def createVP(dlg):
     # Read DEM from user input
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
     DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+    if DEM_layer is None:
+        errorMessage('Invalid DEM file')
+        return
     
     # Check that DEM has appropriate CRS
     source_crs = DEM_layer.crs() # get current CRS
     if source_crs.mapUnits() != 0:
-        DEM_path, DEM_layer = reprojectDEM(DEM_layer)
+        # if CRS is not in meters
+        try:
+            DEM_path, DEM_layer = reprojectDEM(DEM_layer)
+        except TypeError:
+            return
 
-    # generate new clipped DEM and hillshade on first round or when camera moves more than 500 m
+    # check camera is on DEM
+    ex = DEM_layer.extent()
+    if ex.yMaximum() < float(cam_params['lat']) < ex.yMinimum() or ex.xMaximum() < float(cam_params['lat']) < ex.xMinimum():
+        errorMessage("Camera off DEM")
+        return
+
+    # generate new clipped DEM and hillshade on first round or when camera moves more than 200 m
     og_lat, og_lon = cam_params['lat'], cam_params['lon']
-    if dlg.lat_init is None or (abs(dlg.lat_init - og_lat) > 500) or (abs(dlg.lon_init - og_lon) > 500):
-
-        DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
-
-        dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
+    
+    if dlg.lat_init is None or (abs(dlg.lat_init - og_lat) > 200) or (abs(dlg.lon_init - og_lon) > 200):
+        try:
+            DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
+        except TypeError:
+            return
+        try:
+            dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
+        except TypeError:
+            return
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 
     
@@ -425,6 +456,7 @@ def displayVP(dlg):
     
     if vp is None:
         # break if create VP did not work
+        errorMessage('Virtual photograph failed')
         return
     
     # save vp to temp path
