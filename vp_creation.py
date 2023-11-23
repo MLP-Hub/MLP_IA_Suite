@@ -41,7 +41,12 @@ from functools import partial
 
 from .interface_tools import errorMessage
 
-def resetCam(dlg):
+def resetCamPath(dlg):
+    """Resets path to camera parameters if they are changed"""
+
+    dlg.cam_path = None
+
+def resetCamPos(dlg):
     """Resets the initial lat/lon of the camera when DEM reloaded"""
 
     dlg.lat_init = None
@@ -130,6 +135,8 @@ def saveCamParam(dlg):
         cam_file.write('%s:%s\n' % (key, value))
 
     cam_file.close()
+
+    dlg.cam_path = cam_filepath
 
 def moveCam(dlg, dir):
     """Moves camera in space relative to azimuth"""
@@ -241,10 +248,10 @@ def clipDEM(DEM_layer, cam_x, cam_y):
 
     # Get clipping extents (clipped either to 25 km or the extent of the DEM if it is smaller)
     ex = DEM_layer.extent() 
-    min_x = max([ex.xMinimum(),(cam_x - 25500)])
-    max_x = min([ex.xMaximum(),(cam_x + 25500)])
-    min_y = max([ex.yMinimum(),(cam_y - 25500)])
-    max_y = min([ex.yMaximum(),(cam_y + 25500)])
+    min_x = max([ex.xMinimum(),(cam_x - 25200)])
+    max_x = min([ex.xMaximum(),(cam_x + 25200)])
+    min_y = max([ex.yMinimum(),(cam_y - 25200)])
+    max_y = min([ex.yMaximum(),(cam_y + 25200)])
 
     out = [min_x, max_x, min_y, max_y]
     extents = ", ".join(str(e) for e in out)
@@ -476,6 +483,13 @@ def displayVP(dlg):
 
 def saveVP(dlg):
     """Saves virtual photograph to specified location"""
+
+    if dlg.cam_path is None:
+        msg = QMessageBox()
+        msg.setText("Save latest camera parameters first.")
+        msg.exec()
+
+        saveCamParam(dlg) # opens camera parameter save dialog
 
     vp = cv2.imread(dlg.vp_path)
     save_vp_path = None

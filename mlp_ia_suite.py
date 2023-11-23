@@ -32,8 +32,8 @@ from .resources import *
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc, saveMask
-from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP
-from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, automatedAlignment
+from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
+from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 
@@ -239,6 +239,7 @@ class MLP_IA_Suite:
         # VP TAB
 
         self.dlg.vp_path = None # initiate variable to hold path to VP (for temp file)
+        self.dlg.cam_path = None # initiate variable to hold path to camera parameters
 
         # Set up line edits (to take appropriate data type)
         numValidator = QDoubleValidator(bottom = 0, notation=QDoubleValidator.StandardNotation) # only allow positive float
@@ -250,9 +251,20 @@ class MLP_IA_Suite:
         self.dlg.Elev_lineEdit.setValidator(numValidator)
         self.dlg.StepSizeM_lineEdit.setValidator(numValidator)
         self.dlg.StepSizeDeg_lineEdit.setValidator(numValidator)
+
+        # reset path to camera parameters if any of them were changed
+        self.dlg.Easting_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.Northing_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.Azi_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.horFOV_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.CamHgt_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.Elev_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.StepSizeM_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
+        self.dlg.StepSizeDeg_lineEdit.textChanged.connect(lambda: resetCamPath(self.dlg))
         
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.InputDEM_button.clicked.connect(lambda: resetCamPos(self.dlg))
         self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         
         # Generate hillshade and VP
