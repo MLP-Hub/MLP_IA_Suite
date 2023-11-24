@@ -33,6 +33,8 @@ import numpy as np
 import tempfile
 import os
 
+from .interface_tools import errorMessage
+
 def checkForImgs(canvas_list, name_list, button_list):
     """Ensures one image per canvas before enabling tool buttons"""
     
@@ -235,11 +237,14 @@ def readCPsfromTable(table):
     dest_pts = []
     x = 0
     while x < table.rowCount():
-        source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
-        dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
-        source_pts.append(source_pt)
-        dest_pts.append(dest_pt)
-        x+=1
+        try:
+            source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
+            dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
+            source_pts.append(source_pt)
+            dest_pts.append(dest_pt)
+            x+=1
+        except AttributeError:
+            return [], [] # return empty lists if table is empty
 
     return source_pts, dest_pts
 
@@ -326,31 +331,44 @@ def enableTools(dlg):
 def alignImgs(dlg, source_img_path, table):
     """Aligns images using perspective transformation"""
 
+    if not os.path.exists(source_img_path):
+        return
     img = cv2.imread(source_img_path)
     (h, w) = img.shape[:2]
 
     source_pts, dest_pts = readCPsfromTable(table) # read control points from table
 
-    # source_pts_array = np.float32(source_pts)
-    # dest_pts_array = np.float32(dest_pts)
+    if len(source_pts) < 4:
+        errorMessage("At least four control points are required for alignment")
+        return
+    if len(source_pts) != len(dest_pts):
+        errorMessage("Number of control points on source and destination images must match")
+        return
 
-    source_pts_good = np.float32(source_pts)
-    dest_pts_good = np.float32(dest_pts)
+    source_pts_array = np.float32(source_pts)
+    dest_pts_array = np.float32(dest_pts)
 
-    # # get best control points based on homography and RANSAC method
-    # homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
-    # mask = mask.flatten()
+    # source_pts_good = np.float32(source_pts)
+    # dest_pts_good = np.float32(dest_pts)
 
-    # index = np.nonzero(mask)
+    # get best control points based on homography and RANSAC method
+    homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
+    mask = mask.flatten()
+
+    index = np.nonzero(mask)
     
-    # source_pts_good = source_pts_array[index]
-    # dest_pts_good = dest_pts_array[index]
+    source_pts_good = source_pts_array[index]
+    dest_pts_good = dest_pts_array[index]
     
     # align image using perspective transform
     dest_img = cv2.imread(dlg.DestImg_lineEdit.text())
     h,w = dest_img.shape[:2] # automatically clip to the destination image
     matrix = cv2.getPerspectiveTransform(source_pts_good, dest_pts_good)
-    aligned_img = cv2.warpPerspective(img, matrix, (w, h))
+    try:
+        aligned_img = cv2.warpPerspective(img, matrix, (w, h))
+    except:
+        errorMessage("Alignment failed")
+        return
 
     # save aligned image to temporary file
     dlg.aligned_img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
@@ -435,6 +453,9 @@ def automatedAlignment(dlg):
 def saveAlign(dlg):
     """Saves aligned image to specified location"""
 
+    if dlg.aligned_img_path is None:
+        errorMessage("No aligned image")
+        return
     aligned_img = cv2.imread(dlg.aligned_img_path)
     align_path = None
 
