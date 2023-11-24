@@ -114,10 +114,21 @@ def addCP(canvas, vl, x, y, table, name):
     table.setItem(row, col, QTableWidgetItem(str(round(x,2))))
     table.setItem(row, col+1, QTableWidgetItem(str(abs(round(y,2)))))
 
+
+def clearSelection(canvas_list):
+    """Clears any selected CPs"""
+
+    for canvas in canvas_list:
+        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
+        if isinstance(cp_layer, QgsVectorLayer):
+            cp_layer.removeSelection() # clear any existing selection
+
+
 def addCPfromClick(dlg, point, canvas, name):
     """Adds CP (from mouse click) to vector layer and table"""
 
     vl = QgsProject.instance().mapLayersByName(name)[0] # get CP vector layer
+    clearSelection([dlg.DestImg_canvas, dlg.SourceImg_canvas]) # remove any highlighted points
 
     # add cp to vector layer and table
     addCP(canvas, vl, point.x(), point.y(), dlg.CP_table, name)
@@ -145,6 +156,24 @@ def newCPfromClick(dlg, canvas, name, img_name):
     dlg.CPtool.canvasClicked.connect(lambda point: addCPfromClick(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
     dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
     canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
+
+def selectFromTable(table, canvas_list):
+    """Allows user to select CP by clicking table row"""
+    
+    row = table.currentRow()
+    for canvas in canvas_list:   
+        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
+        if isinstance(cp_layer, QgsVectorLayer):
+            cp_layer.removeSelection() # clear any existing selection
+            cp_features = cp_layer.getFeatures() # get list of features  
+            # find cp matching the table row
+            i = 0 
+            for f in cp_features:
+                if i == row:
+                    cp_layer.select(f.id())
+                    break
+                i +=1
+
 
 def deleteCP(f, vl_list, table):
     """Deletes selected feature from layer and cp table"""
@@ -176,23 +205,26 @@ def deleteCP(f, vl_list, table):
         pr = vl.dataProvider()
         pr.deleteFeatures([f.id()]) # delete selected CP from vector layer
         vl.commitChanges()
+
+        vl.removeSelection() # remove any selection (may have been highlighted from table)
     
 def selectCP(dlg, canvas_list):
-    """Allows user to select control point from map"""
+    """Allows user to select control point from map to delete"""
 
-    # should be able to delete from table or layer
-    # active on both canvases - must delete corresponding CP from other canvas
-    # check for vector layer type
     vl1 = canvas_list[0].layers()[0] # get CP layer for canvas (should always be top layer)
-    dlg.delTool1 = QgsMapToolIdentifyFeature(canvas_list[0])
-    dlg.delTool1.setLayer(vl1)
-    canvas_list[0].setMapTool(dlg.delTool1)
-
+    if isinstance(vl1, QgsVectorLayer):
+        dlg.delTool1 = QgsMapToolIdentifyFeature(canvas_list[0])
+        dlg.delTool1.setLayer(vl1)
+        canvas_list[0].setMapTool(dlg.delTool1)
+    
     vl2 = canvas_list[1].layers()[0] # get CP layer for canvas (should always be top layer)
-    dlg.delTool2 = QgsMapToolIdentifyFeature(canvas_list[1])
-    dlg.delTool2.setLayer(vl2)
-    canvas_list[1].setMapTool(dlg.delTool2)
+    
+    if isinstance(vl1, QgsVectorLayer):
+        dlg.delTool2 = QgsMapToolIdentifyFeature(canvas_list[1])
+        dlg.delTool2.setLayer(vl2)
+        canvas_list[1].setMapTool(dlg.delTool2)
 
+    # connect delete tools to delete function
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 

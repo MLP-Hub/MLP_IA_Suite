@@ -116,6 +116,8 @@ def loadCamParam(dlg):
     else:
         dlg.Elev_lineEdit.setText(cam_params["elev"])
 
+    dlg.cam_path = cam_filepath # change path to camera parameters
+
 def saveCamParam(dlg):
     """This function saves current camera parameters to a text file"""
 

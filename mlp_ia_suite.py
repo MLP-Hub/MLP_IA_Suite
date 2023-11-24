@@ -33,7 +33,7 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
-from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign
+from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 
@@ -323,8 +323,9 @@ class MLP_IA_Suite:
         self.dlg.saveCP_button.clicked.connect(lambda: saveCPs(self.dlg.CP_table))
         self.dlg.loadCP_button.clicked.connect(lambda: loadCPs(["Source CP Layer","Dest CP Layer"], canvas_list_3, name_list, self.dlg.CP_table))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
-        #self.dlg.Align_button.clicked.connect(lambda: automatedAlignment(self.dlg))
         self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))
+
+        self.dlg.CP_table.itemSelectionChanged.connect(lambda: selectFromTable(self.dlg.CP_table, canvas_list_3)) # Select point on map when row selected in table
 
         # Connect tools to appropriate functions (Alignment tab)
         self.dlg.SideBySide_pushButton_3.hide() # hide side by side view button to start
