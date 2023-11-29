@@ -33,7 +33,7 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
-from .img_alignment import newCPfromClick, selectCP, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable
+from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 
@@ -318,8 +318,8 @@ class MLP_IA_Suite:
         self.dlg.SourceImg_button.clicked.connect(lambda: checkForImgs(canvas_list_3, name_list, button_list))
         self.dlg.DestImg_button.clicked.connect(lambda: checkForImgs(canvas_list_3, name_list, button_list))
         
-        self.dlg.addCP_button.clicked.connect(lambda: newCPfromClick(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
-        self.dlg.delCP_button.clicked.connect(lambda: selectCP(self.dlg, canvas_list_3))
+        self.dlg.addCP_button.clicked.connect(lambda: addCPTool(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
+        self.dlg.delCP_button.clicked.connect(lambda: delCPTool(self.dlg, canvas_list_3))
         self.dlg.saveCP_button.clicked.connect(lambda: saveCPs(self.dlg.CP_table))
         self.dlg.loadCP_button.clicked.connect(lambda: loadCPs(["Source CP Layer","Dest CP Layer"], canvas_list_3, name_list, self.dlg.CP_table))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))

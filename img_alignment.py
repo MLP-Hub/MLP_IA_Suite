@@ -116,16 +116,6 @@ def addCP(canvas, vl, x, y, table, name):
     table.setItem(row, col, QTableWidgetItem(str(round(x,2))))
     table.setItem(row, col+1, QTableWidgetItem(str(abs(round(y,2)))))
 
-
-def clearSelection(canvas_list):
-    """Clears any selected CPs"""
-
-    for canvas in canvas_list:
-        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
-        if isinstance(cp_layer, QgsVectorLayer):
-            cp_layer.removeSelection() # clear any existing selection
-
-
 def addCPfromClick(dlg, point, canvas, name):
     """Adds CP (from mouse click) to vector layer and table"""
 
@@ -139,11 +129,11 @@ def addCPfromClick(dlg, point, canvas, name):
     canvas.unsetMapTool(dlg.CPtool)
     dlg.CPtool = None
     if name == "Source CP Layer":
-        newCPfromClick(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
+        addCPTool(dlg, dlg.DestImg_canvas, "Dest CP Layer", "Destination Image")
     else:
-        newCPfromClick(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
+        addCPTool(dlg, dlg.SourceImg_canvas, "Source CP Layer", "Source Image")
 
-def newCPfromClick(dlg, canvas, name, img_name):
+def addCPTool(dlg, canvas, name, img_name):
     """Allows user to create new control point"""
 
     # check if vector layer of CPs exists, otherwise create one
@@ -158,24 +148,6 @@ def newCPfromClick(dlg, canvas, name, img_name):
     dlg.CPtool.canvasClicked.connect(lambda point: addCPfromClick(dlg, point, canvas, name)) # add cp to canvas when user clicks the image
     dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
     canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
-
-def selectFromTable(table, canvas_list):
-    """Allows user to select CP by clicking table row"""
-    
-    row = table.currentRow()
-    for canvas in canvas_list:   
-        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
-        if isinstance(cp_layer, QgsVectorLayer):
-            cp_layer.removeSelection() # clear any existing selection
-            cp_features = cp_layer.getFeatures() # get list of features  
-            # find cp matching the table row
-            i = 0 
-            for f in cp_features:
-                if i == row:
-                    cp_layer.select(f.id())
-                    break
-                i +=1
-
 
 def deleteCP(f, vl_list, table):
     """Deletes selected feature from layer and cp table"""
@@ -210,7 +182,7 @@ def deleteCP(f, vl_list, table):
 
         vl.removeSelection() # remove any selection (may have been highlighted from table)
     
-def selectCP(dlg, canvas_list):
+def delCPTool(dlg, canvas_list):
     """Allows user to select control point from map to delete"""
 
     vl1 = canvas_list[0].layers()[0] # get CP layer for canvas (should always be top layer)
@@ -230,25 +202,52 @@ def selectCP(dlg, canvas_list):
     dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
     dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
 
-def readCPsfromTable(table):
-    """Reads control points from table"""
+def clearSelection(canvas_list):
+    """Clears any selected CPs"""
 
+    for canvas in canvas_list:
+        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
+        if isinstance(cp_layer, QgsVectorLayer):
+            cp_layer.removeSelection() # clear any existing selection
+
+def selectFromTable(table, canvas_list):
+    """Allows user to select CP by clicking table row"""
+    
+    row = table.currentRow()
+    for canvas in canvas_list:   
+        cp_layer = canvas.layers()[0] # get CP layer for canvas (should always be top layer)
+        if isinstance(cp_layer, QgsVectorLayer):
+            cp_layer.removeSelection() # clear any existing selection
+            cp_features = cp_layer.getFeatures() # get list of features  
+            # find cp matching the table row
+            i = 0 
+            for f in cp_features:
+                if i == row:
+                    cp_layer.select(f.id())
+                    break
+                i +=1
+
+def readCPsfromLayer():
+    """Reads control point coordinates from vector layers"""
+    
     source_pts = []
     dest_pts = []
-    x = 0
-    while x < table.rowCount():
-        try:
-            source_pt = [float(table.item(x, 0).text()),float(table.item(x, 1).text())] 
-            dest_pt = [float(table.item(x, 2).text()),float(table.item(x, 3).text())] 
-            source_pts.append(source_pt)
-            dest_pts.append(dest_pt)
-            x+=1
-        except AttributeError:
-            return [], [] # return empty lists if table is empty
+
+    src_layer = QgsProject.instance().mapLayersByName("Source CP Layer")[0] # get CP vector layer
+
+    for feat in src_layer.getFeatures():
+        pt = [feat.geometry().asPoint().x(), abs(feat.geometry().asPoint().y())]
+        source_pts.append(pt)
+
+    dest_layer = QgsProject.instance().mapLayersByName("Dest CP Layer")[0] # get CP vector layer
+
+    for feat in dest_layer.getFeatures():
+        pt = [feat.geometry().asPoint().x(), abs(feat.geometry().asPoint().y())]
+        dest_pts.append(pt)
 
     return source_pts, dest_pts
 
-def saveCPs(table):
+def saveCPs():
     """Allows user to save set of control points"""
 
     dialog = QFileDialog()
@@ -262,7 +261,7 @@ def saveCPs(table):
 
     cp_file = open(cp_filepath, "w")
 
-    source_pts, dest_pts = readCPsfromTable(table)
+    source_pts, dest_pts = readCPsfromLayer()
     for cp in source_pts: 
         for coord in cp:
             cp_file.write('%s ' % (coord))
@@ -272,24 +271,6 @@ def saveCPs(table):
             cp_file.write('%s ' % (coord))
 
     cp_file.close()
-
-def addCPfromFile(cps_list, layer_names, canvases, img_names, table):
-    """Adds CPs (from file) to vector layer and table"""
-
-    x = 0
-    for x in range(0, 2):
-        # check if vector layer of CPs exists, otherwise create one
-        layer_list = canvases[x].layers()
-        lyr_ids = {}
-        for lyr in layer_list:
-            lyr_ids[lyr.name()] = lyr.id()
-        if layer_names[0] not in lyr_ids:
-            createCPLayer(canvases[x], layer_names[x], img_names[x]) 
-
-        vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
-
-        for point in cps_list[x]:
-            addCP(canvases[x], vl, point[0], -point[1], table, layer_names[x])
 
 def loadCPs(layer_names, canvases, img_names, table):
     """Allows user to load a set of saved control points"""
@@ -318,7 +299,50 @@ def loadCPs(layer_names, canvases, img_names, table):
     cp_file.close()
 
     cps_list = [source_pts, dest_pts]
-    addCPfromFile(cps_list, layer_names, canvases, img_names, table) # add all CPs to vector layers and table
+
+    x = 0
+    for x in range(0, 2):
+        # check if vector layer of CPs exists, otherwise create one
+        layer_list = canvases[x].layers()
+        lyr_ids = {}
+        for lyr in layer_list:
+            lyr_ids[lyr.name()] = lyr.id()
+        if layer_names[0] not in lyr_ids:
+            createCPLayer(canvases[x], layer_names[x], img_names[x]) 
+
+        vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
+
+        for point in cps_list[x]:
+            addCP(canvases[x], vl, point[0], -point[1], table, layer_names[x])
+
+def transformPoints(source_pts, dest_points, matrix, table):
+    """Finds coordinates of cps after alignment"""
+
+    i = 0 
+    for p in source_pts:
+
+        # trasnform source points based on alignment
+        px = (matrix[0][0]*p[0] + matrix[0][1]*p[1] + matrix[0][2]) / ((matrix[2][0]*p[0] + matrix[2][1]*p[1] + matrix[2][2]))
+        py = (matrix[1][0]*p[0] + matrix[1][1]*p[1] + matrix[1][2]) / ((matrix[2][0]*p[0] + matrix[2][1]*p[1] + matrix[2][2]))
+
+        # find difference between new source point location and destination point
+        dest_p = dest_points[i]
+        dx = abs(dest_p[0] - px)
+        dy = abs(dest_p[1] - py)
+        rmse = np.sqrt(dx**2+dy**2) # calculate RMSE
+
+        # # add values to table
+        # table.setItem(i, 4, QTableWidgetItem(str(round(dx,2))))
+        # table.setItem(i, 5, QTableWidgetItem(str(round(dy,2))))
+        # table.setItem(i, 6, QTableWidgetItem(str(round(rmse,2))))
+
+        # add values to table
+        table.setItem(i, 4, QTableWidgetItem(str(round(dx,7))))
+        table.setItem(i, 5, QTableWidgetItem(str(round(dy,7))))
+        table.setItem(i, 6, QTableWidgetItem(str(round(rmse,7))))
+
+
+        i+=1
 
 def enableTools(dlg):
     """Enables canvas tools once canvas is populated with aligned image"""
@@ -335,8 +359,8 @@ def alignImgs(dlg, source_img_path, table):
         return
     img = cv2.imread(source_img_path)
     (h, w) = img.shape[:2]
-
-    source_pts, dest_pts = readCPsfromTable(table) # read control points from table
+    
+    source_pts, dest_pts = readCPsfromLayer()
 
     if len(source_pts) < 4:
         errorMessage("At least four control points are required for alignment")
@@ -369,6 +393,8 @@ def alignImgs(dlg, source_img_path, table):
     except:
         errorMessage("Alignment failed")
         return
+
+    transformPoints(source_pts, dest_pts, matrix, table) # find dx, dy, and RMSE
 
     # save aligned image to temporary file
     dlg.aligned_img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
