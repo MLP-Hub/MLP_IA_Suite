@@ -33,7 +33,7 @@ from .resources import *
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import modelMenu, runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
-from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable
+from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 
@@ -338,6 +338,7 @@ class MLP_IA_Suite:
         self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_4)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
         self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_3))
+        self.dlg.Layer_comboBox.currentIndexChanged.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3))
 
         # VS TAB
 
