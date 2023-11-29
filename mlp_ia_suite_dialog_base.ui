@@ -47,7 +47,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -3194,6 +3194,16 @@ border-radius: 4px;
              </widget>
             </item>
             <item>
+             <widget class="QComboBox" name="Layer_comboBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_22">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -3389,6 +3399,9 @@ border-radius: 4px;
              </property>
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
              </property>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
