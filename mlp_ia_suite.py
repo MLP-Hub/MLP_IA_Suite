@@ -304,10 +304,12 @@ class MLP_IA_Suite:
         # Image Alignment Tab
 
         self.dlg.aligned_img_path = None # initiate variable to hold path to aligned image (for temp file)
+        self.dlg.aligned_mask_path = None # initiate variable to hold path to aligned mask
         
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         self.dlg.DestImg_button.clicked.connect(lambda: getFile(self.dlg.DestImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.Mask_button.clicked.connect(lambda: getFile(self.dlg.Mask_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas, True))
         self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas, True))
         

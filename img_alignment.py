@@ -358,7 +358,6 @@ def alignImgs(dlg, source_img_path, table):
     if not os.path.exists(source_img_path):
         return
     img = cv2.imread(source_img_path)
-    (h, w) = img.shape[:2]
     
     source_pts, dest_pts = readCPsfromLayer()
 
@@ -376,10 +375,10 @@ def alignImgs(dlg, source_img_path, table):
     # dest_pts_good = np.float32(dest_pts)
 
     # get best control points based on homography and RANSAC method
-    homography, mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
-    mask = mask.flatten()
+    homography, cp_mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
+    cp_mask = cp_mask.flatten()
 
-    index = np.nonzero(mask)
+    index = np.nonzero(cp_mask)
     
     source_pts_good = source_pts_array[index]
     dest_pts_good = dest_pts_array[index]
@@ -401,8 +400,6 @@ def alignImgs(dlg, source_img_path, table):
     if os.path.isfile(dlg.aligned_img_path):
         # check if the temporary file already exists
         os.remove(dlg.aligned_img_path)
-    
-    cv2.imwrite(dlg.aligned_img_path, aligned_img)
 
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
@@ -410,7 +407,28 @@ def alignImgs(dlg, source_img_path, table):
 
     addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
     addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
+    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in fullview
+
+    # align mask if provided
+    if dlg.Mask_lineEdit.text():
+        mask = cv2.imread(dlg.Mask_lineEdit.text())
+        img_h, img_w = img.shape[:2]
+        mask_h, mask_w = mask.shape[:2]
+        if img_h != mask_h or img_w != mask_w:
+            errorMessage("Source image and mask must have the same dimensions")
+            return
+        aligned_mask = cv2.warpPerspective(mask, matrix, (w, h))
+
+        # save aligned mask to temporary file
+        dlg.aligned_mask_path = os.path.join(tempfile.mkdtemp(), 'alignedMask.tiff')
+        if os.path.isfile(dlg.aligned_mask_path):
+            # check if the temporary file already exists
+            os.remove(dlg.aligned_mask_path)
+    
+        cv2.imwrite(dlg.aligned_mask_path, aligned_mask)
+
+        addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.SourceImg_canvas, True) # show aligned mask in side-by-side
+        addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in fullview
 
     # re-center VP
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
