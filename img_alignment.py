@@ -250,7 +250,7 @@ def readCPsfromLayer():
 
     return source_pts, dest_pts
 
-def saveCPs():
+def saveCPs(dlg):
     """Allows user to save set of control points"""
 
     dialog = QFileDialog()
@@ -274,6 +274,8 @@ def saveCPs():
             cp_file.write('%s ' % (coord))
 
     cp_file.close()
+    
+    dlg.refresh_dict["Align"]["CPs"]=cp_filepath
 
 def loadCPs(layer_names, canvases, img_names, table):
     """Allows user to load a set of saved control points"""
@@ -362,13 +364,10 @@ def switchLayer(comboBox, canvas):
     # search list of canvas layers for matching layer
     layer_list = canvas.layers()
     for layer in layer_list:
-        print(layer_name)
-        print(layer.name())
         if layer.name() == layer_name:
             # move selected layer to top
             layer_list.remove(layer)
             layer_list.insert(0, layer)
-            print("Got here")
             break
     canvas.setLayers(layer_list) # reset layer list
 
@@ -520,16 +519,26 @@ def automatedAlignment(dlg):
         enableTools(dlg)
 
     else:
-        print( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
+        errorMessage( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
 
 def saveAlign(dlg):
-    """Saves aligned image to specified location"""
+    """Saves aligned image or mask to specified location"""
 
-    if dlg.aligned_img_path is None:
-        errorMessage("No aligned image")
+    img_to_save = dlg.Layer_comboBox.currentText()
+
+    if img_to_save == "Destination Image":
+        errorMessage("Select aligned image or mask from combo box to save")
         return
-    aligned_img = cv2.imread(dlg.aligned_img_path)
-    align_path = None
+    elif img_to_save == "Aligned Image":
+        if dlg.aligned_img_path is None:
+            errorMessage("No aligned image")
+            return
+        aligned_img = cv2.imread(dlg.aligned_img_path)
+    else:
+        if dlg.aligned_mask_path is None:
+            errorMessage("No aligned mask")
+            return
+        aligned_img = cv2.imread(dlg.aligned_mask_path)
 
     # open save dialog and save aligned image
     dialog = QFileDialog()
@@ -542,3 +551,7 @@ def saveAlign(dlg):
         align_path = dialog.selectedFiles()[0]
 
     cv2.imwrite(align_path, aligned_img)
+    if img_to_save == "Aligned Image":
+        dlg.refresh_dict["Align"]["Img"]=align_path
+    else:
+       dlg.refresh_dict["Align"]["Mask"]=align_path 

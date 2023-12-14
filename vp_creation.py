@@ -137,8 +137,7 @@ def saveCamParam(dlg):
         cam_file.write('%s:%s\n' % (key, value))
 
     cam_file.close()
-
-    dlg.cam_path = cam_filepath
+    dlg.refresh_dict["VP"]["Cam"]=cam_filepath
 
 def moveCam(dlg, dir):
     """Moves camera in space relative to azimuth"""
@@ -486,7 +485,8 @@ def displayVP(dlg):
 def saveVP(dlg):
     """Saves virtual photograph to specified location"""
 
-    if dlg.cam_path is None:
+    # first check that camera parameters have been saved
+    if dlg.refresh_dict["VP"]["Cam"] is None:
         msg = QMessageBox()
         msg.setText("Save latest camera parameters first.")
         msg.exec()
@@ -507,3 +507,4 @@ def saveVP(dlg):
         save_vp_path = dialog.selectedFiles()[0]
 
     cv2.imwrite(save_vp_path, vp)
+    dlg.refresh_dict["VP"]["VP"]=save_vp_path

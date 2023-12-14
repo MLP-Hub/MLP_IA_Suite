@@ -205,6 +205,9 @@ class MLP_IA_Suite:
         if self.first_start == True:
             self.first_start = False
             self.dlg = MLP_IA_SuiteDialog()
+
+        # Create a dictionary with all the elements that should be saved before refreshing
+        self.dlg.refresh_dict = {"PyLC":{"Mask":None},"VP":{"Cam":None,"VP":None},"Align":{"CPs":None, "Img":None, "Mask":None}, "VS":{"VS":None}}
         
         # PYLC TAB 
         self.dlg.PyLC_path = None # initiate variable to hold path to mask (for temp file)
@@ -239,7 +242,6 @@ class MLP_IA_Suite:
         # VP TAB
 
         self.dlg.vp_path = None # initiate variable to hold path to VP (for temp file)
-        self.dlg.cam_path = None # initiate variable to hold path to camera parameters
 
         # Set up line edits (to take appropriate data type)
         numValidator = QDoubleValidator(bottom = 0, notation=QDoubleValidator.StandardNotation) # only allow positive float
@@ -322,7 +324,7 @@ class MLP_IA_Suite:
         
         self.dlg.addCP_button.clicked.connect(lambda: addCPTool(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
         self.dlg.delCP_button.clicked.connect(lambda: delCPTool(self.dlg, canvas_list_3))
-        self.dlg.saveCP_button.clicked.connect(lambda: saveCPs(self.dlg.CP_table))
+        self.dlg.saveCP_button.clicked.connect(lambda: saveCPs(self.dlg))
         self.dlg.loadCP_button.clicked.connect(lambda: loadCPs(["Source CP Layer","Dest CP Layer"], canvas_list_3, name_list, self.dlg.CP_table))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
         self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))

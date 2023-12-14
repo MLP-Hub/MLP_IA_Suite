@@ -28,8 +28,6 @@ from qgis.PyQt.QtGui import QImage, QPixmap
 from qgis.PyQt.QtCore import Qt
 from qgis import processing
 
-from .interface_tools import addImg, loadLayer
-
 import skimage
 import numpy as np
 import math
@@ -37,6 +35,8 @@ import scipy
 import cv2
 import tempfile
 import os
+
+from .interface_tools import errorMessage, loadLayer
 
 def initCamParams(dlg):
     """Read initial camera parameters from text file"""
@@ -290,7 +290,7 @@ def saveVS(dlg):
     ctc=QgsProject.instance().transformContext()
 
     if not pipe.set(provider.clone()):
-        print ("Cannot set pipe provider")
+        errorMessage("Cannot set pipe provider")
 
     file_writer.writeRaster(
         pipe,
@@ -298,3 +298,5 @@ def saveVS(dlg):
         provider.ySize(),
         provider.extent(),
         dest_crs, ctc)
+
+    dlg.refresh_dict["VS"]["VS"]=save_vs_path
