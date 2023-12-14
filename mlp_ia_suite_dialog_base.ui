@@ -40,6 +40,9 @@
        <height>0</height>
       </size>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
@@ -47,7 +50,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -429,10 +432,10 @@ padding: 15px 15px 15px 15px;
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+             <enum>QFrame::NoFrame</enum>
             </property>
             <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+             <enum>QFrame::Plain</enum>
             </property>
             <widget class="QPushButton" name="SingleView_pushButton">
              <property name="enabled">
@@ -741,6 +744,9 @@ border-radius: 4px;
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">background-color: rgb(243, 243, 243);</string>
@@ -2533,10 +2539,10 @@ margin-bottom: -6px;
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+             <enum>QFrame::NoFrame</enum>
             </property>
             <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+             <enum>QFrame::Plain</enum>
             </property>
             <widget class="QToolButton" name="SingleView_pushButton_2">
              <property name="enabled">
@@ -2987,10 +2993,10 @@ border-radius: 4px;
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
+               <enum>QFrame::Plain</enum>
               </property>
               <widget class="QToolButton" name="SideBySide_pushButton_3">
                <property name="enabled">
@@ -4140,7 +4146,7 @@ border-radius: 4px;
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is the final step in the process used to create a classified and spatially referenced viewshed. Load the same digital elevation model and camera parameters that you used for the virtual photograph production. Then, retrieve the &lt;span style=&quot; font-style:italic;&quot;&gt;aligned&lt;/span&gt; mask that you made in the previous step.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is the final step in the process used to create a classified and spatially referenced viewshed. Use a digital &lt;span style=&quot; font-style:italic;&quot;&gt;terrain&lt;/span&gt; model. Load the same camera parameters that you used for the virtual photograph production. Then, retrieve the &lt;span style=&quot; font-style:italic;&quot;&gt;aligned&lt;/span&gt; mask that you made in the previous step.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>

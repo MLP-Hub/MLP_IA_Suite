@@ -422,17 +422,9 @@ def alignImgs(dlg, source_img_path, table):
 
     cv2.imwrite(dlg.aligned_img_path, aligned_img)
 
-    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
-    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
-    removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
-
-    addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in fullview
-
     # add layers to combo box
-    dlg.Layer_comboBox.insertItem(1,"Destination Image")
-    dlg.Layer_comboBox.insertItem(0,"Aligned Image") 
+    dlg.Layer_comboBox.insertItem(1,"Aligned Image") 
+    dlg.Layer_comboBox.insertItem(0,"Destination Image")
 
     # align mask if provided
     if dlg.Mask_lineEdit.text():
@@ -456,6 +448,14 @@ def alignImgs(dlg, source_img_path, table):
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in fullview
 
         dlg.Layer_comboBox.insertItem(0,"Aligned Mask") 
+
+    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
+    removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
+    removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
+    
+    addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
+    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in fullview
+    addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
 
     # re-center VP
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())

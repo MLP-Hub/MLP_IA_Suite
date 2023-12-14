@@ -204,8 +204,8 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     ss_view_button.hide()
     single_view_button.show()
 
-def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button):
-    """Changes dsipaly to single canvas"""
+def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button, reverse):
+    """Changes display to single canvas"""
     
     # change which canvases are visible
     canvas_list[2].raise_()
@@ -215,6 +215,8 @@ def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     # make the layers on the main canvas visible
     lyr_list = canvas_list[1].layers()
     lyr_list.extend(canvas_list[0].layers())
+    if reverse:
+        lyr_list.reverse() # reverse layer order for alignment tab
     for lyr in lyr_list:
         loadLayer(canvas_list[2],lyr)
         

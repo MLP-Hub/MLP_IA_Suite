@@ -24,12 +24,28 @@
 
 """This module contains functions for refreshing each tool page in the plugin"""
 
+from qgis.PyQt.QtWidgets import QMessageBox
+
+def messageBox(item):
+    """Shows message box asking about unsaved items"""
+
+    msgBox = QMessageBox
+    msgBox.setText("{} is not saved.".format(item))
+    msgBox.setInformativeText("Refresh anyway?")
+    msgBox.setStandardButtons(QMessageBox.Yes, QMessageBox.No)
+    msgBox.setDefaultButton(QMessageBox.Yes)
+    ret = msgBox.exec()
+
+    return ret
+
 def refresh_PyLC(dlg):
     """Refresh UI in PyLC tab"""
 
     # first check if mask is saved
-    if dlg.refresh_dict["PyLC"]["Mask"] is None:
-        message = "Refresh without saving mask?"
+    if dlg.refresh_dict["PyLC"]["Mask"] is None and dlg.PyLC_path is not None:
+        ret = messageBox("PyLC mask")
+        if ret == QMessageBox.No:
+            return
 
     # then empty all canvases
     # refresh all text boxes
