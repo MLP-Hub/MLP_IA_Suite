@@ -1256,7 +1256,7 @@ border-color: rgb(255, 255, 255);</string>
                 </font>
                </property>
                <property name="text">
-                <string>Input image(s)</string>
+                <string>Input image</string>
                </property>
               </widget>
              </item>

@@ -119,7 +119,7 @@ def runPylc(dlg, mod_dict):
     # Resize reference image if PyLC was scaled
     scale = float(scale_val)
     if scale != 1.0:
-        ref_img = cv2.imread(dlg.InputImg_lineEdit.text()) # load referenc image
+        ref_img = cv2.imread(dlg.InputImg_lineEdit.text()) # load reference image
         height, width = ref_img.shape[:2]
         dim = (int(scale * width), int(scale * height))
         resized_img = cv2.resize(ref_img, dim, interpolation=cv2.INTER_AREA) # for downscaling an image

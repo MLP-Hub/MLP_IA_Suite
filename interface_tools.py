@@ -51,28 +51,6 @@ def setScaleSlideVal(dlg, val):
     val = int(val*10)
     dlg.Scale_slider.setValue(val)
 
-def getFileFolder(lineEdit):
-    """Allows user to select image file or folder"""
-
-    def _selected(name):
-        """Changes file mode depending on whether current selection is a file or a folder"""
-
-        if os.path.isdir(name):
-            dialog.setFileMode(QFileDialog.Directory)
-        else:
-            dialog.setFileMode(QFileDialog.ExistingFile)
-            dialog.setNameFilter("JPG format (*.jpg);;TIF format (*.tif *.TIF)")
-
-  
-    dialog = QFileDialog()
-    dialog.setFileMode(dialog.ExistingFiles)
-    dialog.setOption(dialog.DontUseNativeDialog)
-    dialog.currentChanged.connect(_selected) #if selection changes from file to folder
-        
-    if dialog.exec_():
-        filepath = dialog.selectedFiles()
-        lineEdit.setText(filepath[0])
-
 def getFolder(lineEdit):
     """Select folder (usually output directory)"""
 

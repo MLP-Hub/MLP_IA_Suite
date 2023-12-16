@@ -35,7 +35,7 @@ from .pylc_setup import modelMenu, runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer
 from .vs_creation import displayVS, saveVS
-from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
+from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .refresh import refresh_PyLC
 
 import os.path
@@ -209,8 +209,8 @@ class MLP_IA_Suite:
         self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value()))
         self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text()))
 
-        # Get file/folder inputs
-        self.dlg.InputImg_button.clicked.connect(lambda: getFileFolder(self.dlg.InputImg_lineEdit))
+        # Get file inputs
+        self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit))
 
         # Run PyLC and display outputs
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
