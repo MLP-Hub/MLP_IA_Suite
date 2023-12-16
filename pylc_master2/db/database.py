@@ -14,7 +14,7 @@ File: database.py
 import json
 import os
 import math
-#import h5py
+import h5py
 import numpy as np
 from config import defaults
 from utils.tools import confirm_write_file

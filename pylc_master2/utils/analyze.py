@@ -15,7 +15,7 @@ File: analyze.py
 import os, sys, glob, math, json
 import numpy as np
 import torch
-#import h5py
+import h5py
 import random
 from random import shuffle
 import cv2
