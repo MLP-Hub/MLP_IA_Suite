@@ -348,7 +348,7 @@ def createVP(dlg):
 
     # Read DEM from user input
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
-    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
+    DEM_layer = QgsRasterLayer(DEM_path, "VP_DEM")
     if DEM_layer is None:
         errorMessage('Invalid DEM file')
         return

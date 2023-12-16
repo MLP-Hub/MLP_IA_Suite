@@ -38,17 +38,7 @@ from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFileFolder, getFolder, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .refresh import refresh_PyLC
 
-import sys
 import os.path
-import subprocess
-
-
-
-# Install requirements for pylc.py
-#MAKE SURE TO CHECK IF ALREADY INSTALLED AND WARN USERS ABOUT DEPENDENCIES
-#bat_path = os.path.join(this_dir, 'pylc_master\pylc_env.bat')
-#bat_path="C:\Thesis\QGIS_Plugin\pylc_env.bat"
-#subprocess.call([r"C:\Thesis\QGIS_Plugin\pylc_env.bat"]) #THIS SEEMS TO BE WORKING NOW
 
 class MLP_IA_Suite:
     """QGIS Plugin Implementation."""

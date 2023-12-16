@@ -37,6 +37,7 @@ import tempfile
 import os
 
 from .interface_tools import errorMessage, loadLayer
+from .vp_creation import reprojectDEM
 
 def initCamParams(dlg):
     """Read initial camera parameters from text file"""
@@ -48,13 +49,17 @@ def initCamParams(dlg):
     # read camera parameters from file
     cam_params = {}
 
-    for line in cam_file:
-        (key, val) = line.split(":")
-        cam_params[key] = val
-        if cam_params[key] != 'None\n':
-            cam_params[key] = float(val)
-        else:
-            cam_params[key]=None # set elevation to None if not provided
+    try:
+        for line in cam_file:
+            (key, val) = line.split(":")
+            cam_params[key] = val
+            if cam_params[key] != 'None\n':
+                cam_params[key] = float(val)
+            else:
+                cam_params[key]=None # set elevation to None if not provided
+    except ValueError:
+        errorMessage("Incorrect value or formatting in input camera parameters.")
+        return
 
     cam_file.close()
 
@@ -95,17 +100,37 @@ def closest_argmin(A, B):
 def drawViewshed(dlg):
     """Get real world coordinates for each pixel in the mask"""
 
+    # read the camera parameters from provided text file
+    cam_params = initCamParams(dlg) 
+    if cam_params is None:
+        return
+    
     # read DEM from user input
     DEM_path = os.path.realpath(dlg.DEM_lineEdit.text())
-    DEM_layer = QgsRasterLayer(DEM_path, "DEM")
-    DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
+    DEM_layer = QgsRasterLayer(DEM_path, "VS_DEM")
+    if DEM_layer is None:
+        errorMessage('Invalid DEM file')
+        return
+    DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
+    
+    # Check that DEM has appropriate CRS
+    source_crs = DEM_layer.crs() # get current CRS
+    if source_crs.mapUnits() != 0:
+        # if CRS is not in meters
+        try:
+            DEM_path, DEM_layer = reprojectDEM(DEM_layer)
+        except TypeError:
+            return
 
+    # check camera is on DEM
+    ex = DEM_layer.extent()
+    if ex.yMaximum() < float(cam_params['lat']) < ex.yMinimum() or ex.xMaximum() < float(cam_params['lat']) < ex.xMinimum():
+        errorMessage("Camera off DEM")
+        return
+    
     # read mask from user input
     mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     mask = cv2.imread(mask_path)
-
-    # read the camera parameters from provided text file
-    cam_params = initCamParams(dlg) 
 
     img_h, img_w, *_ = mask.shape # get height and width of mask
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(DEM_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
@@ -179,7 +204,6 @@ def createVSLayer(vs_path, DEM_lyr):
     ext_list = ["-a_ullr",str(ext.xMinimum()),str(ext.yMaximum()),str(ext.xMaximum()), str(ext.yMinimum())]
     ullr = " ".join(ext_list)
 
-
     PARAMS = { 'COPY_SUBDATASETS' : False, 
               'DATA_TYPE' : 0, 
               'EXTRA' : ullr, 
@@ -214,11 +238,9 @@ def showMask(dlg):
     mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     aligned_mask = QImage(mask_path)
     w,h = aligned_mask.width(), aligned_mask.height() # get mask dimensions
-    #rect = aligned_mask.rect()
 
     pic = QGraphicsPixmapItem()
     pic.setPixmap(QPixmap.fromImage(aligned_mask))
-    #scene.setSceneRect(0,0,w,h)
     scene.addItem(pic)
 
     dlg.Mask_graphic.fitInView(0,0,w,h, Qt.KeepAspectRatio)
@@ -237,7 +259,8 @@ def displayVS(dlg):
     vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
     
     if vs is None:
-        # break if create VP did not work
+        # break if create VS did not work
+        errorMessage("Viewshed creation failed.")
         return
     
     # save vs to temp path
