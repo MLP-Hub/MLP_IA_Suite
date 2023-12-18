@@ -210,8 +210,8 @@ class MLP_IA_Suite:
         self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text()))
 
         # Get file inputs
-        self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit))
-
+        self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        
         # Run PyLC and display outputs
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
         self.dlg.PyLC_Save_pushButton.clicked.connect(lambda: saveMask(self.dlg))
@@ -333,7 +333,7 @@ class MLP_IA_Suite:
         self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_4)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
         self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_3))
-        self.dlg.Layer_comboBox.activated.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3))
+        self.dlg.Layer_comboBox.activated.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3, self.dlg.SourceImg_canvas))
 
         # VS TAB
 

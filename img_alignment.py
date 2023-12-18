@@ -357,19 +357,30 @@ def enableTools(dlg):
     dlg.Fit_toolButton_3.setEnabled(True)
     dlg.Pan_toolButton_3.setEnabled(True)
 
-def switchLayer(comboBox, canvas):
+    if dlg.Mask_lineEdit.text():
+        dlg.Layer_comboBox.setEnabled(True)
+
+def switchLayer(comboBox, main_canvas, side_canvas):
     """Switches which image is on top"""
 
     layer_name = comboBox.currentText() # find selected layer from combo box
-    # search list of canvas layers for matching layer
-    layer_list = canvas.layers()
-    for layer in layer_list:
-        if layer.name() == layer_name:
-            # move selected layer to top
-            layer_list.remove(layer)
-            layer_list.insert(0, layer)
-            break
-    canvas.setLayers(layer_list) # reset layer list
+
+    # access canvas layers
+    al_img = QgsProject.instance().mapLayersByName('Aligned Image')[0]
+    al_mask = QgsProject.instance().mapLayersByName('Aligned Mask')[0]
+    ref_img = QgsProject.instance().mapLayersByName('Destination Image')[0]
+
+    # reorder layers
+    if layer_name == "Aligned Image":
+        main_list = [al_img, ref_img, al_mask]
+        side_list = [al_img, al_mask]
+    else:
+        main_list = [al_mask, ref_img, al_img]
+        side_list = [al_mask, al_img]
+
+    # reset layer list in side-by-side and single view
+    main_canvas.setLayers(main_list) 
+    side_canvas.setLayers(side_list)
 
 def alignImgs(dlg, source_img_path, table):
     """Aligns images using perspective transformation"""
@@ -389,9 +400,6 @@ def alignImgs(dlg, source_img_path, table):
 
     source_pts_array = np.float32(source_pts)
     dest_pts_array = np.float32(dest_pts)
-
-    # source_pts_good = np.float32(source_pts)
-    # dest_pts_good = np.float32(dest_pts)
 
     # get best control points based on homography and RANSAC method
     homography, cp_mask = cv2.findHomography(source_pts_array, dest_pts_array, cv2.RANSAC,5.0)
@@ -422,10 +430,6 @@ def alignImgs(dlg, source_img_path, table):
 
     cv2.imwrite(dlg.aligned_img_path, aligned_img)
 
-    # add layers to combo box
-    dlg.Layer_comboBox.insertItem(1,"Aligned Image") 
-    dlg.Layer_comboBox.insertItem(0,"Destination Image")
-
     # align mask if provided
     if dlg.Mask_lineEdit.text():
         mask = cv2.imread(dlg.Mask_lineEdit.text())
@@ -445,16 +449,18 @@ def alignImgs(dlg, source_img_path, table):
         cv2.imwrite(dlg.aligned_mask_path, aligned_mask)
 
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.SourceImg_canvas, True) # show aligned mask in side-by-side
-        addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in fullview
-
-        dlg.Layer_comboBox.insertItem(0,"Aligned Mask") 
+        addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in full view
+        
+        # add layers to combo box
+        dlg.Layer_comboBox.insertItem(0,"Aligned Mask")
+        dlg.Layer_comboBox.insertItem(0,"Aligned Image")  
 
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
     removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
     
     addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in fullview
+    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in full view
     addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
 
     # re-center VP

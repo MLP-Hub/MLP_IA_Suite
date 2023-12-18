@@ -50,7 +50,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -1620,43 +1620,6 @@ margin-bottom: -6px;
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="QPushButton" name="LoadDEM_button">
-             <property name="toolTip">
-              <string>Load reference data</string>
-             </property>
-             <property name="whatsThis">
-              <string/>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(243, 243, 243);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>Icons/load_icon.png</normaloff>Icons/load_icon.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="SaveDEM_button">
-             <property name="toolTip">
-              <string>Save reference data</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(243, 243, 243);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>Icons/save_icon.png</normaloff>Icons/save_icon.png</iconset>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
@@ -2972,11 +2935,17 @@ border-radius: 4px;
             <number>0</number>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="spacing">
+             <number>3</number>
+            </property>
             <property name="leftMargin">
              <number>5</number>
             </property>
             <property name="topMargin">
              <number>5</number>
+            </property>
+            <property name="rightMargin">
+             <number>11</number>
             </property>
             <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
              <widget class="QFrame" name="frame">
@@ -3145,6 +3114,19 @@ border-radius: 4px;
              </widget>
             </item>
             <item>
+             <widget class="QComboBox" name="Layer_comboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="Line" name="line_4">
               <property name="styleSheet">
                <string notr="true">color: rgba(255, 255, 255, 0);</string>
@@ -3160,6 +3142,12 @@ border-radius: 4px;
                <bool>false</bool>
               </property>
               <property name="minimumSize">
+               <size>
+                <width>29</width>
+                <height>29</height>
+               </size>
+              </property>
+              <property name="maximumSize">
                <size>
                 <width>29</width>
                 <height>29</height>
@@ -3207,6 +3195,12 @@ border-radius: 4px;
                <bool>false</bool>
               </property>
               <property name="minimumSize">
+               <size>
+                <width>29</width>
+                <height>29</height>
+               </size>
+              </property>
+              <property name="maximumSize">
                <size>
                 <width>29</width>
                 <height>29</height>
@@ -3321,16 +3315,6 @@ border-radius: 4px;
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="Layer_comboBox">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>0</height>
-               </size>
               </property>
              </widget>
             </item>

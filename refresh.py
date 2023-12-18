@@ -29,11 +29,12 @@ from qgis.PyQt.QtWidgets import QMessageBox
 def messageBox(item):
     """Shows message box asking about unsaved items"""
 
-    msgBox = QMessageBox
+    msgBox = QMessageBox()
     msgBox.setText("{} is not saved.".format(item))
     msgBox.setInformativeText("Refresh anyway?")
-    msgBox.setStandardButtons(QMessageBox.Yes, QMessageBox.No)
-    msgBox.setDefaultButton(QMessageBox.Yes)
+    msgBox.setStandardButtons(QMessageBox.Yes)
+    msgBox.addButton(QMessageBox.No)
+    msgBox.setDefaultButton(QMessageBox.No)
     ret = msgBox.exec()
 
     return ret
@@ -41,13 +42,15 @@ def messageBox(item):
 def refresh_PyLC(dlg):
     """Refresh UI in PyLC tab"""
 
-    # first check if mask is saved
+    # check if mask is saved
     if dlg.refresh_dict["PyLC"]["Mask"] is None and dlg.PyLC_path is not None:
         ret = messageBox("PyLC mask")
         if ret == QMessageBox.No:
             return
 
     # then empty all canvases
+    
+
     # refresh all text boxes
 
     # refresh save filepaths
