@@ -532,10 +532,7 @@ def saveAlign(dlg):
 
     img_to_save = dlg.Layer_comboBox.currentText()
 
-    if img_to_save == "Destination Image":
-        errorMessage("Select aligned image or mask from combo box to save")
-        return
-    elif img_to_save == "Aligned Image":
+    if img_to_save == "" or img_to_save == "Aligned Image":
         if dlg.aligned_img_path is None:
             errorMessage("No aligned image")
             return
@@ -555,9 +552,9 @@ def saveAlign(dlg):
 
     if dialog.exec_():
         align_path = dialog.selectedFiles()[0]
-
-    cv2.imwrite(align_path, aligned_img)
-    if img_to_save == "Aligned Image":
-        dlg.refresh_dict["Align"]["Img"]=align_path
-    else:
-       dlg.refresh_dict["Align"]["Mask"]=align_path 
+        cv2.imwrite(align_path, aligned_img)
+    
+        if img_to_save == "Aligned Image":
+            dlg.refresh_dict["Align"]["Img"]=align_path
+        else:
+            dlg.refresh_dict["Align"]["Mask"]=align_path 

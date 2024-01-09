@@ -155,5 +155,5 @@ def saveMask(dlg):
     if dialog.exec_():
         mask_path = dialog.selectedFiles()[0]
 
-    cv2.imwrite(mask_path, mask)
-    dlg.refresh_dict["PyLC"]["Mask"]=mask_path
+        cv2.imwrite(mask_path, mask)
+        dlg.refresh_dict["PyLC"]["Mask"]=mask_path

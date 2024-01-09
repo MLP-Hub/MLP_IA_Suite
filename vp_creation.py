@@ -506,5 +506,5 @@ def saveVP(dlg):
     if dialog.exec_():
         save_vp_path = dialog.selectedFiles()[0]
 
-    cv2.imwrite(save_vp_path, vp)
-    dlg.refresh_dict["VP"]["VP"]=save_vp_path
+        cv2.imwrite(save_vp_path, vp)
+        dlg.refresh_dict["VP"]["VP"]=save_vp_path
