@@ -26,6 +26,8 @@
 
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from qgis.core import QgsProject
+
 def messageBox(item):
     """Shows message box asking about unsaved items"""
 
@@ -39,7 +41,7 @@ def messageBox(item):
 
     return ret
 
-def refresh_PyLC(dlg):
+def refresh_PyLC(dlg, canvas_list):
     """Refresh UI in PyLC tab"""
 
     # check if mask is saved
@@ -49,40 +51,54 @@ def refresh_PyLC(dlg):
             return
 
     # then empty all canvases
-    
+    for canvas in canvas_list:
+        lyrs = canvas.layers()
+        for lyr in lyrs:
+            QgsProject.instance().removeMapLayer(lyr)
+        canvas.setLayers([])
+        canvas.refreshAllLayers()
 
     # refresh all text boxes
+    dlg.InputImg_lineEdit.clear()
+
+    # refresh any other widgets
+    dlg.Model_comboBox.setCurrentIndex(0)
+    dlg.Scale_slider.setValue(10)
+    dlg.Scale_lineEdit.setText("1.0")
 
     # refresh save filepaths
+    dlg.refresh_dict["PyLC"]["Mask"]=None
+    dlg.PyLC_path = None
 
-def refresh_VP(dlg):
-    """Refresh UI in VP tab"""
 
-    # first check if all products are saved
-    # camera parameters, VP
+# def refresh_VP(dlg):
+#     """Refresh UI in VP tab"""
 
-    # then empty all canvases
-    # refresh all text boxes
+#     # first check if all products are saved
+#     # camera parameters, VP
 
-    # refresh save filepaths
+#     # then empty all canvases
+#     # refresh all text boxes
 
-def refresh_align(dlg):
-    """Refresh UI in align tab"""
+#     # refresh save filepaths
 
-    # first check if all products are saved
-    # CPs, aligned image, aligned mask if available
+# def refresh_align(dlg):
+#     """Refresh UI in align tab"""
 
-    # then empty all canvases
-    # refresh all text boxes
+#     # first check if all products are saved
+#     # CPs, aligned image, aligned mask if available
 
-    # refresh save filepaths
+#     # then empty all canvases
+#     # refresh all text boxes
 
-def refresh_VS(dlg):
-    """Refresh UI in VS tab"""
+#     # refresh save filepaths
 
-    # first check if VS is saved
+# def refresh_VS(dlg):
+#     """Refresh UI in VS tab"""
 
-    # then empty all canvases
-    # refresh all text boxes
+#     # first check if VS is saved
 
-    # refresh save filepaths
+#     # then empty all canvases
+#     # refresh all text boxes
+
+#     # refresh save filepaths

@@ -224,13 +224,13 @@ class MLP_IA_Suite:
         self.dlg.SideBySide_pushButton.hide() # hide side by side view button to start
         canvas_list_1 = [self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas, self.dlg.Full_mapCanvas]
         self.dlg.SideBySide_pushButton.clicked.connect(lambda: sideBySide(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
-        self.dlg.SingleView_pushButton.clicked.connect(lambda: singleView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton, False))
+        self.dlg.SingleView_pushButton.clicked.connect(lambda: singleView(canvas_list_1, [self.dlg.Swipe_toolButton, self.dlg.Transparency_slider], self.dlg.SideBySide_pushButton, self.dlg.SingleView_pushButton))
         self.dlg.Pan_toolButton.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_1, self.dlg.Pan_toolButton, self.dlg.Swipe_toolButton))
         self.dlg.Fit_toolButton.clicked.connect(lambda: zoomToExt(canvas_list_1)) # Zoom to mask extent
         self.dlg.Swipe_toolButton.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas, self.dlg.Swipe_toolButton, self.dlg.Pan_toolButton))
         self.dlg.Transparency_slider.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider.value(), self.dlg.Full_mapCanvas))
 
-        self.dlg.PyLC_refresh.clicked.connect(lambda: refresh_PyLC(self.dlg))
+        self.dlg.PyLC_refresh.clicked.connect(lambda: refresh_PyLC(self.dlg, canvas_list_1))
 
         # VP TAB
 
@@ -290,7 +290,7 @@ class MLP_IA_Suite:
         self.dlg.SideBySide_pushButton_2.hide() # hide side by side view button to start
         canvas_list_2 = [self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas, self.dlg.Full_mapCanvas_2]
         self.dlg.SideBySide_pushButton_2.clicked.connect(lambda: sideBySide(canvas_list_2, [self.dlg.Swipe_toolButton_2, self.dlg.Transparency_slider_2],self.dlg.SideBySide_pushButton_2, self.dlg.SingleView_pushButton_2))
-        self.dlg.SingleView_pushButton_2.clicked.connect(lambda: singleView(canvas_list_2, [self.dlg.Swipe_toolButton_2, self.dlg.Transparency_slider_2],self.dlg.SideBySide_pushButton_2, self.dlg.SingleView_pushButton_2, False))
+        self.dlg.SingleView_pushButton_2.clicked.connect(lambda: singleView(canvas_list_2, [self.dlg.Swipe_toolButton_2, self.dlg.Transparency_slider_2],self.dlg.SideBySide_pushButton_2, self.dlg.SingleView_pushButton_2))
         self.dlg.Pan_toolButton_2.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_2, self.dlg.Pan_toolButton_2, self.dlg.Swipe_toolButton_2))
         self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list_2)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_2.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_2, self.dlg.Swipe_toolButton_2, self.dlg.Pan_toolButton_2))
@@ -328,7 +328,7 @@ class MLP_IA_Suite:
         self.dlg.SideBySide_pushButton_3.hide() # hide side by side view button to start
         canvas_list_4 = [self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas,self.dlg.Full_mapCanvas_3]
         self.dlg.SideBySide_pushButton_3.clicked.connect(lambda: sideBySide(canvas_list_4, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3],self.dlg.SideBySide_pushButton_3, self.dlg.SingleView_pushButton_3))
-        self.dlg.SingleView_pushButton_3.clicked.connect(lambda: singleView(canvas_list_4, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3],self.dlg.SideBySide_pushButton_3, self.dlg.SingleView_pushButton_3, True))
+        self.dlg.SingleView_pushButton_3.clicked.connect(lambda: singleView(canvas_list_4, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3],self.dlg.SideBySide_pushButton_3, self.dlg.SingleView_pushButton_3))
         self.dlg.Pan_toolButton_3.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_4, self.dlg.Pan_toolButton_3, self.dlg.Swipe_toolButton_3))
         self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_4)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
