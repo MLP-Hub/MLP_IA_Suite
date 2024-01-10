@@ -242,7 +242,10 @@ def readCPsfromLayer():
         pt = [feat.geometry().asPoint().x(), abs(feat.geometry().asPoint().y())]
         source_pts.append(pt)
 
-    dest_layer = QgsProject.instance().mapLayersByName("Dest CP Layer")[0] # get CP vector layer
+    try:
+        dest_layer = QgsProject.instance().mapLayersByName("Dest CP Layer")[0] # get CP vector layer
+    except IndexError:
+        return [], []
 
     for feat in dest_layer.getFeatures():
         pt = [feat.geometry().asPoint().x(), abs(feat.geometry().asPoint().y())]

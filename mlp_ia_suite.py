@@ -36,7 +36,7 @@ from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeig
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
-from .refresh import refresh_PyLC, refresh_VP
+from .refresh import refresh_PyLC, refresh_VP, refresh_align
 
 import os.path
 
@@ -336,6 +336,8 @@ class MLP_IA_Suite:
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
         self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_3))
         self.dlg.Layer_comboBox.activated.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3, self.dlg.SourceImg_canvas))
+
+        self.dlg.Align_refresh.clicked.connect(lambda: refresh_align(self.dlg, canvas_list_4))
 
         # VS TAB
 
