@@ -36,7 +36,7 @@ from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeig
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
-from .refresh import refresh_PyLC, refresh_VP, refresh_align
+from .refresh import refresh_PyLC, refresh_VP, refresh_align, refresh_VS
 
 import os.path
 
@@ -352,13 +352,14 @@ class MLP_IA_Suite:
         self.dlg.VS_Run_pushButton.clicked.connect(lambda: displayVS(self.dlg))
         self.dlg.VS_Save_pushButton.clicked.connect(lambda: saveVS(self.dlg))
 
-        # Connect tools to appropriate functions (VP tab)
-        self.dlg.SideBySide_pushButton_2.hide() # hide side by side view button to start
+        # Connect tools to appropriate functions (VS tab)
         canvas_list_5 = [self.dlg.VS_mapCanvas]
         self.dlg.Pan_toolButton_4.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_5, self.dlg.Pan_toolButton_4, self.dlg.Swipe_toolButton_4))
         self.dlg.Fit_toolButton_4.clicked.connect(lambda: zoomToExt(canvas_list_5)) # Zoom to viewshed extent
         self.dlg.Swipe_toolButton_4.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.VS_mapCanvas, self.dlg.Swipe_toolButton_4, self.dlg.Pan_toolButton_4))
         self.dlg.Transparency_slider_4.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_4.value(), self.dlg.VS_mapCanvas))
+
+        self.dlg.VS_refresh.clicked.connect(lambda: refresh_VS(self.dlg, canvas_list_5))
 
         # SHOW THE DIALOG
         self.dlg.show()

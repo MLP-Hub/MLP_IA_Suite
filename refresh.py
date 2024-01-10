@@ -223,12 +223,33 @@ def refresh_align(dlg, canvas_list):
     dlg.aligned_img_path = None
     dlg.aligned_mask_path = None
 
-# def refresh_VS(dlg):
-#     """Refresh UI in VS tab"""
+def refresh_VS(dlg, canvas_list):
+    """Refresh UI in VS tab"""
 
-#     # first check if VS is saved
+    # first check if VS is saved
+    if dlg.refresh_dict["VS"]["VS"] is None and dlg.vs_path is not None:
+        ret = messageBox("Viewshed")
+        if ret == QMessageBox.No:
+            return
 
-#     # then empty all canvases
-#     # refresh all text boxes
+    # then empty all canvases
+    emptyCanvases(canvas_list)
+    try:
+        dlg.Mask_graphic.scene().clear()
+    except AttributeError:
+        pass
+        
+    # refresh all text boxes
+    dlg.DEM_lineEdit.clear()
+    dlg.AlignMask_lineEdit.clear()
+    dlg.CamParam_lineEdit.clear()
 
-#     # refresh save filepaths
+    # deactivate tools
+    dlg.Transparency_slider_4.setEnabled(False)
+    dlg.Swipe_toolButton_4.setEnabled(False)
+    dlg.Fit_toolButton_4.setEnabled(False)
+    dlg.Pan_toolButton_4.setEnabled(False)
+
+    # refresh save filepaths
+    dlg.refresh_dict["VS"]["VS"] = None
+    dlg.vs_path = None
