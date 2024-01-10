@@ -28,6 +28,8 @@ from qgis.PyQt.QtWidgets import QMessageBox
 
 from qgis.core import QgsProject
 
+from .interface_tools import sideBySide
+
 def messageBox(item):
     """Shows message box asking about unsaved items"""
 
@@ -36,10 +38,20 @@ def messageBox(item):
     msgBox.setInformativeText("Refresh anyway?")
     msgBox.setStandardButtons(QMessageBox.Yes)
     msgBox.addButton(QMessageBox.No)
-    msgBox.setDefaultButton(QMessageBox.No)
+    #msgBox.setDefaultButton(QMessageBox.No)
     ret = msgBox.exec()
 
     return ret
+
+def emptyCanvases(canvas_list):
+    """Removes all layers from provided canvases and from underlying project"""
+
+    for canvas in canvas_list:
+        lyrs = canvas.layers()
+        for lyr in lyrs:
+            QgsProject.instance().removeMapLayer(lyr)
+        canvas.setLayers([])
+        canvas.refreshAllLayers()
 
 def refresh_PyLC(dlg, canvas_list):
     """Refresh UI in PyLC tab"""
@@ -51,12 +63,7 @@ def refresh_PyLC(dlg, canvas_list):
             return
 
     # then empty all canvases
-    for canvas in canvas_list:
-        lyrs = canvas.layers()
-        for lyr in lyrs:
-            QgsProject.instance().removeMapLayer(lyr)
-        canvas.setLayers([])
-        canvas.refreshAllLayers()
+    emptyCanvases(canvas_list)
 
     # refresh all text boxes
     dlg.InputImg_lineEdit.clear()
@@ -66,21 +73,67 @@ def refresh_PyLC(dlg, canvas_list):
     dlg.Scale_slider.setValue(10)
     dlg.Scale_lineEdit.setText("1.0")
 
-    # refresh save filepaths
+    # deactivate tools
+    dlg.SideBySide_pushButton.setEnabled(False)
+    dlg.SingleView_pushButton.setEnabled(False)
+    dlg.Fit_toolButton.setEnabled(False)
+    dlg.Pan_toolButton.setEnabled(False)
+
+    # return to side-by-side view
+    sideBySide(canvas_list, [dlg.Swipe_toolButton, dlg.Transparency_slider], dlg.SideBySide_pushButton, dlg.SingleView_pushButton)
+    dlg.SideBySide_pushButton.hide() # hide side by side view button
+
+    # refresh defaults and save filepaths
     dlg.refresh_dict["PyLC"]["Mask"]=None
     dlg.PyLC_path = None
 
 
-# def refresh_VP(dlg):
-#     """Refresh UI in VP tab"""
+def refresh_VP(dlg, canvas_list):
+    """Refresh UI in VP tab"""
 
-#     # first check if all products are saved
-#     # camera parameters, VP
+    # first check if camera parameters and VP are saved
+    if dlg.refresh_dict["VP"]["Cam"] is None:
+        ret = messageBox("Camera parameters")
+        if ret == QMessageBox.No:
+            return
+        
+    if dlg.refresh_dict["VP"]["VP"] is None and dlg.vp_path is not None:
+        ret = messageBox("Virtual photograph")
+        if ret == QMessageBox.No:
+            return
+      
+    # then empty all canvases
+    emptyCanvases(canvas_list)
+        
+    # refresh all text boxes
+    dlg.InputDEM_lineEdit.clear()
+    dlg.InputRefImg_lineEdit.clear()
+    dlg.Easting_lineEdit.clear()
+    dlg.Elev_lineEdit.clear()
+    dlg.Azi_lineEdit.clear()
+    dlg.Northing_lineEdit.clear()
+    dlg.CamHgt_lineEdit.clear()
+    dlg.horFOV_lineEdit.clear()
+    dlg.StepSizeM_lineEdit.setText("1")
+    dlg.StepSizeDeg_lineEdit.setText("1")
 
-#     # then empty all canvases
-#     # refresh all text boxes
+    # deactivate tools
+    dlg.SideBySide_pushButton_2.setEnabled(False)
+    dlg.SingleView_pushButton_2.setEnabled(False)
+    dlg.Fit_toolButton_2.setEnabled(False)
+    dlg.Pan_toolButton_2.setEnabled(False)
 
-#     # refresh save filepaths
+    # return to side-by-side view
+    sideBySide(canvas_list, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
+    dlg.SideBySide_pushButton_2.hide() # hide side by side view button
+
+    # refresh defaults and save filepaths
+    dlg.vp_path = None
+    dlg.lat_init = None # initial lat and long for DEM clipping
+    dlg.lon_init = None
+
+    dlg.refresh_dict["VP"]["VP"] = None
+    dlg.refresh_dict["VP"]["Cam"] = None
 
 # def refresh_align(dlg):
 #     """Refresh UI in align tab"""

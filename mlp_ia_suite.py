@@ -36,7 +36,7 @@ from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeig
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer
 from .vs_creation import displayVS, saveVS
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
-from .refresh import refresh_PyLC
+from .refresh import refresh_PyLC, refresh_VP
 
 import os.path
 
@@ -295,6 +295,8 @@ class MLP_IA_Suite:
         self.dlg.Fit_toolButton_2.clicked.connect(lambda: zoomToExt(canvas_list_2)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_2.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_2, self.dlg.Swipe_toolButton_2, self.dlg.Pan_toolButton_2))
         self.dlg.Transparency_slider_2.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_2.value(), self.dlg.Full_mapCanvas_2))
+
+        self.dlg.VP_refresh.clicked.connect(lambda: refresh_VP(self.dlg, canvas_list_2))
 
         # Image Alignment Tab
 

@@ -2802,7 +2802,7 @@ border-radius: 4px;
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="VS_refresh_2">
+           <widget class="QPushButton" name="VP_refresh">
             <property name="maximumSize">
              <size>
               <width>100</width>
