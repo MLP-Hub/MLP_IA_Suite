@@ -190,6 +190,7 @@ def delCPTool(dlg, canvas_list):
         dlg.delTool1 = QgsMapToolIdentifyFeature(canvas_list[0])
         dlg.delTool1.setLayer(vl1)
         canvas_list[0].setMapTool(dlg.delTool1)
+        dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))    # connect delete tools to delete function
     
     vl2 = canvas_list[1].layers()[0] # get CP layer for canvas (should always be top layer)
     
@@ -197,10 +198,7 @@ def delCPTool(dlg, canvas_list):
         dlg.delTool2 = QgsMapToolIdentifyFeature(canvas_list[1])
         dlg.delTool2.setLayer(vl2)
         canvas_list[1].setMapTool(dlg.delTool2)
-
-    # connect delete tools to delete function
-    dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
-    dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))
+        dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))    # connect delete tools to delete function
 
 def clearSelection(canvas_list):
     """Clears any selected CPs"""
@@ -472,63 +470,20 @@ def alignImgs(dlg, source_img_path, table):
 
     enableTools(dlg)
 
-def automatedAlignment(dlg):
-    """Test function for automated image alignment"""
-    MIN_MATCH_COUNT = 10
+def undoAlign(dlg):
+    """Undoes alignment and re-instates control points but keeps info in CP table"""
 
-    # source_img = cv2.imread(dlg.SourceImg_lineEdit.text(), cv2.IMREAD_GRAYSCALE) # queryImage
-    # dest_img = cv2.imread(dlg.DestImg_lineEdit.text(), cv2.IMREAD_GRAYSCALE) # trainImage
-    img1 = cv2.imread(dlg.SourceImg_lineEdit.text()) # queryImage
-    img2 = cv2.imread(dlg.DestImg_lineEdit.text()) # trainImage
+    # access canvas layers
+    source_cps = QgsProject.instance().mapLayersByName('Source CP Layer')[0]
+    dest_cps = QgsProject.instance().mapLayersByName('Dest CP Layer')[0]
+    source_img = QgsProject.instance().mapLayersByName('Source Image')[0]
+    dest_img = QgsProject.instance().mapLayersByName('Destination Image')[0]
 
-    # Initiate SIFT detector
-    sift = cv2.SIFT_create()
-    # find the keypoints and descriptors with SIFT
-    kp1, des1 = sift.detectAndCompute(img1,None)
-    kp2, des2 = sift.detectAndCompute(img2,None)
-    
-    FLANN_INDEX_KDTREE = 1
-    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-    search_params = dict(checks = 50)
-    flann = cv2.FlannBasedMatcher(index_params, search_params)
-    matches = flann.knnMatch(des1,des2,k=2)
-    
-    # store all the good matches as per Lowe's ratio test.
-    good = []
-    for m,n in matches:
-        if m.distance < 0.7*n.distance:
-            good.append(m)
+    # reset layer list in side-by-side and single view
+    dlg.Full_mapCanvas_3.setLayers([]) 
+    dlg.SourceImg_canvas.setLayers([source_cps, source_img])
+    dlg.DestImg_canvas.setLayers([dest_cps, dest_img])
 
-    if len(good)>MIN_MATCH_COUNT:
-        src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
-        dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
-    
-        matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
-        h,w = img2.shape[:2]
-
-        aligned_img = cv2.warpPerspective(img1, matrix, (w, h))
-        
-        # save aligned image to temporary file
-        img_path = os.path.join(tempfile.mkdtemp(), 'alignedImg.tiff')
-        if os.path.isfile(img_path):
-            # check if the temporary file already exists
-            os.remove(img_path)
-    
-        cv2.imwrite(img_path, aligned_img)
-        
-        removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the original image
-        addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
-        addImg(img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-        addImg(img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show output mask in fullview
-
-        # re-center VP
-        dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
-        dlg.DestImg_canvas.refresh()
-
-        enableTools(dlg)
-
-    else:
-        errorMessage( "Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT) )
 
 def saveAlign(dlg):
     """Saves aligned image or mask to specified location"""

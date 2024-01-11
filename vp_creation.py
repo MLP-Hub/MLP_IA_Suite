@@ -23,6 +23,7 @@
 """
 
 from .interface_tools import addImg
+from .refresh import messageBox
 
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
 from qgis.PyQt.QtCore import Qt
@@ -341,6 +342,12 @@ def camXY(hillshade_layer, lat, lon):
 
 def createVP(dlg):
     """Creates virtual photograph""" 
+
+    # checks if VP exists but hasn't been saved
+    if dlg.refresh_dict["VP"]["VP"] is None and dlg.vp_path is not None:
+        ret = messageBox("Virtual photograph")
+        if ret == QMessageBox.No:
+            return
     
     cam_params = readCamParams(dlg) # read camera parameters
     if cam_params is None:

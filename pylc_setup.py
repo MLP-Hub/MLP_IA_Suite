@@ -22,10 +22,10 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox
 
 from .interface_tools import addImg, errorMessage
-from .refresh import refresh_PyLC
+from .refresh import messageBox
 
 import cv2
 import tempfile
@@ -108,6 +108,12 @@ def enableTools(dlg):
 
 def runPylc(dlg, mod_dict):
     """Runs pylc and displays outputs"""
+
+    # check if mask exists in tempfile but was not saved
+    if dlg.refresh_dict["PyLC"]["Mask"] is None and dlg.PyLC_path is not None:
+        ret = messageBox("PyLC mask")
+        if ret == QMessageBox.No:
+            return
 
     pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
     if pylc_args is None:

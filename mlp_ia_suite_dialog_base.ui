@@ -3796,6 +3796,21 @@ border-radius: 4px;
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="UndoAlign_button">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(243, 243, 243);</string>
+                 </property>
+                 <property name="text">
+                  <string>Undo</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="SaveAlign_button">
                  <property name="font">
                   <font>
