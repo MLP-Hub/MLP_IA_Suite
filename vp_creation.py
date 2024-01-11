@@ -284,7 +284,7 @@ def reprojectDEM(DEM_layer):
     # Ensure DEM is in projected CRS with unit meters
     source_crs = DEM_layer.crs() # get current CRS
     dir_path = os.path.dirname(__file__)
-    crs_catalog_path = os.path.normpath(dir_path + "\\crs_list.txt") # path to file containing list of appropriate CRS
+    crs_catalog_path = os.path.normpath(dir_path, "crs_list.txt") # path to file containing list of appropriate CRS
         
     crs_dlg = QgsProjectionSelectionDialog() # open CRS selection dialog
     crs_file = open(crs_catalog_path, "r")

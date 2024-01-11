@@ -107,7 +107,7 @@ class Parameters:
 
         # Default schema file (LCC.A)
         this_dir = os.path.dirname(os.path.realpath(__file__))
-        self.schema = os.path.join(this_dir, 'schemas\schema_a.json')
+        self.schema = os.path.join(this_dir, 'schemas','schema_a.json')
         self.schema_name = str(os.path.splitext(os.path.basename(self.schema))[0])
 
         # Get schema palettes, labels, categories
@@ -127,14 +127,14 @@ class Parameters:
         # default paths
         this_dir = os.path.dirname(os.path.realpath(__file__))
         self.root = os.path.join(this_dir,'data')
-        self.img_dir = os.path.join(this_dir,'data\\raw\\images')
-        self.mask_dir = os.path.join(this_dir,'data\\raw\\masks')
-        self.db_dir = os.path.join(this_dir,'data\\db')
-        self.output_dir = os.path.join(this_dir,'data\\outputs')
-        self.save_dir = os.path.join(this_dir,'data\\save')
-        self.model_dir = os.path.join(this_dir,'data\\models')
-        self.meta_grayscale_path = os.path.join(this_dir,'data\\metadata\\meta_ch1_schema_a.npy')
-        self.meta_colour_path = os.path.join(this_dir,'data\\metadata\\meta_ch3_schema_a.npy')
+        self.img_dir = os.path.join(this_dir,'data','raw','images')
+        self.mask_dir = os.path.join(this_dir,'data','raw','masks')
+        self.db_dir = os.path.join(this_dir,'data','db')
+        self.output_dir = os.path.join(this_dir,'data','outputs')
+        self.save_dir = os.path.join(this_dir,'data','save')
+        self.model_dir = os.path.join(this_dir,'data','models')
+        self.meta_grayscale_path = os.path.join(this_dir,'data','metadata','meta_ch1_schema_a.npy')
+        self.meta_colour_path = os.path.join(this_dir,'data','metadata','meta_ch3_schema_a.npy')
 
         # Extraction parameters
         self.n_samples = 0
@@ -190,7 +190,8 @@ class Parameters:
         self.jsd = 1.
 
         # Network parameters
-        self.pretrained = './data/models/resnet101-5d3b4d8f.pth'
+        this_dir = os.path.dirname(os.path.realpath(__file__))
+        self.pretrained = os.path.join(this_dir,'data','models','resnet101-5d3b4d8f.pth')
         self.n_epochs = 20
         self.batch_size = 8
         self.dropout = 0.5

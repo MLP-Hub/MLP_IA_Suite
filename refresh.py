@@ -36,9 +36,9 @@ def messageBox(item):
     msgBox = QMessageBox()
     msgBox.setText("{} is not saved.".format(item))
     msgBox.setInformativeText("Refresh anyway?")
-    msgBox.setStandardButtons(QMessageBox.Yes)
-    msgBox.addButton(QMessageBox.No)
-    #msgBox.setDefaultButton(QMessageBox.No)
+    msgBox.setStandardButtons(QMessageBox.No)
+    msgBox.addButton(QMessageBox.Yes)
+    msgBox.setDefaultButton(QMessageBox.No)
     ret = msgBox.exec()
 
     return ret

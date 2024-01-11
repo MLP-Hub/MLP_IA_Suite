@@ -280,7 +280,7 @@ def displayVS(dlg):
     loadLayer(dlg.VS_mapCanvas, vs_ref_layer)
     loadLayer(dlg.VS_mapCanvas, DEM_layer)
     
-    showMask(dlg) # show input image in side-by-side
+    showMask(dlg) # show input mask in side-by-side
 
     enableTools(dlg)
 

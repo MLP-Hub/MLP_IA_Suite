@@ -25,6 +25,7 @@
 from qgis.PyQt.QtWidgets import QFileDialog
 
 from .interface_tools import addImg, errorMessage
+from .refresh import refresh_PyLC
 
 import cv2
 import tempfile
@@ -57,7 +58,7 @@ def pylcArgs(dlg, mod_dict):
     # Get user input parameters
     dir_path = os.path.dirname(__file__)
     model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
-    model_path = os.path.normpath(dir_path + "\\pylc_master\\data\\models\\"+model_file)
+    model_path = os.path.join(dir_path,"pylc_master","data","models",model_file)
     
     if not os.path.exists(model_path):
         errorMessage("Could not find specified model")
