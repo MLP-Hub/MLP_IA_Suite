@@ -31,7 +31,7 @@ from .resources import *
 
 # Import the code for the dialog
 from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
-from .pylc_setup import modelMenu, runPylc, saveMask
+from .pylc_setup import runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer, undoAlign
 from .vs_creation import displayVS, saveVS
@@ -203,17 +203,16 @@ class MLP_IA_Suite:
         # PYLC TAB 
         self.dlg.PyLC_path = None # initiate variable to hold path to mask (for temp file)
 
-        mod_dict = modelMenu(self.dlg) # set up model menu
-
         # Set up image scale slider
         self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value()))
         self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text()))
 
         # Get file inputs
         self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        
+        self.dlg.InputModel_button.clicked.connect(lambda: getFile(self.dlg.InputModel_lineEdit, "*.pth"))
+
         # Run PyLC and display outputs
-        self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg, mod_dict))
+        self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg))
         self.dlg.PyLC_Save_pushButton.clicked.connect(lambda: saveMask(self.dlg))
         
         # Link the extent of the image to the extent of the mask and v.v.

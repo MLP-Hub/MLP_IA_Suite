@@ -40,29 +40,15 @@ import pylc
 
 #PYLC SPECIFIC FUNCTIONS
 
-def modelMenu(dlg):
-    """Creates menu for PyLC models"""
-
-    mod_dict = {"Greyscale 1":"pylc_2-1_deeplab_ch1_schema_a.pth","Greyscale 2":"pylc_2-2_deeplab_ch1_schema_a.pth",
-                "Greyscale 3":"pylc_2-3_deeplab_ch1_schema_a.pth","Greyscale 4":"pylc_2-4_deeplab_ch1_schema_a.pth",
-                "Greyscale 5":"pylc_2-5_deeplab_ch1_schema_a.pth","Colour 1":"pylc_2-1_deeplab_ch3_schema_a.pth",
-                "Colour 2":"pylc_2-2_deeplab_ch3_schema_a.pth","Colour 3":"pylc_2-3_deeplab_ch3_schema_a.pth","Colour 5":
-                "pylc_2-5_deeplab_ch3_schema_a.pth"}
-    dlg.Model_comboBox.clear()
-    dlg.Model_comboBox.addItems(key for key in mod_dict) # Add model names to combo box
-    return mod_dict
-
-def pylcArgs(dlg, mod_dict):
+def pylcArgs(dlg):
     """Gets user input and sets up PyLC arguments"""
 
     # Get user input parameters
-    dir_path = os.path.dirname(__file__)
-    model_file = mod_dict[dlg.Model_comboBox.currentText()] # accesses model file name from model dictionary
-    model_path = os.path.join(dir_path,"pylc_master","data","models",model_file)
-    
-    if not os.path.exists(model_path):
-        errorMessage("Could not find specified model")
+    if dlg.InputModel_lineEdit.text() is "":
+        errorMessage("Input model cannot be empty")
         return
+    else:
+        model_path = os.path.normpath(dlg.InputModel_lineEdit.text())
 
     if dlg.InputImg_lineEdit.text() is "":
         errorMessage("Input image cannot be empty")
@@ -106,7 +92,7 @@ def enableTools(dlg):
     dlg.Fit_toolButton.setEnabled(True)
     dlg.Pan_toolButton.setEnabled(True)
 
-def runPylc(dlg, mod_dict):
+def runPylc(dlg):
     """Runs pylc and displays outputs"""
 
     # check if mask exists in tempfile but was not saved
@@ -115,7 +101,7 @@ def runPylc(dlg, mod_dict):
         if ret == QMessageBox.No:
             return
 
-    pylc_args = pylcArgs(dlg, mod_dict) # get pylc args
+    pylc_args = pylcArgs(dlg) # get pylc args
     if pylc_args is None:
         return # exit if there was an error getting the arguments
     pylc.main(pylc_args) # run pylc
