@@ -18,7 +18,7 @@ import sys
 this_dir = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(this_dir, 'pylc_master')
 sys.path.append(path)
-from test import tester
+import test
 from config import defaults
 
 
@@ -38,7 +38,7 @@ def main(args):
             os.mkdir(dir_path)
 
     # execute processing function
-    tester(args)
+    test.tester(args)
 
 
 if __name__ == "__main__":
