@@ -12,6 +12,12 @@ Module: Application
 File: pylc.py
 """
 import os
+import sys
+
+# Import the code for pylc
+this_dir = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(this_dir, 'pylc_master')
+sys.path.append(path)
 from test import tester
 from config import defaults
 

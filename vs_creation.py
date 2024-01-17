@@ -23,7 +23,7 @@
 """
 
 from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency, QgsRasterFileWriter, QgsRasterPipe
-from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem
+from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem, QMessageBox
 from qgis.PyQt.QtGui import QImage, QPixmap
 from qgis.PyQt.QtCore import Qt
 from qgis import processing
@@ -38,6 +38,7 @@ import os
 
 from .interface_tools import errorMessage, loadLayer
 from .vp_creation import reprojectDEM
+from .refresh import messageBox
 
 def initCamParams(dlg):
     """Read initial camera parameters from text file"""
@@ -255,6 +256,12 @@ def enableTools(dlg):
 
 def displayVS(dlg):
     """Creates and displays viewshed"""
+
+    # first check if temp VS exists unsaved
+    if dlg.refresh_dict["VS"]["VS"] is None and dlg.vs_path is not None:
+        ret = messageBox("Viewshed")
+        if ret == QMessageBox.No:
+            return
 
     vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
     
