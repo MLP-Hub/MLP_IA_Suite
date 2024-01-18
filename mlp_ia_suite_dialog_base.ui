@@ -258,7 +258,7 @@ padding: 15px 15px 15px 15px;
              <item row="2" column="1">
               <widget class="QLabel" name="Help_label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our help documentation for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plug-in related inquiries should be directed to cwright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our help documentation for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plug-in related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -795,7 +795,7 @@ border-radius: 4px;
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. For more information, including details for model selection, visit the &lt;a href=&quot;https://github.com/scrose/pylc&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PyLC Github&lt;/span&gt;&lt;/a&gt; page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. To download a model, visit the &lt;a href=&quot;https://github.com/scrose/pylc&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PyLC Github&lt;/span&gt;&lt;/a&gt; page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -1601,7 +1601,7 @@ margin-bottom: -6px;
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a ray tracing algorithm to create a virtual photograph given camera parameters and digital elevation model. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool uses a ray tracing algorithm to create a virtual photograph given camera parameters and digital elevation model. Virtual photographs work best when produced with a digital &lt;span style=&quot; font-style:italic;&quot;&gt;surface &lt;/span&gt;model. If elevation is left blank, the program will determine the ground-level elevation of the camera from the DEM.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>

@@ -15,11 +15,8 @@ import os
 import sys
 
 # Import the code for pylc
-this_dir = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(this_dir, 'pylc_master')
-sys.path.append(path)
-import test
-from config import defaults
+from mlp_ia_suite.pylc_master.test import tester
+from mlp_ia_suite.pylc_master.config import defaults
 
 
 def main(args):
@@ -38,7 +35,7 @@ def main(args):
             os.mkdir(dir_path)
 
     # execute processing function
-    test.tester(args)
+    tester(args)
 
 
 if __name__ == "__main__":
