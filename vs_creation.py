@@ -262,8 +262,11 @@ def displayVS(dlg):
         ret = messageBox("Viewshed")
         if ret == QMessageBox.No:
             return
-
-    vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
+    try:
+        vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
+    except TypeError:
+        errorMessage("Viewshed creation failed.")
+        return
     
     if vs is None:
         # break if create VS did not work

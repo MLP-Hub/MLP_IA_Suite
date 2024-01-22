@@ -1,7 +1,3 @@
-# This file contains metadata for your plugin.
-
-# This file should be included when you package your plugin.# Mandatory items:
-
 [general]
 name=MLP Image Analysis Suite
 qgisMinimumVersion=3.0
@@ -12,20 +8,17 @@ email=claire.wright.mi@gmail.com
 
 about=This plugin contains four tools for analysing oblique terrestrial photographs. The final product is a classified and spatially referenced viewshed representing the landscape shown in the photograph.
 
-tracker=http://bugs
-repository=http://repo
+repository=https://github.com/ClaireWrightMi/MLP_IA_Suite
 # End of mandatory metadata
 
 # Recommended items:
 
 hasProcessingProvider=no
-# Uncomment the following line and add your changelog:
-# changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=python, oblique image, automated classification, monoplotting
 
-homepage=http://homepage
+homepage=https://github.com/ClaireWrightMi/MLP_IA_Suite
 category=Plugins
 icon=icon.png
 # experimental flag
@@ -40,7 +33,7 @@ deprecated=False
 # plugin_dependencies=
 
 Category of the plugin: Raster, Vector, Database or Web
-# category=
+# category=Plugins
 
 # If the plugin can run on QGIS Server.
 server=False
