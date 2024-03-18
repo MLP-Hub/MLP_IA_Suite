@@ -97,7 +97,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Welcome to the Mountain Legacy Project Image Analysis Plug-In</string>
+                <string>Welcome to the Mountain Image Analysis Suite</string>
                </property>
                <property name="textFormat">
                 <enum>Qt::RichText</enum>
@@ -127,7 +127,7 @@
                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
                </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Mountain Legacy Project image analysis plug-in contains a suite of tools to go from a pair of repeat oblique images to a set of georeferenced, classified viewshed representing the landcover present in the images. There are four tools available through the plug-in:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Mountain Image Analysis Suite plugin contains a set of tools to go from a ground-based oblique image to a georeferenced, classified viewshed representing the landcover for the area visible in the image. MIAS works with both greyscale and colour images. There are four tools available through the plug-in:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -174,7 +174,7 @@ padding: 15px 15px 15px 15px;
               <number>5</number>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p style=&quot;margin-bottom:1.6em&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Classification&lt;/span&gt;: This tool uses a machine-learning algorithm to classify the landcover types in the oblique images. It produces a classified mask.&lt;/p&gt;&lt;p  style=&quot;margin-bottom:1.6em&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VP Creation:&lt;/span&gt; This tool creates a virtual photograph from a digital elevation model showing the terrain visible in the image. Virtual photograph creation relies on user input camera positioning.&lt;/p&gt;&lt;p  style=&quot;margin-bottom:1.6em&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alignment:&lt;/span&gt; This tool is used to align the classified images to their corresponding virtual photographs using control points. It is necessary to subsequently create an accurate viewshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VS Creation:&lt;/span&gt; This tool produces a georeferenced and classified viewshed, the final product!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Classification&lt;/span&gt;: This tool uses a machine-learning algorithm to classify the landcover types in the oblique images. It produces a classified mask.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VP Creation:&lt;/span&gt; This tool creates a virtual photograph from a digital elevation model showing the terrain visible in the image. Virtual photograph creation relies on user input camera positioning.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alignment:&lt;/span&gt; This tool is used to align a classified image to its corresponding virtual photograph using control points. It is necessary to subsequently create an accurate viewshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VS Creation:&lt;/span&gt; This tool produces a georeferenced and classified viewshed, the final product!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -258,7 +258,7 @@ padding: 15px 15px 15px 15px;
              <item row="2" column="1">
               <widget class="QLabel" name="Help_label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our help documentation for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plug-in related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our help documentation for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plugin related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
