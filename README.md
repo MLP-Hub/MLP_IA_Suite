@@ -24,8 +24,15 @@ Install the latest version of QGIS through the OSGEO installer from URL. INSTRUC
 Install the latest version of QGIS from URL.
 
 ### Dependencies
-MIAS relies on some Python packages that do not come installed with QGIS and has conflicts with the exsiting versions of opencv and numpy. From QGIS, open the Python console and type the following commands:
->>> COPY COMMANDS HERE
+MIAS relies on some Python packages that do not come installed with QGIS and has conflicts with the existing versions of opencv and numpy. From QGIS, open the Python console and type the following commands:
+'''
+import pip
+pip.main(['uninstall','-y','opencv-contrib-python'])
+pip.main(['install','opencv-python'])
+pip.main(['install','--upgrage','numpy'])
+pip.main(['install','torch'])
+pip.main(['install','scikit-image'])
+'''
 
 ## Usage
 A video tutorial for MIAS is available at URL.
