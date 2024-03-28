@@ -25,7 +25,7 @@ Install the latest version of QGIS from URL.
 
 ### Dependencies
 MIAS relies on some Python packages that do not come installed with QGIS and has conflicts with the existing versions of opencv and numpy. From QGIS, open the Python console and type the following commands:
-```
+```python
 import pip
 pip.main(['uninstall','-y','opencv-contrib-python'])
 pip.main(['install','opencv-python'])
