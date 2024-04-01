@@ -24,11 +24,7 @@ Install the latest version of QGIS through the OSGeo4W installer from [here](htt
 Install the latest version of QGIS [here](https://qgis.org/en/site/forusers/download.html).
 
 ### Dependencies
-<<<<<<< HEAD
 MIAS relies on some Python packages that do not come installed with QGIS and has conflicts with the existing versions of opencv and numpy. From the Plugins menu on QGIS, open the Python console and type the following commands:
-=======
-MIAS relies on some Python packages that do not come installed with QGIS and has conflicts with the existing versions of opencv and numpy. From QGIS, open the Python console and type the following commands:
->>>>>>> c9c952be232345a570384a655b388958d45e9481
 ```python
 import pip
 pip.main(['uninstall','-y','opencv-contrib-python'])
