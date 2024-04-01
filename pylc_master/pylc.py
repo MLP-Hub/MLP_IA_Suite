@@ -11,8 +11,6 @@ University of Victoria
 Module: Application
 File: pylc.py
 """
-import os
-import sys
 
 # Import the code for pylc
 from mlp_ia_suite.pylc_master.test import tester
@@ -22,7 +20,6 @@ def main(args):
     """
     Main application handler
     """
-
     # execute processing function
     tester(args)
 
