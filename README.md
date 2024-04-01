@@ -2,21 +2,20 @@
 __QGIS plugin for analysing ground-based oblique images__ 
 
 [![QGIS 3.28](https://img.shields.io/badge/QGIS-3.28.1-blue.svg)](https://www.qgis.org/en/site/forusers/download.html)
-[![GNU License](https://img.shields.io/badge/License-GNU-green)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![Python 3.9](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![GNU License](https://img.shields.io/badge/License-GNU-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Reference: PUT PAPER HERE
+Reference: Wright, C., Bone, C., Mathews, D., Tricker, J., Wright, B., and Higgs, E. Mountain Image Analysis Suite (MIAS): A new plugin for converting oblique images to landcover maps in QGIS. *Transactions in GIS* (Submitted 2024).
 
 ## Overview
 This plugin contains four tools for analysing ground-based oblique images. The final product is a classified and spatially referenced viewshed representing the landscape shown in the photograph. MIAS harnesses PyLC (Python Landscape Classifier) available independently [here](https://github.com/scrose/pylc). The training dataset is sampled from the [Mountain Legacy Project](https://mountainlegacy.ca) repeat photography collection hosted at the [University of Victoria](https://www.uvic.ca).
 
-## Requirements
-QGIS 3.28.1  
-Python 3.9  
+## Requirements (QGIS 3.28.1) 
 
-numpy >=1.18.5  
-opencv >=3.4.1  
-torch >=1.6.0  
-scikit-image >= 0.19.3
+- [numpy](https://numpy.org/) >=1.18.5
+- [opencv](https://opencv.org/) >=3.4.1
+- [torch](https://pytorch.org/) >=1.6.0
+- [scikit-image](https://scikit-image.org/) >=0.19.3
 
 ## Installation
 
@@ -42,7 +41,7 @@ From the Code menu (green button) on the [GitHub page](https://github.com/Claire
 From the Plugins menu in QGIS, choose Manage and Install Plugins, then Install from ZIP. Upload the ZIP file that you just downloaded from GitHub.
 
 ## Usage
-A video tutorial for MIAS is available at URL.
-A written tutorial and corresponding test data are found in the Example folder.
+A video tutorial for MIAS is available [here](URL).
+A written tutorial and corresponding test data can be downloaded [here](URL).
 
 
