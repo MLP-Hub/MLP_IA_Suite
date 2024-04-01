@@ -1,5 +1,8 @@
 # Mountain Image Analysis Suite (MIAS)
-### QGIS plugin for analysing ground-based oblique images 
+__QGIS plugin for analysing ground-based oblique images__ 
+
+[![QGIS 3.28](https://img.shields.io/badge/QGIS-3.28.1-blue.svg)](https://www.qgis.org/en/site/forusers/download.html)
+[![GNU License](https://img.shields.io/badge/License-GNU-green)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 Reference: PUT PAPER HERE
 
