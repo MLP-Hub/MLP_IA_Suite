@@ -144,6 +144,8 @@ def zoomToExt(canvas_list):
     """Zooms provided canvas to extent of primary layer"""
     
     active_layer = canvas_list[1].layer(0)
+    if active_layer.name() == "Source CP Layer" or active_layer.name() == "Dest CP Layer":
+        active_layer = canvas_list[1].layer(1)
 
     for canvas in canvas_list:
         canvas.setExtent(active_layer.extent())
