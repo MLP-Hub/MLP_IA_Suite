@@ -328,7 +328,7 @@ class MLP_IA_Suite:
 
         # Connect tools to appropriate functions (Alignment tab)
         self.dlg.SideBySide_pushButton_3.hide() # hide side by side view button to start
-        canvas_list_4 = [self.dlg.SourceImg_canvas, self.dlg.DestImg_canvas,self.dlg.Full_mapCanvas_3]
+        canvas_list_4 = [self.dlg.DestImg_canvas,self.dlg.SourceImg_canvas, self.dlg.Full_mapCanvas_3]
         self.dlg.SideBySide_pushButton_3.clicked.connect(lambda: sideBySide(canvas_list_4, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3],self.dlg.SideBySide_pushButton_3, self.dlg.SingleView_pushButton_3))
         self.dlg.SingleView_pushButton_3.clicked.connect(lambda: singleView(canvas_list_4, [self.dlg.Swipe_toolButton_3, self.dlg.Transparency_slider_3],self.dlg.SideBySide_pushButton_3, self.dlg.SingleView_pushButton_3))
         self.dlg.Pan_toolButton_3.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_4, self.dlg.Pan_toolButton_3, self.dlg.Swipe_toolButton_3))

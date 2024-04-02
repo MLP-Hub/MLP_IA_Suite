@@ -385,7 +385,7 @@ def switchLayer(comboBox, main_canvas, side_canvas):
 
 def alignImgs(dlg, source_img_path, table):
     """Aligns images using perspective transformation"""
-
+    mask_exists = False
     if not os.path.exists(source_img_path):
         return
     img = cv2.imread(source_img_path)
@@ -449,6 +449,8 @@ def alignImgs(dlg, source_img_path, table):
     
         cv2.imwrite(dlg.aligned_mask_path, aligned_mask)
 
+        mask_exists = True
+
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.SourceImg_canvas, True) # show aligned mask in side-by-side
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in full view
         
@@ -461,8 +463,8 @@ def alignImgs(dlg, source_img_path, table):
     removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
     
     addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in full view
     addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
+    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in full view
 
     # re-center VP
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
@@ -480,7 +482,7 @@ def undoAlign(dlg):
     dest_img = QgsProject.instance().mapLayersByName('Destination Image')[0]
 
     # reset to side-by-side view
-    canvas_list_4 = [dlg.SourceImg_canvas, dlg.DestImg_canvas,dlg.Full_mapCanvas_3]
+    canvas_list_4 = [dlg.SourceImg_canvas, dlg.DestImg_canvas, dlg.Full_mapCanvas_3]
     sideBySide(canvas_list_4, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
     dlg.SingleView_pushButton_3.setEnabled(False)
     dlg.SideBySide_pushButton_3.setEnabled(False)
@@ -488,6 +490,7 @@ def undoAlign(dlg):
     dlg.Layer_comboBox.setEnabled(False)
 
     # reset layer list and canvas extent in side-by-side view
+    dlg.Full_mapCanvas_3.setLayers([])
     dlg.SourceImg_canvas.setLayers([source_cps, source_img])
     dlg.DestImg_canvas.setLayers([dest_cps, dest_img])
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[1].extent())
