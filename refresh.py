@@ -208,8 +208,8 @@ def refresh_align(dlg, canvas_list):
     dlg.Fit_toolButton_3.setEnabled(False)
     dlg.Pan_toolButton_3.setEnabled(False)
 
-    if dlg.Mask_lineEdit.text():
-        dlg.Layer_comboBox.setEnabled(False)
+    dlg.Layer_comboBox.clear()
+    dlg.Layer_comboBox.setEnabled(False)
 
     # return to side-by-side view
     sideBySide(canvas_list, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)

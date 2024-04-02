@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from .interface_tools import addImg, removeLayer
+from .interface_tools import addImg, removeLayer, singleView, sideBySide
 
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentifyFeature
 from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer, QgsPointXY
@@ -292,7 +292,7 @@ def loadCPs(layer_names, canvases, img_names, table):
     cp_file = open(cp_filepath, "r")
 
     source_pts_list = cp_file.readline().strip().split() # read first line (source coordinates)
-    dest_pts_list = cp_file.readline().strip().split() # read seconf line (destination coordinates)
+    dest_pts_list = cp_file.readline().strip().split() # read second line (destination coordinates)
     source_pts = []
     dest_pts = []
     pt_count = 0
@@ -454,7 +454,7 @@ def alignImgs(dlg, source_img_path, table):
         
         # add layers to combo box
         dlg.Layer_comboBox.insertItem(0,"Aligned Mask")
-        dlg.Layer_comboBox.insertItem(0,"Aligned Image")  
+        dlg.Layer_comboBox.insertItem(0,"Aligned Image") 
 
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[1]) # remove the original image
     removeLayer(dlg.SourceImg_canvas, dlg.SourceImg_canvas.layers()[0]) # remove the source image CPs
@@ -479,10 +479,19 @@ def undoAlign(dlg):
     source_img = QgsProject.instance().mapLayersByName('Source Image')[0]
     dest_img = QgsProject.instance().mapLayersByName('Destination Image')[0]
 
-    # reset layer list in side-by-side and single view
-    dlg.Full_mapCanvas_3.setLayers([]) 
+    # reset to side-by-side view
+    canvas_list_4 = [dlg.SourceImg_canvas, dlg.DestImg_canvas,dlg.Full_mapCanvas_3]
+    sideBySide(canvas_list_4, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
+    dlg.SingleView_pushButton_3.setEnabled(False)
+    dlg.SideBySide_pushButton_3.setEnabled(False)
+    dlg.Layer_comboBox.clear()
+    dlg.Layer_comboBox.setEnabled(False)
+
+    # reset layer list and canvas extent in side-by-side view
     dlg.SourceImg_canvas.setLayers([source_cps, source_img])
     dlg.DestImg_canvas.setLayers([dest_cps, dest_img])
+    dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[1].extent())
+    dlg.DestImg_canvas.refresh()
 
 
 def saveAlign(dlg):
