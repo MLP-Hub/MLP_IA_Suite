@@ -313,7 +313,7 @@ def loadCPs(layer_names, canvases, img_names, table):
         lyr_ids = {}
         for lyr in layer_list:
             lyr_ids[lyr.name()] = lyr.id()
-        if layer_names[0] not in lyr_ids:
+        if layer_names[x] not in lyr_ids:
             createCPLayer(canvases[x], layer_names[x], img_names[x]) 
 
         vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
