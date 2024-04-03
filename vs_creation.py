@@ -170,8 +170,8 @@ def drawViewshed(dlg):
         ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
         ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
 
-        xs = np.linspace(ray_start_x, ray_end_x, round(25000/pixelSizeX))
-        ys = np.linspace(ray_start_y, ray_end_y, round(25000/pixelSizeY))
+        xs = np.linspace(ray_start_x, ray_end_x, round(100000/pixelSizeX))
+        ys = np.linspace(ray_start_y, ray_end_y, round(100000/pixelSizeY))
 
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]+cam_params["hgt"]
 
@@ -188,9 +188,10 @@ def drawViewshed(dlg):
         ys_visible = ys[unique_angles_indx].astype(int) # keep only visible y-coordinates
 
         angle_matches_index = closest_argmin(unique_angles, img_v_angles)
+
         mask_col = mask[:,img_x] # get column from mask
         mask_col = np.flip(mask_col, axis=0) # reverse order of pixels
-        mask_col = mask_col[angle_matches_index] # keep only the non-sky pixels
+        mask_col = mask_col[angle_matches_index] # keep only the visible pixels
 
         vs[ys_visible, xs_visible] = mask_col
             

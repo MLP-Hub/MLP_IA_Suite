@@ -282,7 +282,6 @@ def clipDEM(DEM_layer, cam_x, cam_y):
 
 def reprojectDEM(DEM_layer):
     """Ensures DEM has appropriate CRS"""
-
     # Ensure DEM is in projected CRS with unit meters
     source_crs = DEM_layer.crs() # get current CRS
     dir_path = os.path.dirname(__file__)
