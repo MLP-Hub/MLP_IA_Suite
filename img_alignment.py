@@ -448,7 +448,7 @@ def alignImgs(dlg, source_img_path, table):
         if img_h != mask_h or img_w != mask_w:
             errorMessage("Source image and mask must have the same dimensions")
             return
-        aligned_mask = cv2.warpPerspective(mask, matrix, (w, h))
+        aligned_mask = cv2.warpPerspective(mask, matrix, (w, h), flags = cv2.INTER_NEAREST)
 
         # save aligned mask to temporary file
         dlg.aligned_mask_path = os.path.join(tempfile.mkdtemp(), 'alignedMask.tiff')
