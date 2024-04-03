@@ -148,8 +148,9 @@ def zoomToExt(canvas_list):
         active_layer = canvas_list[1].layer(1)
 
     for canvas in canvas_list:
-        canvas.setExtent(active_layer.extent())
-        canvas.refresh()
+        if canvas is not None:
+            canvas.setExtent(active_layer.extent())
+            canvas.refresh()
 
 def transparency(val, canvas):
     """Changes top image transparency based on slider"""

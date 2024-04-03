@@ -355,7 +355,7 @@ class MLP_IA_Suite:
         # Connect tools to appropriate functions (VS tab)
         canvas_list_5 = [self.dlg.VS_mapCanvas]
         self.dlg.Pan_toolButton_4.clicked.connect(lambda: panCanvas(self.dlg, canvas_list_5, self.dlg.Pan_toolButton_4, self.dlg.Swipe_toolButton_4))
-        self.dlg.Fit_toolButton_4.clicked.connect(lambda: zoomToExt(canvas_list_5)) # Zoom to viewshed extent
+        self.dlg.Fit_toolButton_4.clicked.connect(lambda: zoomToExt([None, self.dlg.VS_mapCanvas])) # Zoom to viewshed extent
         self.dlg.Swipe_toolButton_4.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.VS_mapCanvas, self.dlg.Swipe_toolButton_4, self.dlg.Pan_toolButton_4))
         self.dlg.Transparency_slider_4.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_4.value(), self.dlg.VS_mapCanvas))
 
