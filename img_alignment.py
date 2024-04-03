@@ -361,6 +361,15 @@ def enableTools(dlg):
     if dlg.Mask_lineEdit.text():
         dlg.Layer_comboBox.setEnabled(True)
 
+def enableButtons(dlg, undo):
+    """Disables align and CP buttons after alignment or enables with Undo"""
+
+    dlg.Align_button.setEnabled(undo)
+    dlg.addCP_button.setEnabled(undo)
+    dlg.delCP_button.setEnabled(undo)
+    dlg.saveCP_button.setEnabled(undo)
+    dlg.loadCP_button.setEnabled(undo)
+
 def switchLayer(comboBox, main_canvas, side_canvas):
     """Switches which image is on top"""
 
@@ -471,6 +480,7 @@ def alignImgs(dlg, source_img_path, table):
     dlg.DestImg_canvas.refresh()
 
     enableTools(dlg)
+    enableButtons(dlg, False)
 
 def undoAlign(dlg):
     """Undoes alignment and re-instates control points but keeps info in CP table"""
@@ -496,6 +506,7 @@ def undoAlign(dlg):
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[1].extent())
     dlg.DestImg_canvas.refresh()
 
+    enableButtons(dlg, True)
 
 def saveAlign(dlg):
     """Saves aligned image or mask to specified location"""
