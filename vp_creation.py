@@ -27,7 +27,7 @@ from .refresh import messageBox
 
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback, QgsFeedback
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback, QgsFeedback, QgsProcessingContext
 from qgis.gui import QgsProjectionSelectionDialog 
 from qgis import processing
 
@@ -257,6 +257,7 @@ def clipDEM(DEM_layer, cam_x, cam_y):
 
     out = [min_x, max_x, min_y, max_y]
     extents = ", ".join(str(e) for e in out)
+    
 
     parameters = {'INPUT':DEM_layer,
                     'PROJWIN':extents,
@@ -379,6 +380,11 @@ def createVP(dlg):
     og_lat, og_lon = cam_params['lat'], cam_params['lon']
     
     if dlg.lat_init is None or (abs(dlg.lat_init - og_lat) > 200) or (abs(dlg.lon_init - og_lon) > 200):
+        
+        msg = QMessageBox()
+        msg.setText("Clipping DEM and processing hillshade. This may take several minutes. QGIS may show as not responding. Do not click anything.")
+        msg.setIcon(QMessageBox.Warning)
+        msg.exec()   
         try:
             DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
         except TypeError:

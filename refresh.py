@@ -34,6 +34,7 @@ def messageBox(item):
     """Shows message box asking about unsaved items"""
 
     msgBox = QMessageBox()
+    msgBox.setIcon(QMessageBox.Warning)
     msgBox.setText("{} is not saved.".format(item))
     msgBox.setInformativeText("Refresh anyway?")
     msgBox.setStandardButtons(QMessageBox.No)
