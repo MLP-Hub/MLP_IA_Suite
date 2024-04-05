@@ -156,7 +156,7 @@ def moveCam(dlg, dir):
         i+=1
     
     cam_x = params['cam_x']
-    cam_y = params['cam_x']
+    cam_y = params['cam_y']
     azi = params['azi']
     step_size_m = params['step_size_m']
 
@@ -257,7 +257,6 @@ def clipDEM(DEM_layer, cam_x, cam_y):
 
     out = [min_x, max_x, min_y, max_y]
     extents = ", ".join(str(e) for e in out)
-    
 
     parameters = {'INPUT':DEM_layer,
                     'PROJWIN':extents,
