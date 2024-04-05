@@ -367,7 +367,6 @@ def enableButtons(dlg, undo):
     dlg.Align_button.setEnabled(undo)
     dlg.addCP_button.setEnabled(undo)
     dlg.delCP_button.setEnabled(undo)
-    dlg.saveCP_button.setEnabled(undo)
     dlg.loadCP_button.setEnabled(undo)
 
 def switchLayer(comboBox, main_canvas, side_canvas):
