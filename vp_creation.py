@@ -433,8 +433,8 @@ def createVP(dlg):
         ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
         ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
 
-        xs = np.linspace(ray_start_x, ray_end_x, round(25000/pixelSizeX))
-        ys = np.linspace(ray_start_y, ray_end_y, round(25000/pixelSizeY))
+        xs = np.linspace(ray_start_x, ray_end_x, round(100000/pixelSizeX))
+        ys = np.linspace(ray_start_y, ray_end_y, round(100000/pixelSizeY))
 
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
         greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)

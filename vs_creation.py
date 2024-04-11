@@ -173,7 +173,7 @@ def drawViewshed(dlg):
         xs = np.linspace(ray_start_x, ray_end_x, round(100000/pixelSizeX))
         ys = np.linspace(ray_start_y, ray_end_y, round(100000/pixelSizeY))
 
-        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]+cam_params["hgt"]
+        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
 
         opp = (xs - cam_x)*pixelSizeX
         adj = (cam_y - ys)*pixelSizeY
