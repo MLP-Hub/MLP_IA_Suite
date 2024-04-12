@@ -13,7 +13,7 @@ File: pylc.py
 """
 
 # Import the code for pylc
-from mlp_ia_suite.pylc_master.test import tester
+from pylc_master.test import tester
 
 
 def main(args):
