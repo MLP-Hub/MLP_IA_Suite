@@ -339,6 +339,19 @@ def camXY(hillshade_layer, lat, lon):
 
     return cam_x, cam_y, pixelSizeX, pixelSizeY
 
+def fillForeground(cam_x, cam_y, ray_start_x, ray_start_y, DEM_img, HS_img, cam_params, pixel_size):
+    """Fills in elevations and greyscale values for first 100 m of VP"""
+    elev_og = scipy.ndimage.map_coordinates(DEM_img, np.vstack((cam_y,cam_x)), order = 1) - cam_params["elev"]-cam_params["hgt"]
+    grey_og = scipy.ndimage.map_coordinates(HS_img, np.vstack((cam_y,cam_x)), order = 1)
+
+    elev_100 = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ray_start_y,ray_start_x)), order = 1) - cam_params["elev"]-cam_params["hgt"]
+    grey_100 = scipy.ndimage.map_coordinates(HS_img, np.vstack((ray_start_y,ray_start_x)), order = 1)
+
+    foreground_elevs = np.linspace(elev_og[0], elev_100[0], round(400/pixel_size))
+    foreground_greys = np.linspace(grey_og[0], grey_100[0], round(400/pixel_size))
+
+    return foreground_elevs, foreground_greys
+
 def createVP(dlg):
     """Creates virtual photograph""" 
 
@@ -438,6 +451,17 @@ def createVP(dlg):
 
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
         greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
+
+        foreground_elevs, foreground_greys = fillForeground(cam_x, cam_y, ray_start_x, ray_start_y, DEM_img, HS_img, cam_params, pixelSizeX)
+        
+        elevs=np.concatenate((foreground_elevs, elevs), axis=None)
+        greys=np.concatenate((foreground_greys, greys), axis=None)
+
+        foreground_x = np.linspace(cam_x, ray_start_x, round(400/pixelSizeX))
+        foreground_y = np.linspace(cam_y, ray_start_y, round(400/pixelSizeX))
+
+        xs=np.concatenate((foreground_x, xs), axis=None)
+        ys=np.concatenate((foreground_y, ys), axis=None)
 
         opp = (xs - cam_x)*pixelSizeX
         adj = (cam_y - ys)*pixelSizeY
