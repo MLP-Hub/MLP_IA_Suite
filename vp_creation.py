@@ -40,7 +40,7 @@ import numpy as np
 import math
 from functools import partial
 
-from .interface_tools import errorMessage
+from .interface_tools import errorMessage, sideBySide
 
 def resetCamPath(dlg):
     """Resets path to camera parameters if they are changed"""
@@ -471,6 +471,10 @@ def enableTools(dlg):
 def displayVP(dlg):
     """Creates and displays virtual photo"""
 
+    if dlg.SideBySide_pushButton_2.isEnabled():
+        canvas_list_2 = [dlg.Img_mapCanvas_2, dlg.VP_mapCanvas, dlg.Full_mapCanvas_2]
+        sideBySide(canvas_list_2, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
+    
     vp = createVP(dlg) # create virtual photo
     
     if vp is None:
