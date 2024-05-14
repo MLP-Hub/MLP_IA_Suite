@@ -212,6 +212,9 @@ def refresh_align(dlg, canvas_list):
     dlg.Layer_comboBox.clear()
     dlg.Layer_comboBox.setEnabled(False)
 
+    # activate align button
+    dlg.Align_button.setEnabled(True)
+
     # return to side-by-side view
     sideBySide(canvas_list, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
     dlg.SideBySide_pushButton_3.hide() # hide side by side view button
