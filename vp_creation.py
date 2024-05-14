@@ -339,19 +339,6 @@ def camXY(hillshade_layer, lat, lon):
 
     return cam_x, cam_y, pixelSizeX, pixelSizeY
 
-def fillForeground(cam_x, cam_y, ray_start_x, ray_start_y, DEM_img, HS_img, cam_params, pixel_size):
-    """Fills in elevations and greyscale values for first 100 m of VP"""
-    elev_og = scipy.ndimage.map_coordinates(DEM_img, np.vstack((cam_y,cam_x)), order = 1) - cam_params["elev"]-cam_params["hgt"]
-    grey_og = scipy.ndimage.map_coordinates(HS_img, np.vstack((cam_y,cam_x)), order = 1)
-
-    elev_100 = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ray_start_y,ray_start_x)), order = 1) - cam_params["elev"]-cam_params["hgt"]
-    grey_100 = scipy.ndimage.map_coordinates(HS_img, np.vstack((ray_start_y,ray_start_x)), order = 1)
-
-    foreground_elevs = np.linspace(elev_og[0], elev_100[0], round(400/pixel_size))
-    foreground_greys = np.linspace(grey_og[0], grey_100[0], round(400/pixel_size))
-
-    return foreground_elevs, foreground_greys
-
 def createVP(dlg):
     """Creates virtual photograph""" 
 
@@ -397,17 +384,17 @@ def createVP(dlg):
         msg.setIcon(QMessageBox.Warning)
         msg.exec()   
         try:
-            DEM_path, clipDEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
+            dlg.clip_DEM_path, dlg.clip_DEM_layer = clipDEM(DEM_layer, cam_params['lat'], cam_params['lon'])
         except TypeError:
             return
         try:
-            dlg.hillshade_path, dlg.hs_layer = createHillshade(clipDEM_layer)
+            dlg.hillshade_path, dlg.hs_layer = createHillshade(dlg.clip_DEM_layer)
         except TypeError:
             return
         dlg.lat_init = cam_params['lat'] # replace with new camera position
         dlg.lon_init = cam_params['lon'] 
     
-    DEM_img = skimage.io.imread(DEM_path) # read clipped DEM into image array
+    DEM_img = skimage.io.imread(dlg.clip_DEM_path) # read clipped DEM into image array
     HS_img = skimage.io.imread(dlg.hillshade_path) # read clipped hillshade into image array
 
     img_h, img_w = getImgDimensions(dlg)
@@ -452,22 +439,11 @@ def createVP(dlg):
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
         greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
 
-        foreground_elevs, foreground_greys = fillForeground(cam_x, cam_y, ray_start_x, ray_start_y, DEM_img, HS_img, cam_params, pixelSizeX)
-        
-        elevs=np.concatenate((foreground_elevs, elevs), axis=None)
-        greys=np.concatenate((foreground_greys, greys), axis=None)
-
-        foreground_x = np.linspace(cam_x, ray_start_x, round(400/pixelSizeX))
-        foreground_y = np.linspace(cam_y, ray_start_y, round(400/pixelSizeX))
-
-        xs=np.concatenate((foreground_x, xs), axis=None)
-        ys=np.concatenate((foreground_y, ys), axis=None)
-
         opp = (xs - cam_x)*pixelSizeX
         adj = (cam_y - ys)*pixelSizeY
 
         dem_dist = np.sqrt(np.add(opp**2, adj**2))
-        vert_angles = np.divide(elevs,dem_dist) # find ratio (opp/adj)
+        vert_angles = np.arctan(np.divide(elevs,dem_dist)) # find ratio (opp/adj)
 
         dem_angles_inc = np.fmax.accumulate(vert_angles) # checks for only increasing DEM angles
         unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
