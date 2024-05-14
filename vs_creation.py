@@ -288,6 +288,10 @@ def displayVS(dlg):
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
     setVSTransparency(vs_ref_layer) # set black to transparent
     
+    #remove any existing layers, then add VS and DEM to map
+    layer_list = dlg.VS_mapCanvas.layers()
+    for lyr in layer_list:
+        QgsProject.instance().removeMapLayer(lyr.id()) # if the layer already exists, remove it from the canvas
     loadLayer(dlg.VS_mapCanvas, vs_ref_layer)
     loadLayer(dlg.VS_mapCanvas, DEM_layer)
     

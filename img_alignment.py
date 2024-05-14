@@ -393,7 +393,7 @@ def switchLayer(comboBox, main_canvas, side_canvas):
 
 def alignImgs(dlg, source_img_path, table):
     """Aligns images using perspective transformation"""
-    mask_exists = False
+    
     if not os.path.exists(source_img_path):
         return
     img = cv2.imread(source_img_path)
@@ -456,8 +456,6 @@ def alignImgs(dlg, source_img_path, table):
             os.remove(dlg.aligned_mask_path)
     
         cv2.imwrite(dlg.aligned_mask_path, aligned_mask)
-
-        mask_exists = True
 
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.SourceImg_canvas, True) # show aligned mask in side-by-side
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in full view
