@@ -371,7 +371,7 @@ def createVP(dlg):
 
     # check camera is on DEM
     ex = DEM_layer.extent()
-    if ex.yMaximum() < float(cam_params['lat']) < ex.yMinimum() or ex.xMaximum() < float(cam_params['lat']) < ex.xMinimum():
+    if ex.yMaximum() < float(cam_params['lon']) or ex.yMinimum() > float(cam_params['lon']) or ex.xMaximum() < float(cam_params['lat']) or ex.xMinimum() > float(cam_params['lat']):
         errorMessage("Camera off DEM")
         return
 
