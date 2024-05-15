@@ -22,12 +22,12 @@
  ***************************************************************************/
 """
 
-from .interface_tools import addImg
+from .interface_tools import addImg, errorMessage, sideBySide
 from .refresh import messageBox
 
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QProgressDialog
 from qgis.PyQt.QtCore import Qt
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProcessingFeedback, QgsFeedback, QgsProcessingContext
+from qgis.core import QgsRasterLayer, QgsProcessing
 from qgis.gui import QgsProjectionSelectionDialog 
 from qgis import processing
 
@@ -39,8 +39,6 @@ import scipy
 import numpy as np
 import math
 from functools import partial
-
-from .interface_tools import errorMessage, sideBySide
 
 def resetCamPath(dlg):
     """Resets path to camera parameters if they are changed"""
@@ -281,11 +279,13 @@ def clipDEM(DEM_layer, cam_x, cam_y):
 
 def reprojectDEM(DEM_layer):
     """Ensures DEM has appropriate CRS"""
+    
     # Ensure DEM is in projected CRS with unit meters
     source_crs = DEM_layer.crs() # get current CRS
     dir_path = os.path.dirname(__file__)
-    crs_catalog_path = os.path.normpath(dir_path, "crs_list.txt") # path to file containing list of appropriate CRS
-        
+    dir_path = os.path.normpath(dir_path)
+    crs_catalog_path = os.path.join(dir_path, "crs_list.txt") # path to file containing list of appropriate CRS
+  
     crs_dlg = QgsProjectionSelectionDialog() # open CRS selection dialog
     crs_file = open(crs_catalog_path, "r")
     crs_data = crs_file.read()
@@ -293,19 +293,19 @@ def reprojectDEM(DEM_layer):
     crs_file.close()
     crs_dlg.setOgcWmsCrsFilter(crs_list)
     crs_dlg.exec()
-    dest_crs = crs_dlg.crs() # destination CRS selected by user
+    dest_crs = crs_dlg.crs() # destination CRS selected by use
 
     # Reproject DEM
     parameters = { 'INPUT':DEM_layer, 
                         'SOURCE_CRS':source_crs,
                         'TARGET_CRS':dest_crs,
-                        'RESAMPLING':2,
+                        'RESAMPLING':1,
                         'NODATA':None,
                         'TARGET_RESOLUTION':None,
                         'OPTIONS':'',
                         'DATA_TYPE':6,
                         'TARGET_EXTENT':None,
-                        'TARGET_EXTENT_CRS':None,
+                        'TARGET_EXTENT_CRS':dest_crs,
                         'MULTITHREADING':False,
                         'EXTRA':'',
                         'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
@@ -315,6 +315,7 @@ def reprojectDEM(DEM_layer):
         proj_DEM = processing.run("gdal:warpreproject", parameters)
         projDEM_path=proj_DEM['OUTPUT']
         projDEM_layer = QgsRasterLayer(projDEM_path, "Projected DEM")
+
     except:
         errorMessage("DEM reprojection failed")
         return

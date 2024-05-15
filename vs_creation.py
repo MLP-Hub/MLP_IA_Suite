@@ -112,7 +112,6 @@ def drawViewshed(dlg):
     if DEM_layer is None:
         errorMessage('Invalid DEM file')
         return
-    DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
     
     # Check that DEM has appropriate CRS
     source_crs = DEM_layer.crs() # get current CRS
@@ -122,7 +121,9 @@ def drawViewshed(dlg):
             DEM_path, DEM_layer = reprojectDEM(DEM_layer)
         except TypeError:
             return
-
+        
+    DEM_img = skimage.io.imread(DEM_path) # read DEM into image array
+    
     # check camera is on DEM
     ex = DEM_layer.extent()
     if ex.yMaximum() < float(cam_params['lat']) < ex.yMinimum() or ex.xMaximum() < float(cam_params['lat']) < ex.xMinimum():
