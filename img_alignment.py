@@ -424,7 +424,7 @@ def alignImgs(dlg, source_img_path, table):
     h,w = dest_img.shape[:2] # automatically clip to the destination image
     matrix = cv2.getPerspectiveTransform(source_pts_good, dest_pts_good)
     try:
-        aligned_img = cv2.warpPerspective(img, matrix, (w, h))
+        aligned_img = cv2.warpPerspective(img, matrix, (w, h),flags = cv2.INTER_NEAREST)
     except:
         errorMessage("Alignment failed")
         return
