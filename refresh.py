@@ -68,9 +68,9 @@ def refresh_PyLC(dlg, canvas_list):
 
     # refresh all text boxes
     dlg.InputImg_lineEdit.clear()
+    dlg.InputModel_lineEdit.clear()
 
     # refresh any other widgets
-    dlg.Model_comboBox.setCurrentIndex(0)
     dlg.Scale_slider.setValue(10)
     dlg.Scale_lineEdit.setText("1.0")
 
