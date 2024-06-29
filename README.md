@@ -4,7 +4,7 @@ __QGIS plugin for analysing ground-based oblique images__
 [![QGIS 3.28](https://img.shields.io/badge/QGIS-3.28.1-blue.svg)](https://www.qgis.org/en/site/forusers/download.html)
 [![Python 3.9](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 [![GNU License](https://img.shields.io/badge/License-GNU-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[!Zenodo](https://doi.org/10.5281/zenodo.12587817)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12587817.svg)](https://doi.org/10.5281/zenodo.12587817)
 
 Reference: Wright, C., Bone, C., Mathews, D., Tricker, J., Wright, B., and Higgs, E. Mountain Image Analysis Suite (MIAS): A new plugin for converting oblique images to landcover maps in QGIS. *Transactions in GIS* (Submitted 2024).
 
