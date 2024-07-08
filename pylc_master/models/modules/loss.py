@@ -53,7 +53,7 @@ class MultiLoss(torch.nn.Module):
         self.ce = 0.
         self.dsc = 0.
         self.fl = 0.
-        
+
         self.device = torch.device(defaults.device)
 
         # initialize cross entropy loss weights
@@ -247,25 +247,25 @@ class RunningLoss(object):
         if not save_dir:
             save_dir = defaults.save_dir
         self.model_dir = os.path.join(save_dir, model_id)
-        self.log_file = os.path.join(utils.mk_path(self.model_dir), 'losses.pth')
+        # self.log_file = os.path.join(utils.mk_path(self.model_dir), 'losses.pth')
         self.load()
 
     def load(self):
         """
         Loads log file for losses. Resumes tracking if requested.
         """
-        if os.path.exists(self.log_file):
-            print('Loss logs found at:\n\t{}'.format(self.log_file), end='')
-            if self.resume:
-                print('\n\tResuming!')
-                loss_res = torch.load(self.log_file)
-                self.train = loss_res['train']
-                self.valid = loss_res['valid']
-                self.test = loss_res['test']
-                self.best_dice = loss_res['best_dice']
-            else:
-                print('\tDeleting and Restarting loss tracking.')
-                os.remove(self.log_file)
+        # if os.path.exists(self.log_file):
+        #     print('Loss logs found at:\n\t{}'.format(self.log_file), end='')
+        #     if self.resume:
+        #         print('\n\tResuming!')
+        #         loss_res = torch.load(self.log_file)
+        #         self.train = loss_res['train']
+        #         self.valid = loss_res['valid']
+        #         self.test = loss_res['test']
+        #         self.best_dice = loss_res['best_dice']
+        #     else:
+        #         print('\tDeleting and Restarting loss tracking.')
+        #         os.remove(self.log_file)
 
     def log(self, iteration, training):
         """
@@ -296,13 +296,13 @@ class RunningLoss(object):
         """
         Save training loss values to file.
         """
-        torch.save({
-            "train": self.train,
-            "valid": self.valid,
-            "test": self.test,
-            "best_dice": self.best_dice,
-            "lr": self.lr
-        }, self.log_file)
+        # torch.save({
+        #     "train": self.train,
+        #     "valid": self.valid,
+        #     "test": self.test,
+        #     "best_dice": self.best_dice,
+        #     "lr": self.lr
+        # }, self.log_file)
 
     def print_status(self, mode):
         """

@@ -29,11 +29,11 @@ class Checkpoint:
         self.optim = None
 
         # initialize checkpoint and output model files
-        if not save_dir:
-            save_dir = defaults.save_dir
-        self.model_dir = utils.mk_path(os.path.join(save_dir, model_id))
-        self.checkpoint_file = os.path.join(self.model_dir, 'checkpoint.pth')
-        self.model_file = os.path.join(self.model_dir, model_id + '.pth')
+        # if not save_dir:
+        #     save_dir = defaults.save_dir
+        # self.model_dir = utils.mk_path(os.path.join(save_dir, model_id))
+        # self.checkpoint_file = os.path.join(self.model_dir, 'checkpoint.pth')
+        # self.model_file = os.path.join(self.model_dir, model_id + '.pth')
 
     def load(self):
         """ load checkpoint file """

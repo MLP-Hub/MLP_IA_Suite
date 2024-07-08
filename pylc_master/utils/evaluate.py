@@ -13,6 +13,7 @@ File: evaluate.py
 """
 import json
 import os
+import sys
 import torch
 import utils.tex as tex
 import numpy as np
@@ -21,7 +22,8 @@ import utils.tools as utils
 from config import defaults, Parameters
 from utils.metrics import Metrics
 
-from mlp_ia_suite.interface_tools import errorMessage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from interface_tools import errorMessage
 
 
 class Evaluator:
@@ -59,9 +61,9 @@ class Evaluator:
         # Make output and mask directories for results
         self.model_path = None
         self.output_dir = os.path.join(defaults.output_dir, self.meta.id)
-        self.masks_dir = utils.mk_path(os.path.join(self.output_dir, 'masks'))
-        self.logits_dir = utils.mk_path(os.path.join(self.output_dir, 'logits'))
-        self.metrics_dir = utils.mk_path(os.path.join(self.output_dir, 'metrics'))
+        # self.masks_dir = utils.mk_path(os.path.join(self.output_dir, 'masks'))
+        # self.logits_dir = utils.mk_path(os.path.join(self.output_dir, 'logits'))
+        # self.metrics_dir = utils.mk_path(os.path.join(self.output_dir, 'metrics'))
 
     def load(self, mask_pred, meta, mask_true_path=None, scale=None):
         """
@@ -193,73 +195,28 @@ class Evaluator:
         self.y_true = None
         self.y_pred = None
 
-    def save_logits(self, logits):
-        """
-        Save unnormalized model outputs (logits) to file.
+    # def save_logits(self, logits):
+    #     """
+    #     Save unnormalized model outputs (logits) to file.
+    #
+    #     Parameters
+    #     ----------
+    #     logits: list
+    #         Unnormalized model outputs.
+    #     Returns
+    #     -------
+    #     logits_file: str
+    #         Output path to model outputs file.
+    #     """
+    #     # save unnormalized model outputs
+    #     # logits_file = os.path.join(self.logits_dir, self.fid + '_output.pth')
+    #     # if utils.confirm_write_file(logits_file):
+    #     #     torch.save({"results": logits, "meta": self.meta}, logits_file)
+    #     #     print("Model output data saved to \n\t{}.".format(logits_file))
+    #     #     return logits_file
+    #     return
 
-        Parameters
-        ----------
-        logits: list
-            Unnormalized model outputs.
-        Returns
-        -------
-        logits_file: str
-            Output path to model outputs file.
-        """
-        # save unnormalized model outputs
-        logits_file = os.path.join(self.logits_dir, self.fid + '_output.pth')
-        if utils.confirm_write_file(logits_file):
-            torch.save({"results": logits, "meta": self.meta}, logits_file)
-            print("Model output data saved to \n\t{}.".format(logits_file))
-            return logits_file
-        return
 
-    def save_metrics(self):
-        """
-        Save prediction evaluation results to files.
-
-        Returns
-        -------
-        metrics_file: str
-            Output path to metrics data file.
-        metrics_file: str
-            Output path to confusion matrix PDF file.
-        metrics_file: str
-            Output path to confusion matrix data file.
-        """
-        # Build output file paths
-        metrics_file = os.path.join(self.metrics_dir, self.fid + '_eval.json')
-        cmap_img_file = os.path.join(self.metrics_dir, self.fid + '_cmap.pdf')
-        cmap_data_file = os.path.join(self.metrics_dir, self.fid + '_cmap.npy')
-
-        # save evaluation metrics results as JSON file
-        if utils.confirm_write_file(metrics_file):
-            with open(metrics_file, 'w') as fp:
-                json.dump(self.metrics.results, fp, indent=4)
-        # save confusion matrix as PDF and data file
-        if utils.confirm_write_file(cmap_img_file):
-            self.metrics.cmap.get_figure().savefig(cmap_img_file, format='pdf', dpi=400)
-            np.save(cmap_data_file, self.metrics.cmatrix)
-
-        # clear metrics plot
-        self.metrics.plt.clf()
-        return metrics_file, cmap_img_file, cmap_data_file
-
-    def save_tex(self):
-        """
-        Save prediction evaluation results as LaTeX table to file.
-
-        Returns
-        -------
-        tex_file: str
-            Output path to TeX data file.
-        """
-        tex_file = os.path.join(self.metrics_dir, self.fid + '_metrics.tex')
-        if utils.confirm_write_file(tex_file):
-            with open(tex_file, 'w') as fp:
-                fp.write(tex.convert_md_to_tex(self.meta))
-                return tex_file
-        return
 
     def save_image(self, args):
         """

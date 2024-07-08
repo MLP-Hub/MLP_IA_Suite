@@ -25,7 +25,7 @@ from numpy import random
 from config import defaults, Parameters
 from utils.tools import get_fname
 
-from mlp_ia_suite.interface_tools import errorMessage
+from interface_tools import errorMessage
 
 
 class Model:

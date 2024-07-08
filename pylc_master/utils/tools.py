@@ -12,6 +12,7 @@ Module: Utilities
 File: tools.py
 """
 import os
+import sys
 from math import ceil
 import torch.nn.functional
 import numpy as np
@@ -20,7 +21,8 @@ import cv2
 
 from config import defaults
 
-from mlp_ia_suite.interface_tools import errorMessage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from interface_tools import errorMessage
 
 
 def rgb2hex(color):

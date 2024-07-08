@@ -16,10 +16,11 @@ File: pylc.py
 import sys
 import os
 
-this_dir = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(this_dir, 'pylc_master')
-sys.path.append(path)
-import test
+# this_dir = os.path.dirname(os.path.realpath(__file__))
+# path = os.path.join(this_dir, 'pylc_master')
+# sys.path.append(path)
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from pylc_master.test import test_model
 
 
 def main(args):
@@ -27,7 +28,7 @@ def main(args):
     Main application handler
     """
     # execute processing function
-    test.tester(args)
+    test_model(args)
 
 
 if __name__ == "__main__":

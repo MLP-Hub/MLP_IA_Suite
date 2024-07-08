@@ -22,7 +22,7 @@ from qgis.PyQt.QtWidgets import QProgressDialog
 from qgis.PyQt.QtCore import Qt
 
 
-def tester(args):
+def test_model(args):
     """
     Apply model to input image(s) to generate segmentation maps.
 
@@ -91,7 +91,7 @@ def tester(args):
             progressDlg.setWindowModality(Qt.WindowModal)
             progressDlg.setValue(0)
             progressDlg.forceShow()
-            progressDlg.show()  
+            progressDlg.show()
 
             for i, (tile, _) in enumerate(img_loader):
                 progressDlg.setValue(i)
@@ -112,14 +112,13 @@ def tester(args):
 
             # Evaluate prediction against ground-truth
             # - skip if only global/aggregated requested
-            if not params.aggregate_metrics:
-                evaluator.evaluate().save_metrics()
+
         else:
             evaluator.load(results, extractor.get_meta()).save_image(args)
 
         # save unnormalized models outputs (i.e. raw logits) to file (if requested)
-        if args['save_logits']:
-            evaluator.save_logits(model_outputs)
+        # if args['save_logits']:
+            # evaluator.save_logits(model_outputs)
 
         # Reset evaluator
         evaluator.reset()
@@ -127,4 +126,3 @@ def tester(args):
     # Compute global metrics
     if args['aggregate_metrics']:
         evaluator.evaluate(aggregate=True)
-        evaluator.save_metrics()

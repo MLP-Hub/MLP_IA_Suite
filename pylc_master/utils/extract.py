@@ -12,6 +12,7 @@ Module: Extractor
 File: extract.py
 """
 import os
+import sys
 import time
 import torch
 import numpy as np
@@ -21,7 +22,8 @@ from db.dataset import MLPDataset
 import utils.tools as utils
 from utils.profile import get_profile
 
-from mlp_ia_suite.interface_tools import errorMessage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from interface_tools import errorMessage
 
 
 class Extractor(object):

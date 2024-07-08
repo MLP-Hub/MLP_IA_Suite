@@ -18,7 +18,8 @@ import sys
 import numpy as np
 import torch
 
-from mlp_ia_suite.interface_tools import errorMessage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from interface_tools import errorMessage
 
 class Parameters:
     """

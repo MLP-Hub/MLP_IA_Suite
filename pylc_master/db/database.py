@@ -13,13 +13,15 @@ File: database.py
 """
 import json
 import os
+import sys
 import math
 #import h5py
 import numpy as np
 from config import defaults
 from utils.tools import confirm_write_file
 
-from mlp_ia_suite.interface_tools import errorMessage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from interface_tools import errorMessage
 
 
 class DB(object):

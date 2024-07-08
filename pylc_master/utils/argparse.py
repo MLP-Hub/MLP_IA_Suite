@@ -14,7 +14,7 @@ File: argparse.py
 
 from argparse import ArgumentParser
 from preprocess import extract, augment, merge, grayscale
-from test import tester
+from test import test_model
 from train import trainer
 from config import defaults
 
@@ -292,7 +292,7 @@ def get_parser():
         parents=[parser]
     )
     parser_test.set_defaults(
-        func=tester
+        func=test_model
     )
     parser_test.add_argument(
         '-l', '--model',
