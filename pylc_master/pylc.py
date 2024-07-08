@@ -13,7 +13,13 @@ File: pylc.py
 """
 
 # Import the code for pylc
-from mlp_ia_suite.pylc_master.test import tester
+import sys
+import os
+
+this_dir = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(this_dir, 'pylc_master')
+sys.path.append(path)
+import test
 
 
 def main(args):
@@ -21,7 +27,7 @@ def main(args):
     Main application handler
     """
     # execute processing function
-    tester(args)
+    test.tester(args)
 
 
 if __name__ == "__main__":

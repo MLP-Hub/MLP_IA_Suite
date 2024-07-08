@@ -337,16 +337,10 @@ def transformPoints(source_pts, dest_points, matrix, table):
         dy = abs(dest_p[1] - py)
         rmse = np.sqrt(dx**2+dy**2) # calculate RMSE
 
-        # # add values to table
-        # table.setItem(i, 4, QTableWidgetItem(str(round(dx,2))))
-        # table.setItem(i, 5, QTableWidgetItem(str(round(dy,2))))
-        # table.setItem(i, 6, QTableWidgetItem(str(round(rmse,2))))
-
         # add values to table
         table.setItem(i, 4, QTableWidgetItem(str(round(dx,7))))
         table.setItem(i, 5, QTableWidgetItem(str(round(dy,7))))
         table.setItem(i, 6, QTableWidgetItem(str(round(rmse,7))))
-
 
         i+=1
 
@@ -424,7 +418,7 @@ def alignImgs(dlg, source_img_path, table):
     h,w = dest_img.shape[:2] # automatically clip to the destination image
     matrix = cv2.getPerspectiveTransform(source_pts_good, dest_pts_good)
     try:
-        aligned_img = cv2.warpPerspective(img, matrix, (w, h),flags = cv2.INTER_NEAREST)
+        aligned_img = cv2.warpPerspective(img, matrix, (w, h))
     except:
         errorMessage("Alignment failed")
         return
