@@ -50,7 +50,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -1391,6 +1391,9 @@ margin-top: -6px;
 margin-bottom: -6px;
 }
 </string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
                </property>
                <property name="maximum">
                 <number>10</number>

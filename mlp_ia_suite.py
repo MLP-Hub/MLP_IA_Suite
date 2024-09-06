@@ -208,7 +208,7 @@ class MLP_IA_Suite:
         self.dlg.Scale_lineEdit.textChanged.connect(lambda: setScaleSlideVal(self.dlg, self.dlg.Scale_lineEdit.text()))
 
         # Get file inputs
-        self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.InputImg_button.clicked.connect(lambda: getFile(self.dlg.InputImg_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
         self.dlg.InputModel_button.clicked.connect(lambda: getFile(self.dlg.InputModel_lineEdit, "*.pth"))
 
         # Run PyLC and display outputs
@@ -259,7 +259,7 @@ class MLP_IA_Suite:
         # Get file/folder inputs
         self.dlg.InputDEM_button.clicked.connect(lambda: getFile(self.dlg.InputDEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
         self.dlg.InputDEM_button.clicked.connect(lambda: resetCamPos(self.dlg))
-        self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.InputRefImg_button.clicked.connect(lambda: getFile(self.dlg.InputRefImg_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
         
         # Generate hillshade and VP
         self.dlg.lat_init = None # initial lat and long for DEM clipping
@@ -301,11 +301,12 @@ class MLP_IA_Suite:
 
         self.dlg.aligned_img_path = None # initiate variable to hold path to aligned image (for temp file)
         self.dlg.aligned_mask_path = None # initiate variable to hold path to aligned mask
+        self.dlg.CPtool = None # initiate variable for control point tool
         
         # Get file/folder inputs and display images
-        self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        self.dlg.DestImg_button.clicked.connect(lambda: getFile(self.dlg.DestImg_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        self.dlg.Mask_button.clicked.connect(lambda: getFile(self.dlg.Mask_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
+        self.dlg.DestImg_button.clicked.connect(lambda: getFile(self.dlg.DestImg_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
+        self.dlg.Mask_button.clicked.connect(lambda: getFile(self.dlg.Mask_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
         self.dlg.SourceImg_button.clicked.connect(lambda: addImg(self.dlg.SourceImg_lineEdit.text(), "Source Image", self.dlg.SourceImg_canvas, True))
         self.dlg.DestImg_button.clicked.connect(lambda: addImg(self.dlg.DestImg_lineEdit.text(), "Destination Image", self.dlg.DestImg_canvas, True))
         
@@ -319,7 +320,7 @@ class MLP_IA_Suite:
         self.dlg.addCP_button.clicked.connect(lambda: addCPTool(self.dlg, self.dlg.SourceImg_canvas, "Source CP Layer", "Source Image"))
         self.dlg.delCP_button.clicked.connect(lambda: delCPTool(self.dlg, canvas_list_3))
         self.dlg.saveCP_button.clicked.connect(lambda: saveCPs(self.dlg))
-        self.dlg.loadCP_button.clicked.connect(lambda: loadCPs(["Source CP Layer","Dest CP Layer"], canvas_list_3, name_list, self.dlg.CP_table))
+        self.dlg.loadCP_button.clicked.connect(lambda: loadCPs(["Source CP Layer","Dest CP Layer"], canvas_list_3, name_list, self.dlg.CP_table, self.dlg))
         self.dlg.Align_button.clicked.connect(lambda: alignImgs(self.dlg, self.dlg.SourceImg_lineEdit.text(), self.dlg.CP_table))
         self.dlg.UndoAlign_button.clicked.connect(lambda: undoAlign(self.dlg))
         self.dlg.SaveAlign_button.clicked.connect(lambda: saveAlign(self.dlg))
@@ -345,7 +346,7 @@ class MLP_IA_Suite:
         
         # Get file/folder inputs
         self.dlg.DEM_button.clicked.connect(lambda: getFile(self.dlg.DEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
-        self.dlg.AlignMask_button.clicked.connect(lambda: getFile(self.dlg.AlignMask_lineEdit, "JPEG format (*.jpeg);;JPG format (*.jpg);;PNG format (*.png);;TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.AlignMask_button.clicked.connect(lambda: getFile(self.dlg.AlignMask_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
         self.dlg.CamParam_button.clicked.connect(lambda: getFile(self.dlg.CamParam_lineEdit, "Text files (*.txt)"))
 
         # Generate VS

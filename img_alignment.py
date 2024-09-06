@@ -89,7 +89,7 @@ def createCPLayer(canvas, lyr_name, img_name):
     canvas.setLayers(layer_list)
     canvas.refreshAllLayers()
 
-def addCP(canvas, vl, x, y, table, name):
+def addCP(canvas, vl, x, y, table, name, dlg):
     """Adds CP to vector layer and table"""
     
     vl.startEditing() # enter editing mode
@@ -116,6 +116,8 @@ def addCP(canvas, vl, x, y, table, name):
     table.setItem(row, col, QTableWidgetItem(str(round(x,2))))
     table.setItem(row, col+1, QTableWidgetItem(str(abs(round(y,2)))))
 
+    dlg.refresh_dict["Align"]["CPs"]=None
+
 def addCPfromClick(dlg, point, canvas, name):
     """Adds CP (from mouse click) to vector layer and table"""
 
@@ -123,7 +125,7 @@ def addCPfromClick(dlg, point, canvas, name):
     clearSelection([dlg.DestImg_canvas, dlg.SourceImg_canvas]) # remove any highlighted points
 
     # add cp to vector layer and table
-    addCP(canvas, vl, point.x(), point.y(), dlg.CP_table, name)
+    addCP(canvas, vl, point.x(), point.y(), dlg.CP_table, name, dlg)
 
     # When done, switch canvases
     canvas.unsetMapTool(dlg.CPtool)
@@ -149,7 +151,7 @@ def addCPTool(dlg, canvas, name, img_name):
     dlg.CPtool.setCursor(Qt.CrossCursor) # use crosshair cursor
     canvas.setMapTool(dlg.CPtool) # set the map tool for the canvas
 
-def deleteCP(f, vl_list, table):
+def deleteCP(f, vl_list, table, dlg):
     """Deletes selected feature from layer and cp table"""
 
     # loop through both layers to find which cp was clicked on,
@@ -181,6 +183,8 @@ def deleteCP(f, vl_list, table):
         vl.commitChanges()
 
         vl.removeSelection() # remove any selection (may have been highlighted from table)
+
+    dlg.refresh_dict["Align"]["CPs"]=None
     
 def delCPTool(dlg, canvas_list):
     """Allows user to select control point from map to delete"""
@@ -198,7 +202,7 @@ def delCPTool(dlg, canvas_list):
         dlg.delTool2 = QgsMapToolIdentifyFeature(canvas_list[1])
         dlg.delTool2.setLayer(vl2)
         canvas_list[1].setMapTool(dlg.delTool2)
-        dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))    # connect delete tools to delete function
+        dlg.delTool2.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table, dlg))    # connect delete tools to delete function
 
 def clearSelection(canvas_list):
     """Clears any selected CPs"""
@@ -278,7 +282,7 @@ def saveCPs(dlg):
     
     dlg.refresh_dict["Align"]["CPs"]=cp_filepath
 
-def loadCPs(layer_names, canvases, img_names, table):
+def loadCPs(layer_names, canvases, img_names, table, dlg):
     """Allows user to load a set of saved control points"""
     
     # first, get user specified text file containing previously saved CPs
@@ -319,7 +323,7 @@ def loadCPs(layer_names, canvases, img_names, table):
         vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
 
         for point in cps_list[x]:
-            addCP(canvases[x], vl, point[0], -point[1], table, layer_names[x])
+            addCP(canvases[x], vl, point[0], -point[1], table, layer_names[x], dlg)
 
 def transformPoints(source_pts, dest_points, matrix, table):
     """Finds coordinates of cps after alignment"""
@@ -526,7 +530,7 @@ def saveAlign(dlg):
         align_path = dialog.selectedFiles()[0]
         cv2.imwrite(align_path, aligned_img)
     
-        if img_to_save == "Aligned Image":
+        if img_to_save == "" or img_to_save == "Aligned Image":
             dlg.refresh_dict["Align"]["Img"]=align_path
         else:
             dlg.refresh_dict["Align"]["Mask"]=align_path 

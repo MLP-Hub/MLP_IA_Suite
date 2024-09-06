@@ -176,6 +176,15 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     for lyr in lyr_list:
         removeLayer(canvas_list[2],lyr)
 
+    # reset layer transparency
+    active_layer = canvas_list[0].layer(0)
+    active_layer.renderer().setOpacity(1)
+    active_layer.triggerRepaint()
+    active_layer = canvas_list[1].layer(0)
+    active_layer.renderer().setOpacity(1)
+    active_layer.triggerRepaint()
+
+
     for tool in exclusive_tools:
         tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
 

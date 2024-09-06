@@ -19,9 +19,9 @@ import numpy as np
 import torch
 import cv2
 
-from config import defaults
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from config import defaults
 from interface_tools import errorMessage
 
 
@@ -195,7 +195,10 @@ def adjust_to_tile(img, tile_size, stride, ch, interpolate=cv2.INTER_AREA):
     dim = (w_scaled, h_scaled)
 
     # resize image to fit tiled dimensions
-    img_resized = cv2.resize(img, dim, interpolation=interpolate)
+    try:
+        img_resized = cv2.resize(img, dim, interpolation=interpolate)
+    except cv2.error as e:
+        errorMessage("Scale too small")
     h_resized = img_resized.shape[0]
     h_tgt = int(h_resized / tile_size) * tile_size
 

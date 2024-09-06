@@ -182,7 +182,7 @@ def refresh_align(dlg, canvas_list):
         if ret == QMessageBox.No:
             return
 
-    if QgsProject.instance().mapLayersByName("Source CP Layer") or QgsProject.instance().mapLayersByName("Dest CP Layer") and dlg.refresh_dict["Align"]["CPs"] is None:
+    if (QgsProject.instance().mapLayersByName("Source CP Layer") or QgsProject.instance().mapLayersByName("Dest CP Layer")) and dlg.refresh_dict["Align"]["CPs"] is None:
         ret = messageBox("Control points")
         if ret == QMessageBox.No:
             return
@@ -208,6 +208,10 @@ def refresh_align(dlg, canvas_list):
     dlg.SingleView_pushButton_3.setEnabled(False)
     dlg.Fit_toolButton_3.setEnabled(False)
     dlg.Pan_toolButton_3.setEnabled(False)
+    if dlg.CPtool:
+        dlg.SourceImg_canvas.unsetMapTool(dlg.CPtool)
+        dlg.DestImg_canvas.unsetMapTool(dlg.CPtool)
+        
 
     dlg.Layer_comboBox.clear()
     dlg.Layer_comboBox.setEnabled(False)

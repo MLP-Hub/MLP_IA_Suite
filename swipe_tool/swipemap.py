@@ -80,6 +80,7 @@ class SwipeMap(QgsMapCanvasItem):
     settings = QgsMapSettings(self.canvas.mapSettings())
     settings.setLayers(self.layers)
     settings.setBackgroundColor(QColor(Qt.transparent))
+    settings.setDevicePixelRatio(1)
     
     self.setRect( self.canvas.extent() )
     job = QgsMapRendererParallelJob( settings ) 
