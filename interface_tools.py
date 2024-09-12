@@ -31,8 +31,6 @@ from qgis.gui import QgsMapToolPan
 sys.path.append(os.path.join(os.path.dirname(__file__), '.'))
 from swipe_tool import mapswipetool
 
-
-
 def errorMessage(txt):
     """Displays error message to user"""
     msg = QMessageBox()

@@ -35,6 +35,7 @@ from .pylc_setup import runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer, undoAlign
 from .vs_creation import displayVS, saveVS
+from .mosaic import addLayer, removeLayer
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .refresh import refresh_PyLC, refresh_VP, refresh_align, refresh_VS
 
@@ -345,7 +346,7 @@ class MLP_IA_Suite:
         self.dlg.vs_path = None # initiate variable to hold path to VP (for temp file)
         
         # Get file/folder inputs
-        self.dlg.DEM_button.clicked.connect(lambda: getFile(self.dlg.DEM_lineEdit, "TIF format (*.tif *.TIF);;TIFF format (*.tiff *.TIFF)"))
+        self.dlg.DEM_button.clicked.connect(lambda: getFile(self.dlg.DEM_lineEdit, "TIF format (*.tif *.TIF *.tiff *.TIFF)"))
         self.dlg.AlignMask_button.clicked.connect(lambda: getFile(self.dlg.AlignMask_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))
         self.dlg.CamParam_button.clicked.connect(lambda: getFile(self.dlg.CamParam_lineEdit, "Text files (*.txt)"))
 
@@ -361,6 +362,11 @@ class MLP_IA_Suite:
         self.dlg.Transparency_slider_4.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_4.value(), self.dlg.VS_mapCanvas))
 
         self.dlg.VS_refresh.clicked.connect(lambda: refresh_VS(self.dlg, canvas_list_5))
+
+        # Mosaic Tab
+        self.dlg.addLayer_button.clicked.connect(lambda: addLayer("TIF format (*.tif *.TIF *.tiff *.TIFF)", self.dlg.layers_listWidget))
+        self.dlg.removerLayer_button.clicked.connect(lambda: removeLayer(self.dlg.layers_listWidget))
+        
 
         # SHOW THE DIALOG
         self.dlg.show()
