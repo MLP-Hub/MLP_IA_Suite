@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1541</width>
+    <width>1483</width>
     <height>843</height>
    </rect>
   </property>
@@ -31,8 +31,8 @@
   <property name="windowTitle">
    <string>MLP Image Analysis Suite</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
       <size>
@@ -50,7 +50,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Home_tab">
       <property name="styleSheet">
@@ -127,7 +127,7 @@
                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
                </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Mountain Image Analysis Suite plugin contains a set of tools to go from a ground-based oblique image to a georeferenced, classified viewshed representing the landcover for the area visible in the image. MIAS works with both greyscale and colour images. There are four tools available through the plug-in:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Mountain Image Analysis Suite plugin contains a set of tools to go from a ground-based oblique image to a georeferenced, classified viewshed representing the landcover for the area visible in the image. If multiple images are used, the resulting viewsheds can be combined into a single map layer. MIAS works with both greyscale and colour images. There are five tools available through the plug-in.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -174,7 +174,7 @@ padding: 15px 15px 15px 15px;
               <number>5</number>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Classification&lt;/span&gt;: This tool uses a machine-learning algorithm to classify the landcover types in the oblique images. It produces a classified mask.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VP Creation:&lt;/span&gt; This tool creates a virtual photograph from a digital elevation model showing the terrain visible in the image. Virtual photograph creation relies on user input camera positioning.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alignment:&lt;/span&gt; This tool is used to align a classified image to its corresponding virtual photograph using control points. It is necessary to subsequently create an accurate viewshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VS Creation:&lt;/span&gt; This tool produces a georeferenced and classified viewshed, the final product!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Classification&lt;/span&gt;: This tool uses a machine-learning algorithm to classify the landcover types in the oblique images. It produces a classified mask.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VP Creation:&lt;/span&gt; This tool creates a virtual photograph from a digital elevation model showing the terrain visible in the image. Virtual photograph creation relies on user input camera positioning.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Alignment:&lt;/span&gt; This tool is used to align a classified image to its corresponding virtual photograph using control points. It is necessary to subsequently create an accurate viewshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;VS Creation:&lt;/span&gt; This tool produces a georeferenced and classified viewshed showing the area visible in the original image.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Mosaicking: &lt;/span&gt;This tool is used to combine multiple viewsheds into a single landcover layer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -4892,6 +4892,265 @@ border-color: rgb(255, 255, 255);</string>
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Mosaic_tab">
+      <attribute name="title">
+       <string>Mosaicking</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_13">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="Mosaic_title">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Mosaicking</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::RichText</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="Mosaic_description">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is used to combine multiple viewsheds into a single landcover layer. By default, mosaicking is accomplished based on landcover prediction probabilities for each pixel assessed by the automated landscape classifier during the classsication step. If manual ranking is enabled, mosaicking will occur using a modified mode procedure based on the order of the layers provided in the list view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignJustify|Qt::AlignTop</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="moveLayerDown_button_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>29</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move backward</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/add_CP.png</normaloff>Icons/add_CP.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveLayerDown_button_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>29</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move backward</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/remove_CP.png</normaloff>Icons/remove_CP.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_15">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>200</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="ranking_checkBox">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Manual Ranking</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveLayerUp_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>29</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move forward</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/arrow_up.png</normaloff>Icons/arrow_up.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="moveLayerDown_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>29</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move backward</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Icons/arrow_down.png</normaloff>Icons/arrow_down.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QgsMapCanvas" name="Mosaic_mapCanvas" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>1000</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
