@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterTransparency, QgsRasterFileWriter, QgsRasterPipe
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem, QMessageBox
 from qgis.PyQt.QtGui import QImage, QPixmap
 from qgis.PyQt.QtCore import Qt
@@ -198,8 +198,10 @@ def drawViewshed(dlg):
             
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
+    # convert to singleband
     vs_sb = np.sum(vs, 2)
 
+    # convert to correct legend (1 to 8 for classes, 0 is ND)
     vs_sb[vs_sb == 3] = 0
     vs_sb[vs_sb == 207] = 1
     vs_sb[vs_sb == 420] = 2
@@ -236,15 +238,6 @@ def createVSLayer(vs_path, DEM_lyr):
     vs_layer = QgsRasterLayer(vs_ref_path, "Viewshed")
 
     return vs_ref_path, vs_layer  
-
-# def setVSTransparency(vs_layer):
-#     """Sets black (no data) areas to  transparent"""
-    
-#     raster_transparency  = vs_layer.renderer().rasterTransparency()
-#     pixel = QgsRasterTransparency.TransparentThreeValuePixel()
-#     pixel.red, pixel.green, pixel.blue, pixel.percentTransparent = 0, 0, 0, 100
-#     raster_transparency.setTransparentThreeValuePixelList([pixel])
-#     vs_layer.triggerRepaint()
 
 def showMask(dlg):
     """Adds aligned mask to QGraphics View"""
@@ -301,7 +294,16 @@ def displayVS(dlg):
 
     QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
-    #setVSTransparency(vs_ref_layer) # set black to transparent
+
+    dir_path = os.path.dirname(__file__)
+    dir_path = os.path.normpath(dir_path)
+    style_path = os.path.join(dir_path, "sb_PyLC_style.qml") # path to file containing list of appropriate CRS
+
+    vs_ref_layer.loadNamedStyle(style_path)
+    #iface.layerTreeView().refreshLayerSymbology(rasterlayer.id())
+    #rasterlayer.triggerRepaint()
+
+
     
     #remove any existing layers, then add VS and DEM to map
     layer_list = dlg.VS_mapCanvas.layers()
