@@ -22,11 +22,15 @@
  ***************************************************************************/
 """
 
+import os
+
+from qgis.core import QgsRasterLayer
 from qgis.PyQt.QtWidgets import QFileDialog
 from PyQt5.QtCore import Qt
 
 def addLayer(filter_string, listWidget):
     """Users provides raster layer to add to list"""
+
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.ExistingFiles)
     dialog.setOption(dialog.DontUseNativeDialog)
@@ -44,3 +48,39 @@ def removeLayer(listWidget):
 
     row = listWidget.currentRow()
     listWidget.takeItem(row)
+
+def readRasterLayers(listWidget):
+    """Reads filepaths from list and creates raster layers"""
+
+    filepaths = [listWidget.item(x).text() for x in range(listWidget.count())]
+
+    layer_list = []
+
+    for filepath in filepaths:
+        good_path = os.path.realpath(filepath)
+        raster_layer = QgsRasterLayer(good_path, os.path.basename(good_path))
+        layer_list.append(raster_layer)
+
+    return layer_list
+
+def rankedMosaic(layer_list):
+    """Mosaics a set of rasters based on mode"""
+
+def mosaicRasters(listWidget, ranking_checkBox):
+    """Mosaics provided rasters together"""
+
+    layer_list = readRasterLayers(listWidget)
+
+    if ranking_checkBox.isChecked():
+        rankedMosaic(layer_list)
+
+
+    # for each layer:
+        # find associated text file
+        # for each landcover class
+            # create an array and save as a temporary image
+            # convert each image to raster layer (see createViewshedLayer)
+            # save raster layer to temp file (layerName_conifer)
+    # use cell statistics to find average (or total ask Ben) for each class
+    # use cell statistics to find 
+

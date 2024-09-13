@@ -144,7 +144,7 @@ def drawViewshed(dlg):
     
     # create blank viewshed (same size as DEM)
     dem_h, dem_w, *_ = DEM_img.shape
-    vs = np.zeros((dem_h,dem_w, 3),dtype=np.uint8) 
+    vs = np.ones((dem_h,dem_w, 3),dtype=np.uint8)
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
@@ -211,7 +211,7 @@ def createVSLayer(vs_path, DEM_lyr):
               'DATA_TYPE' : 0, 
               'EXTRA' : ullr, 
               'INPUT' : vs_path, 
-              'NODATA' : None, 
+              'NODATA' : "1", 
               'OPTIONS' : '', 
               'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT, 
               'TARGET_CRS' : None }
@@ -231,7 +231,6 @@ def setVSTransparency(vs_layer):
     pixel.red, pixel.green, pixel.blue, pixel.percentTransparent = 0, 0, 0, 100
     raster_transparency.setTransparentThreeValuePixelList([pixel])
     vs_layer.triggerRepaint()
-
 
 def showMask(dlg):
     """Adds aligned mask to QGraphics View"""
