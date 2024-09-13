@@ -198,37 +198,21 @@ def drawViewshed(dlg):
             
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
-    return vs, DEM_layer
+    vs_sb = np.sum(vs, 2)
 
-def singleBand(vs_lyr):
-    """Converts multiband raster to singleband with LC classes"""
+    vs_sb[vs_sb == 3] = 0
+    vs_sb[vs_sb == 207] = 1
+    vs_sb[vs_sb == 420] = 2
+    vs_sb[vs_sb == 376] = 3
+    vs_sb[vs_sb == 227] = 4
+    vs_sb[vs_sb == 255] = 5
+    vs_sb[vs_sb == 413] = 6
+    vs_sb[vs_sb == 259] = 7
+    vs_sb[vs_sb == 489] = 8
 
-    # formula = "'A'=34 * 'B'=139 * 'C'=34 * 1"
-    # # + A=255 * B=165 * C=0 * 2" 
-    # #+ (A=124) * (B=252) * (C=0) * 3 + (A=139) * (B=69) * (C=19) * 4 + (A=0) * (B=0) * (C=255) * 5 + (A=95) * (B=158) * (C=160) * 6 + (A=255) * (B=0) * (C=4) * 7 + (A=45) * (B=189) * (C=255) * 8"
+    vs_sb_int = vs_sb.astype(int)
 
-    # parameters = {'INPUT_A' : vs_lyr,
-    #         'BAND_A' : 1,
-    #         'BAND_B' : 2,
-    #         'BAND_C' : 3,
-    #         'FORMULA' : formula,   
-    #         'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT}
-
-    #vs_sb_ref = processing.run('gdal:rastercalculator', parameters)
-
-    formula = '("Viewshed@1"=34) * ("Viewshed@2"=139) * ("Viewshed@3"=34) * 1 +\n("Viewshed@1"=255) * ("Viewshed@2"=165) * ("Viewshed@3"=0) * 2 +\n("Viewshed@1"=124) * ("Viewshed@2"=252) * ("Viewshed@3"=0) * 3 +\n("Viewshed@1"=139) * ("Viewshed@2"=69) * ("Viewshed@3"=19) * 4 +\n("Viewshed@1"=0) * ("Viewshed@2"=0) * ("Viewshed@3"=255) * 5 +\n("Viewshed@1"=95) * ("Viewshed@2"=158) * ("Viewshed@3"=160) * 6 +\n("Viewshed@1"=255) * ("Viewshed@2"=0) * ("Viewshed@3"=4) * 7 +\n("Viewshed@1"=45) * ("Viewshed@2"=189) * ("Viewshed@3"=255) * 8'
-
-    parameters = {'LAYERS' : vs_lyr,
-                  'EXPRESSION' : formula,
-                  'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT}
-
-    vs_sb_ref = processing.run('qgis:rastercalculator', parameters)
-
-    vs_sb_path=vs_sb_ref['OUTPUT']
-    vs_sb_layer = QgsRasterLayer(vs_sb_path, "Viewshed")
-
-    return vs_sb_path, vs_sb_layer 
-
+    return vs_sb_int, DEM_layer
 
 def createVSLayer(vs_path, DEM_lyr):
     """Converts viewshed image to useable layer"""
@@ -241,7 +225,7 @@ def createVSLayer(vs_path, DEM_lyr):
               'DATA_TYPE' : 0, 
               'EXTRA' : ullr, 
               'INPUT' : vs_path, 
-              'NODATA' : "1", 
+              'NODATA' : "0", 
               'OPTIONS' : '', 
               'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT, 
               'TARGET_CRS' : None }
@@ -312,12 +296,10 @@ def displayVS(dlg):
     
     cv2.imwrite(dlg.vs_path, vs) # write viewshed to image
 
+
     dlg.vs_path, vs_ref_layer = createVSLayer(dlg.vs_path, DEM_layer) # convert viewshed from image to referenced raster layer, update path to VS layer
 
     QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
-    dlg.vs_path, vs_sb_layer = singleBand(vs_ref_layer) # convert to singleband
-
-    QgsProject.instance().addMapLayer(vs_sb_layer, False) # add layer to the registry (but don't load into main map)
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
     #setVSTransparency(vs_ref_layer) # set black to transparent
     
