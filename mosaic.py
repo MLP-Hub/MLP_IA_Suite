@@ -84,21 +84,25 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
     """Mosaics a set of rasters based on mode"""
     
     input_arrays = []
+
     for i, filepath in enumerate(filepaths):
+        
         # read image into array
         img = skimage.io.imread(os.path.realpath(filepath), as_gray=True)
 
         # pad array with NaN values so that all inputs have same size
 
-        before_y = int(max(extents[3]) - extents[3][i-1])
-        after_y = int(extents[2][i-1] - min(extents[2]))
+        before_y = int(extents[2][i-1] - min(extents[2]))
+        after_y = int(max(extents[3]) - extents[3][i-1])
 
-        before_x = int(extents[0][i-1] - min(extents[0]))
-        after_x = int(max(extents[1]) - extents[1][i-1])
-
+        before_x = int(max(extents[1]) - extents[1][i-1])
+        after_x = int(extents[0][i-1] - min(extents[0]))
+        
         pad_width = ((before_y, after_y), (before_x, after_x))
 
         img_pad = np.pad(img.astype(np.float), pad_width, mode='constant', constant_values=np.nan)
+
+        img_pad[img_pad == 0] = np.nan # convert zeros to NaN as well
 
         input_arrays.append(img_pad)
     
