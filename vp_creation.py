@@ -511,7 +511,7 @@ def saveVP(dlg):
     vp = cv2.imread(dlg.vp_path)
     save_vp_path = None
 
-    # open save dialog and save aligned image
+    # open save dialog
     dialog = QFileDialog()
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")

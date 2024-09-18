@@ -318,7 +318,7 @@ def saveVS(dlg):
     vs = QgsRasterLayer(dlg.vs_path)
     save_vs_path = None
 
-    # open save dialog and save aligned image
+    # open save dialog
     dialog = QFileDialog()
     dialog.setOption(dialog.DontUseNativeDialog)
     dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")

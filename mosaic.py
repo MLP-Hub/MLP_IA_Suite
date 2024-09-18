@@ -29,7 +29,7 @@ import cv2
 import skimage
 import tempfile
 
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe
 from qgis.PyQt.QtWidgets import QFileDialog
 from PyQt5.QtCore import Qt
 from qgis import processing
@@ -58,18 +58,39 @@ def removeLayer(listWidget):
     listWidget.takeItem(row)
 
 def readRasterLayers(listWidget):
-    """Reads filepaths from list and finds extents for each layer"""
+    """Reads filepaths from list and finds extents, resolutions, and checks CRS for each layer"""
 
-    filepaths = [listWidget.item(x).text() for x in range(listWidget.count())]
+    filepaths = [listWidget.item(x).text() for x in range(listWidget.count())] # get list of filepaths from input
 
     min_xs = []
     max_xs = []
     min_ys = []
     max_ys = []
 
+    # check original CRS and resolution
+    good_path = os.path.realpath(filepaths[0])
+    raster_layer = QgsRasterLayer(good_path, os.path.basename(good_path))
+    ref_crs = raster_layer.crs() # get current CRS
+    refResX = round(raster_layer.rasterUnitsPerPixelX())
+    refResY = round(raster_layer.rasterUnitsPerPixelY())
+
     for filepath in filepaths:
+
+        # first convert to raster layer
         good_path = os.path.realpath(filepath)
         raster_layer = QgsRasterLayer(good_path, os.path.basename(good_path))
+
+        # check layer CRS (all must be the same CRS and in meters)
+        if raster_layer.crs() != ref_crs:
+            errorMessage("All inputs must be in the same coordinate reference systems")
+            return
+        
+        # check layer resolution (must be the same)
+        print(raster_layer.rasterUnitsPerPixelX(), refResX, raster_layer.rasterUnitsPerPixelY(), refResY)
+        if  round(raster_layer.rasterUnitsPerPixelX()) != refResX or round(raster_layer.rasterUnitsPerPixelY()) != refResY:
+            errorMessage("All inputs must have in the same spatial resolution")
+            return
+
         ex = raster_layer.extent()
         min_xs.append(ex.xMinimum())
         max_xs.append(ex.xMaximum())
@@ -78,7 +99,7 @@ def readRasterLayers(listWidget):
 
     extents = [min_xs, max_xs, min_ys, max_ys]
 
-    return filepaths, extents
+    return filepaths, extents, refResX, refResY
 
 def rankedMosaic(filepaths, extents, res_x, res_y):
     """Mosaics a set of rasters based on mode"""
@@ -92,11 +113,11 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
 
         # pad array with NaN values so that all inputs have same size
 
-        before_y = int(extents[2][i-1] - min(extents[2]))
-        after_y = int(max(extents[3]) - extents[3][i-1])
+        before_y = int((extents[2][i-1] - min(extents[2]))/res_y)
+        after_y = int((max(extents[3]) - extents[3][i-1])/res_y)
 
-        before_x = int(max(extents[1]) - extents[1][i-1])
-        after_x = int(extents[0][i-1] - min(extents[0]))
+        before_x = int((max(extents[1]) - extents[1][i-1])/res_x)
+        after_x = int((extents[0][i-1] - min(extents[0]))/res_x)
         
         pad_width = ((before_y, after_y), (before_x, after_x))
 
@@ -108,9 +129,6 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
     
     mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0]
     mosaic = mosaic.astype(np.int)
-    np.squeeze(mosaic)
-    
-    # later, account for different layer resolutions
 
     return mosaic
 
@@ -142,10 +160,10 @@ def createMosaicLayer(mosaic_path, extents):
 def mosaicRasters(listWidget, ranking_checkBox, dlg):
     """Mosaics provided rasters together"""
 
-    filepaths, extents = readRasterLayers(listWidget)
+    filepaths, extents, res_x, res_y = readRasterLayers(listWidget)
 
     if ranking_checkBox.isChecked():
-        mosaic_img = rankedMosaic(filepaths, extents, 1, 1)
+        mosaic_img = rankedMosaic(filepaths, extents, res_x, res_y)
     else:
         mosaic_img = probMosaic(filepaths, extents)
 
@@ -159,13 +177,10 @@ def mosaicRasters(listWidget, ranking_checkBox, dlg):
     if os.path.isfile(dlg.mosaic_path):
         # check if the temporary file already exists
         os.remove(dlg.mosaic_path)
-    
-    #skimage.io.imsave("C:\\MIAS\\ttt.tiff", mosaic_img)
 
-    skimage.io.imsave(dlg.mosaic_path, mosaic_img) # write viewshed to image
+    skimage.io.imsave(dlg.mosaic_path, mosaic_img) # write mosaic to image
 
-
-    dlg.mosaic_path, mosaic_ref_layer = createMosaicLayer(dlg.mosaic_path, extents) # convert viewshed from image to referenced raster layer, update path to VS layer
+    dlg.mosaic_path, mosaic_ref_layer = createMosaicLayer(dlg.mosaic_path, extents) # convert mosaic from image to referenced raster layer
 
     QgsProject.instance().addMapLayer(mosaic_ref_layer, False) # add layer to the registry (but don't load into main map)
     
@@ -175,8 +190,47 @@ def mosaicRasters(listWidget, ranking_checkBox, dlg):
 
     mosaic_ref_layer.loadNamedStyle(style_path)
 
-    #remove any existing layers, then add VS and DEM to map
+    #remove any existing layers, then add mosaic to map
     layer_list = dlg.Mosaic_mapCanvas.layers()
     for lyr in layer_list:
         QgsProject.instance().removeMapLayer(lyr.id()) # if the layer already exists, remove it from the canvas
     loadLayer(dlg.Mosaic_mapCanvas, mosaic_ref_layer)
+
+
+def saveMosaic(dlg):
+    """Saves mosaic to specified location"""
+
+    mosaic = QgsRasterLayer(dlg.mosaic_path)
+    save_mosaic_path = None
+
+    # open save dialog 
+    dialog = QFileDialog()
+    dialog.setOption(dialog.DontUseNativeDialog)
+    dialog.setNameFilter("TIFF format (*.tiff *.TIFF)")
+    dialog.setDefaultSuffix("tiff")
+    dialog.setAcceptMode(QFileDialog.AcceptSave)
+
+    if dialog.exec_():
+        save_mosaic_path = dialog.selectedFiles()[0]
+
+        # get CRS from first layer in list
+        filepath = os.path.realpath(dlg.layers_listWidget.item(0).text())
+        ref_layer = QgsRasterLayer(filepath, "ref")
+        dest_crs = ref_layer.crs()
+
+
+        # write moasic to raster file
+        file_writer = QgsRasterFileWriter(save_mosaic_path)
+        pipe = QgsRasterPipe()
+        provider = mosaic.dataProvider()
+        ctc=QgsProject.instance().transformContext()
+
+        if not pipe.set(provider.clone()):
+            errorMessage("Cannot set pipe provider")
+
+        file_writer.writeRaster(
+            pipe,
+            provider.xSize(),
+            provider.ySize(),
+            provider.extent(),
+            dest_crs, ctc)
