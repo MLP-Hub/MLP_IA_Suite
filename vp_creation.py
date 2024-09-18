@@ -38,7 +38,6 @@ import cv2
 import scipy
 import numpy as np
 import math
-from functools import partial
 
 def resetCamPath(dlg):
     """Resets path to camera parameters if they are changed"""

@@ -23,10 +23,18 @@
 """
 
 import os
+import numpy as np
+import scipy
+import cv2
+import skimage
+import tempfile
 
-from qgis.core import QgsRasterLayer
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject
 from qgis.PyQt.QtWidgets import QFileDialog
 from PyQt5.QtCore import Qt
+from qgis import processing
+
+from .interface_tools import errorMessage,  loadLayer
 
 def addLayer(filter_string, listWidget):
     """Users provides raster layer to add to list"""
@@ -50,37 +58,121 @@ def removeLayer(listWidget):
     listWidget.takeItem(row)
 
 def readRasterLayers(listWidget):
-    """Reads filepaths from list and creates raster layers"""
+    """Reads filepaths from list and finds extents for each layer"""
 
     filepaths = [listWidget.item(x).text() for x in range(listWidget.count())]
 
-    layer_list = []
+    min_xs = []
+    max_xs = []
+    min_ys = []
+    max_ys = []
 
     for filepath in filepaths:
         good_path = os.path.realpath(filepath)
         raster_layer = QgsRasterLayer(good_path, os.path.basename(good_path))
-        layer_list.append(raster_layer)
+        ex = raster_layer.extent()
+        min_xs.append(ex.xMinimum())
+        max_xs.append(ex.xMaximum())
+        min_ys.append(ex.yMinimum())
+        max_ys.append(ex.yMaximum())
 
-    return layer_list
+    extents = [min_xs, max_xs, min_ys, max_ys]
 
-def rankedMosaic(layer_list):
+    return filepaths, extents
+
+def rankedMosaic(filepaths, extents, res_x, res_y):
     """Mosaics a set of rasters based on mode"""
+    
+    input_arrays = []
+    for i, filepath in enumerate(filepaths):
+        # read image into array
+        img = skimage.io.imread(os.path.realpath(filepath), as_gray=True)
 
-def mosaicRasters(listWidget, ranking_checkBox):
+        # pad array with NaN values so that all inputs have same size
+
+        before_y = int(max(extents[3]) - extents[3][i-1])
+        after_y = int(extents[2][i-1] - min(extents[2]))
+
+        before_x = int(extents[0][i-1] - min(extents[0]))
+        after_x = int(max(extents[1]) - extents[1][i-1])
+
+        pad_width = ((before_y, after_y), (before_x, after_x))
+
+        img_pad = np.pad(img.astype(np.float), pad_width, mode='constant', constant_values=np.nan)
+
+        input_arrays.append(img_pad)
+    
+    mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0]
+    mosaic = mosaic.astype(np.int)
+    np.squeeze(mosaic)
+    
+    # later, account for different layer resolutions
+
+    return mosaic
+
+def probMosaic(filepaths, extents):
+    """Mosaics a set of rasters based on classification probability"""
+
+def createMosaicLayer(mosaic_path, extents):
+    """Converts mosaic image to useable layer"""
+ 
+    ext_list = ["-a_ullr",str(min(extents[0])),str(max(extents[3])),str(max(extents[1])), str(min(extents[2]))]
+    ullr = " ".join(ext_list)
+
+    PARAMS = { 'COPY_SUBDATASETS' : False, 
+              'DATA_TYPE' : 0, 
+              'EXTRA' : ullr, 
+              'INPUT' : mosaic_path, 
+              'NODATA' : "0", 
+              'OPTIONS' : '', 
+              'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT, 
+              'TARGET_CRS' : None }
+
+    mosaic_ref=processing.run("gdal:translate", PARAMS)
+
+    mosaic_ref_path=mosaic_ref['OUTPUT']
+    mosaic_layer = QgsRasterLayer(mosaic_ref_path, "Mosaic")
+
+    return mosaic_ref_path, mosaic_layer  
+
+def mosaicRasters(listWidget, ranking_checkBox, dlg):
     """Mosaics provided rasters together"""
 
-    layer_list = readRasterLayers(listWidget)
+    filepaths, extents = readRasterLayers(listWidget)
 
     if ranking_checkBox.isChecked():
-        rankedMosaic(layer_list)
+        mosaic_img = rankedMosaic(filepaths, extents, 1, 1)
+    else:
+        mosaic_img = probMosaic(filepaths, extents)
+
+    if mosaic_img is None:
+        # break if mosaicking did not work
+        errorMessage("Mosaicking failed.")
+        return
+
+    # save mosaicked image to temp path
+    dlg.mosaic_path = os.path.join(tempfile.mkdtemp(), 'tempMosaic.tiff')
+    if os.path.isfile(dlg.mosaic_path):
+        # check if the temporary file already exists
+        os.remove(dlg.mosaic_path)
+    
+    #skimage.io.imsave("C:\\MIAS\\ttt.tiff", mosaic_img)
+
+    skimage.io.imsave(dlg.mosaic_path, mosaic_img) # write viewshed to image
 
 
-    # for each layer:
-        # find associated text file
-        # for each landcover class
-            # create an array and save as a temporary image
-            # convert each image to raster layer (see createViewshedLayer)
-            # save raster layer to temp file (layerName_conifer)
-    # use cell statistics to find average (or total ask Ben) for each class
-    # use cell statistics to find 
+    dlg.mosaic_path, mosaic_ref_layer = createMosaicLayer(dlg.mosaic_path, extents) # convert viewshed from image to referenced raster layer, update path to VS layer
 
+    QgsProject.instance().addMapLayer(mosaic_ref_layer, False) # add layer to the registry (but don't load into main map)
+    
+    dir_path = os.path.dirname(__file__)
+    dir_path = os.path.normpath(dir_path)
+    style_path = os.path.join(dir_path, "sb_PyLC_style.qml") # path to file containing layer style
+
+    mosaic_ref_layer.loadNamedStyle(style_path)
+
+    #remove any existing layers, then add VS and DEM to map
+    layer_list = dlg.Mosaic_mapCanvas.layers()
+    for lyr in layer_list:
+        QgsProject.instance().removeMapLayer(lyr.id()) # if the layer already exists, remove it from the canvas
+    loadLayer(dlg.Mosaic_mapCanvas, mosaic_ref_layer)

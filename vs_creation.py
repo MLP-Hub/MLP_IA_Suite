@@ -297,14 +297,10 @@ def displayVS(dlg):
 
     dir_path = os.path.dirname(__file__)
     dir_path = os.path.normpath(dir_path)
-    style_path = os.path.join(dir_path, "sb_PyLC_style.qml") # path to file containing list of appropriate CRS
+    style_path = os.path.join(dir_path, "sb_PyLC_style.qml") # path to file containing layer style
 
     vs_ref_layer.loadNamedStyle(style_path)
-    #iface.layerTreeView().refreshLayerSymbology(rasterlayer.id())
-    #rasterlayer.triggerRepaint()
 
-
-    
     #remove any existing layers, then add VS and DEM to map
     layer_list = dlg.VS_mapCanvas.layers()
     for lyr in layer_list:
