@@ -34,7 +34,7 @@ from .mlp_ia_suite_dialog import MLP_IA_SuiteDialog
 from .pylc_setup import runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer, undoAlign
-from .vs_creation import displayVS, saveVS
+from .vs_creation import createVS, saveVS
 from .mosaic import addLayer, removeLayer, mosaicRasters, saveMosaic
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .refresh import refresh_PyLC, refresh_VP, refresh_align, refresh_VS
@@ -351,7 +351,7 @@ class MLP_IA_Suite:
         self.dlg.CamParam_button.clicked.connect(lambda: getFile(self.dlg.CamParam_lineEdit, "Text files (*.txt)"))
 
         # Generate VS
-        self.dlg.VS_Run_pushButton.clicked.connect(lambda: displayVS(self.dlg))
+        self.dlg.VS_Run_pushButton.clicked.connect(lambda: createVS(self.dlg))
         self.dlg.VS_Save_pushButton.clicked.connect(lambda: saveVS(self.dlg))
 
         # Connect tools to appropriate functions (VS tab)

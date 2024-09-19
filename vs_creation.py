@@ -69,7 +69,7 @@ def initCamParams(dlg):
 def camXY(DEM_layer, lat, lon):
     """Determines pixel coordinates of camera position"""
 
-    # get hillshade extents and spatial resolution
+    # get DEM extents and spatial resolution
     ex = DEM_layer.extent() 
     pixelSizeX = DEM_layer.rasterUnitsPerPixelX()
     pixelSizeY = DEM_layer.rasterUnitsPerPixelY()
@@ -151,6 +151,8 @@ def drawViewshed(dlg):
     img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
     img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
 
+    xmins, xmaxs, ymins, ymaxs = [], [], [], [] # initiate variables to find visible extent for clipping later
+
     progressDlg = QProgressDialog("Creating viewshed...","Cancel", 0, img_w)
     progressDlg.setWindowModality(Qt.WindowModal)
     progressDlg.setValue(0)
@@ -188,6 +190,13 @@ def drawViewshed(dlg):
         xs_visible = xs[unique_angles_indx].astype(int) # keep only visible x-coordinates
         ys_visible = ys[unique_angles_indx].astype(int) # keep only visible y-coordinates
 
+        # add max and min extents
+        xmins.append(min(xs_visible))
+        xmaxs.append(max(xs_visible))
+        ymins.append(min(ys_visible))
+        ymaxs.append(max(ys_visible))
+
+        # fund matching angles
         angle_matches_index = closest_argmin(unique_angles, img_v_angles)
 
         mask_col = mask[:,img_x] # get column from mask
@@ -214,9 +223,42 @@ def drawViewshed(dlg):
 
     vs_sb_int = vs_sb.astype(int)
 
-    return vs_sb_int, DEM_layer
+    # find visible extents to clip VS later   
+    xmin = ex.xMinimum() + min(xmins)*pixelSizeX
+    xmax = ex.xMinimum() + max(xmaxs)*pixelSizeX
+    ymax = ex.yMaximum() - min(ymins)*pixelSizeY
+    ymin = ex.yMaximum() - max(ymaxs)*pixelSizeY
+    vis_ex = [xmin, xmax, ymin, ymax]
 
-def createVSLayer(vs_path, DEM_lyr):
+    return vs_sb_int, DEM_layer, vis_ex
+
+def clipVSLayer(vs_layer, vis_ex):
+    """Clip viewshed to visible area"""
+
+    extents = ", ".join(str(e) for e in vis_ex)
+
+    parameters = {'INPUT':vs_layer,
+                    'PROJWIN':extents,
+                    'OVERCRS':None,
+                    'NODATA':None,
+                    'OPTIONS':None,
+                    'DATA_TYPE':None,
+                    'EXTRA':None,
+                    'OUTPUT':QgsProcessing.TEMPORARY_OUTPUT
+            }
+
+    try:
+        clipped_vs = processing.run("gdal:cliprasterbyextent", parameters)
+    
+        clipVS_path=clipped_vs['OUTPUT']
+        clipVS_layer = QgsRasterLayer(clipVS_path, "Clipped VS") 
+    except:
+        errorMessage("Viewshed failed")
+        return
+    
+    return clipVS_path, clipVS_layer
+
+def createVSLayer(vs_path, DEM_lyr, vis_ex):
     """Converts viewshed image to useable layer"""
 
     ext = DEM_lyr.extent() 
@@ -237,7 +279,9 @@ def createVSLayer(vs_path, DEM_lyr):
     vs_ref_path=vs_ref['OUTPUT']
     vs_layer = QgsRasterLayer(vs_ref_path, "Viewshed")
 
-    return vs_ref_path, vs_layer  
+    vs_clip_path, vs_clip_layer = clipVSLayer(vs_layer, vis_ex)
+
+    return vs_clip_path, vs_clip_layer  
 
 def showMask(dlg):
     """Adds aligned mask to QGraphics View"""
@@ -262,7 +306,7 @@ def enableTools(dlg):
     dlg.Fit_toolButton_4.setEnabled(True)
     dlg.Pan_toolButton_4.setEnabled(True)
 
-def displayVS(dlg):
+def createVS(dlg):
     """Creates and displays viewshed"""
 
     # first check if temp VS exists unsaved
@@ -271,7 +315,7 @@ def displayVS(dlg):
         if ret == QMessageBox.No:
             return
     try:
-        vs, DEM_layer = drawViewshed(dlg) # create viewshed using ray tracing
+        vs, DEM_layer, vis_ex = drawViewshed(dlg) # create viewshed using ray tracing
     except TypeError:
         errorMessage("Viewshed creation failed.")
         return
@@ -290,7 +334,7 @@ def displayVS(dlg):
     cv2.imwrite(dlg.vs_path, vs) # write viewshed to image
 
 
-    dlg.vs_path, vs_ref_layer = createVSLayer(dlg.vs_path, DEM_layer) # convert viewshed from image to referenced raster layer, update path to VS layer
+    dlg.vs_path, vs_ref_layer = createVSLayer(dlg.vs_path, DEM_layer, vis_ex) # convert viewshed from image to referenced raster layer, update path to VS layer
 
     QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
