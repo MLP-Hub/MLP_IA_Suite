@@ -35,7 +35,7 @@ from .pylc_setup import runPylc, saveMask
 from .vp_creation import displayVP, loadCamParam, saveCamParam, moveCam, camHeight, rotateCam, saveVP, resetCamPos, resetCamPath
 from .img_alignment import addCPTool, delCPTool, saveCPs, loadCPs, checkForImgs, alignImgs, saveAlign, selectFromTable, switchLayer, undoAlign
 from .vs_creation import createVS, saveVS
-from .mosaic import addLayer, removeLayer, mosaicRasters, saveMosaic
+from .mosaic import addLayer, removeLayer, moveLayerUp, moveLayerDown, mosaicRasters, saveMosaic
 from .interface_tools import setScaleBoxVal, setScaleSlideVal, getFile, updateExtents, panCanvas, zoomToExt, singleView, sideBySide, swipeTool, transparency, addImg
 from .refresh import refresh_PyLC, refresh_VP, refresh_align, refresh_VS
 
@@ -369,6 +369,8 @@ class MLP_IA_Suite:
 
         self.dlg.addLayer_button.clicked.connect(lambda: addLayer("TIF format (*.tif *.TIF *.tiff *.TIFF)", self.dlg.layers_listWidget))
         self.dlg.removerLayer_button.clicked.connect(lambda: removeLayer(self.dlg.layers_listWidget))
+        self.dlg.moveLayerUp_button.clicked.connect(lambda: moveLayerUp(self.dlg.layers_listWidget))
+        self.dlg.moveLayerDown_button.clicked.connect(lambda: moveLayerDown(self.dlg.layers_listWidget))
         self.dlg.mosaicRun_pushButton.clicked.connect(lambda: mosaicRasters(self.dlg.layers_listWidget, self.dlg.ranking_checkBox, self.dlg))
         self.dlg.mosaicSave_pushButton.clicked.connect(lambda: saveMosaic(self.dlg))
         

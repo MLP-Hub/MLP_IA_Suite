@@ -25,7 +25,6 @@
 import os
 import numpy as np
 import scipy
-import cv2
 import skimage
 import tempfile
 
@@ -57,6 +56,20 @@ def removeLayer(listWidget):
     row = listWidget.currentRow()
     listWidget.takeItem(row)
 
+def moveLayerUp(listWidget):
+    """Moves layer up in list"""
+
+    currentRow = listWidget.currentRow()
+    currentItem = listWidget.takeItem(currentRow)
+    listWidget.insertItem(currentRow - 1, currentItem)
+
+def moveLayerDown(listWidget):
+    """Moves layer down in list"""
+
+    currentRow = listWidget.currentRow()
+    currentItem = listWidget.takeItem(currentRow)
+    listWidget.insertItem(currentRow + 1, currentItem)
+
 def readRasterLayers(listWidget):
     """Reads filepaths from list and finds extents, resolutions, and checks CRS for each layer"""
 
@@ -86,7 +99,6 @@ def readRasterLayers(listWidget):
             return
         
         # check layer resolution (must be the same)
-        print(raster_layer.rasterUnitsPerPixelX(), refResX, raster_layer.rasterUnitsPerPixelY(), refResY)
         if  round(raster_layer.rasterUnitsPerPixelX()) != refResX or round(raster_layer.rasterUnitsPerPixelY()) != refResY:
             errorMessage("All inputs must have in the same spatial resolution")
             return
@@ -127,7 +139,7 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
 
         input_arrays.append(img_pad)
     
-    mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0]
+    mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0] # find mode
     mosaic = mosaic.astype(np.int)
 
     return mosaic
