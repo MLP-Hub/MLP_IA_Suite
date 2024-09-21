@@ -345,6 +345,7 @@ class MLP_IA_Suite:
         # VS TAB
 
         self.dlg.vs_path = None # initiate variable to hold path to VP (for temp file)
+        self.dlg.probs_lyr_path = None # initiate variable to hold path to probabilities layer
         
         # Get file/folder inputs
         self.dlg.DEM_button.clicked.connect(lambda: getFile(self.dlg.DEM_lineEdit, "TIF format (*.tif *.TIF *.tiff *.TIFF)"))

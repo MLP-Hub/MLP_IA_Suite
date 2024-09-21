@@ -451,8 +451,8 @@ def alignImgs(dlg, source_img_path, table):
         #check for probability layer (PyLC output)
         mask_path, ext = os.path.splitext(os.path.realpath(dlg.Mask_lineEdit.text()))
         probs_path = os.path.join(mask_path + '.npy')
-
-        try:
+        if os.path.isfile(probs_path):
+            # if probability layer exists, align and save to temporary file
             probs = np.load(probs_path)
             probs = probs.astype(np.float32)
             aligned_probs = cv2.warpPerspective(probs, matrix, (w, h), flags = cv2.INTER_NEAREST) # align probability layer with same 
@@ -462,9 +462,6 @@ def alignImgs(dlg, source_img_path, table):
                 # check if the temporary file already exists
                 os.remove(dlg.aligned_probs_path)
             np.save(dlg.aligned_probs_path, aligned_probs)
-        except:
-            # no probs file exists
-            pass
 
         # save aligned mask to temporary file
         dlg.aligned_mask_path = os.path.join(tempfile.mkdtemp(), 'alignedMask.tiff')

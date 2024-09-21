@@ -134,6 +134,13 @@ def drawViewshed(dlg):
     mask_path = os.path.realpath(dlg.AlignMask_lineEdit.text())
     mask = cv2.imread(mask_path)
 
+    # check for probability layer and read it in
+    mask_name, ext = os.path.splitext(os.path.realpath(dlg.AlignMask_lineEdit.text()))
+    probs_path = os.path.join(mask_name + '.npy')
+    probs = None
+    if os.path.isfile(probs_path):
+        probs = np.load(probs_path)
+
     img_h, img_w, *_ = mask.shape # get height and width of mask
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(DEM_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
     v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
@@ -145,6 +152,10 @@ def drawViewshed(dlg):
     # create blank viewshed (same size as DEM)
     dem_h, dem_w, *_ = DEM_img.shape
     vs = np.ones((dem_h,dem_w, 3),dtype=np.uint8)
+    # create probability layer if using
+    probs_lyr = None
+    if probs is not None:
+        probs_lyr = np.ones((dem_h,dem_w),dtype=np.float32)
 
     a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
@@ -204,6 +215,13 @@ def drawViewshed(dlg):
         mask_col = mask_col[angle_matches_index] # keep only the visible pixels
 
         vs[ys_visible, xs_visible] = mask_col
+
+        # if probabilities exist, also fill into probs layer
+        if probs_lyr is not None:
+            probs_col = probs[:,img_x]
+            probs_col = np.flip(probs_col, axis=0)
+            probs_col = probs_col[angle_matches_index]
+            probs_lyr[ys_visible, xs_visible] = probs_col
             
         a = a+(cam_params["h_fov"]/img_w) # update ray angle
 
@@ -230,7 +248,7 @@ def drawViewshed(dlg):
     ymin = ex.yMaximum() - max(ymaxs)*pixelSizeY
     vis_ex = [xmin, xmax, ymin, ymax]
 
-    return vs_sb_int, DEM_layer, vis_ex
+    return vs_sb_int, DEM_layer, vis_ex, probs_lyr
 
 def clipVSLayer(vs_layer, vis_ex):
     """Clip viewshed to visible area"""
@@ -315,7 +333,7 @@ def createVS(dlg):
         if ret == QMessageBox.No:
             return
     try:
-        vs, DEM_layer, vis_ex = drawViewshed(dlg) # create viewshed using ray tracing
+        vs, DEM_layer, vis_ex, probs_lyr = drawViewshed(dlg) # create viewshed using ray tracing
     except TypeError:
         errorMessage("Viewshed creation failed.")
         return
@@ -333,8 +351,19 @@ def createVS(dlg):
     
     cv2.imwrite(dlg.vs_path, vs) # write viewshed to image
 
-
     dlg.vs_path, vs_ref_layer = createVSLayer(dlg.vs_path, DEM_layer, vis_ex) # convert viewshed from image to referenced raster layer, update path to VS layer
+
+    # if probabilities exist, convert to image and save to temp path
+    if probs_lyr is not None:
+        probs_img = (1-probs_lyr)*255
+        dlg.probs_lyr_path = os.path.join(tempfile.mkdtemp(), 'tempProbs.tiff')
+        if os.path.isfile(dlg.probs_lyr_path):
+            # check if the temporary file already exists
+            os.remove(dlg.probs_lyr_path)
+    
+        cv2.imwrite(dlg.probs_lyr_path, probs_img) # write viewshed to image
+        dlg.probs_lyr_path, probs_ref_layer = createVSLayer(dlg.probs_lyr_path, DEM_layer, vis_ex) # convert viewshed from image to referenced raster layer, update path to VS layer
+
 
     QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
@@ -355,6 +384,24 @@ def createVS(dlg):
     showMask(dlg) # show input mask in side-by-side
 
     enableTools(dlg)
+
+
+def writeRaster(layer, save_path, crs):
+    """Write raster to file"""
+    file_writer = QgsRasterFileWriter(save_path)
+    pipe = QgsRasterPipe()
+    provider = layer.dataProvider()
+    ctc=QgsProject.instance().transformContext()
+
+    if not pipe.set(provider.clone()):
+        errorMessage("Cannot set pipe provider")
+
+    file_writer.writeRaster(
+        pipe,
+        provider.xSize(),
+        provider.ySize(),
+        provider.extent(),
+        crs, ctc)
 
 def saveVS(dlg):
     """Saves viewshed to specified location"""
@@ -377,21 +424,12 @@ def saveVS(dlg):
         DEM_layer = QgsRasterLayer(DEM_path, "DEM")
         dest_crs = DEM_layer.crs()
 
+        writeRaster(vs, save_vs_path, dest_crs)
 
-        # write vs to raster file
-        file_writer = QgsRasterFileWriter(save_vs_path)
-        pipe = QgsRasterPipe()
-        provider = vs.dataProvider()
-        ctc=QgsProject.instance().transformContext()
-
-        if not pipe.set(provider.clone()):
-            errorMessage("Cannot set pipe provider")
-
-        file_writer.writeRaster(
-            pipe,
-            provider.xSize(),
-            provider.ySize(),
-            provider.extent(),
-            dest_crs, ctc)
+        if dlg.probs_lyr_path is not None:
+            probs = QgsRasterLayer(dlg.probs_lyr_path)
+            save_path, ext = os.path.splitext(save_vs_path)
+            save_probs_path = os.path.join(save_path + '_probs.tiff')
+            writeRaster(probs, save_probs_path, dest_crs)
 
         dlg.refresh_dict["VS"]["VS"]=save_vs_path
