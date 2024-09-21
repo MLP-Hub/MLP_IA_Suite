@@ -303,6 +303,7 @@ class MLP_IA_Suite:
         self.dlg.aligned_img_path = None # initiate variable to hold path to aligned image (for temp file)
         self.dlg.aligned_mask_path = None # initiate variable to hold path to aligned mask
         self.dlg.CPtool = None # initiate variable for control point tool
+        self.dlg.aligned_probs_path = None
         
         # Get file/folder inputs and display images
         self.dlg.SourceImg_button.clicked.connect(lambda: getFile(self.dlg.SourceImg_lineEdit, "Images (*.jpeg *.jpg *.png *.tif *.TIF *.tiff *.TIFF)"))

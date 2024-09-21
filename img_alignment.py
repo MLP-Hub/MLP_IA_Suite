@@ -445,7 +445,26 @@ def alignImgs(dlg, source_img_path, table):
         if img_h != mask_h or img_w != mask_w:
             errorMessage("Source image and mask must have the same dimensions")
             return
+        
         aligned_mask = cv2.warpPerspective(mask, matrix, (w, h), flags = cv2.INTER_NEAREST)
+
+        #check for probability layer (PyLC output)
+        mask_path, ext = os.path.splitext(os.path.realpath(dlg.Mask_lineEdit.text()))
+        probs_path = os.path.join(mask_path + '.npy')
+
+        try:
+            probs = np.load(probs_path)
+            probs = probs.astype(np.float32)
+            aligned_probs = cv2.warpPerspective(probs, matrix, (w, h), flags = cv2.INTER_NEAREST) # align probability layer with same 
+            # save aligned probabilities to temporary file
+            dlg.aligned_probs_path = os.path.join(tempfile.mkdtemp(), 'alignedProbs.npy')
+            if os.path.isfile(dlg.aligned_probs_path):
+                # check if the temporary file already exists
+                os.remove(dlg.aligned_probs_path)
+            np.save(dlg.aligned_probs_path, aligned_probs)
+        except:
+            # no probs file exists
+            pass
 
         # save aligned mask to temporary file
         dlg.aligned_mask_path = os.path.join(tempfile.mkdtemp(), 'alignedMask.tiff')
@@ -534,3 +553,10 @@ def saveAlign(dlg):
             dlg.refresh_dict["Align"]["Img"]=align_path
         else:
             dlg.refresh_dict["Align"]["Mask"]=align_path 
+
+        if dlg.aligned_probs_path:
+            #check for probability layer (PyLC output)
+            aligned_probs = np.load(dlg.aligned_probs_path)
+            mask_path, ext = os.path.splitext(align_path)
+            probs_path = os.path.join(mask_path + '.npy')
+            np.save(probs_path, aligned_probs)

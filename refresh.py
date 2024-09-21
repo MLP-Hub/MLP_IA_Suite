@@ -230,6 +230,7 @@ def refresh_align(dlg, canvas_list):
 
     dlg.aligned_img_path = None
     dlg.aligned_mask_path = None
+    dlg.aligned_probs_path = None
 
 def refresh_VS(dlg, canvas_list):
     """Refresh UI in VS tab"""
