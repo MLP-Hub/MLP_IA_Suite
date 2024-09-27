@@ -131,7 +131,7 @@ def pad_arrays(filepaths, extents, res_x, res_y):
         before_x = int((max(extents[1]) - extents[1][i])/res_x)
         after_x = int((extents[0][i] - min(extents[0]))/res_x)
         
-        pad_width = ((before_y, after_y), (before_x, after_x))
+        pad_width = ((after_y, before_y), (after_x, before_x))
 
         img_pad = np.pad(img.astype(np.float), pad_width, mode='constant', constant_values=np.nan)
 
@@ -149,56 +149,28 @@ def rankedMosaic(input_arrays):
 
     return mosaic
 
-# def probMosaic(input_arrays, input_probs):
-    # """Mosaics a set of rasters based on classification probability"""
-
-    # # create large raster using max extents of all inputs, add 8 channels for 8 LC types
-    # master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], 8),dtype=np.float64)
-
-    # rows = master.shape[0]
-    # cols = master.shape[1]
-
-    # progressDlg = QProgressDialog("Creating viewshed...","Cancel", 0, rows)
-    # progressDlg.setWindowModality(Qt.WindowModal)
-    # progressDlg.setValue(0)
-    # progressDlg.forceShow()
-    # progressDlg.show() 
-
-    # for i in range(0, rows):
-    #     progressDlg.setValue(i)
-    #     for j in range(0, cols):
-    #         for k, array in enumerate(input_arrays):
-    #             lc_class = array[i,j]
-    #             if np.isnan(lc_class):
-    #                 break
-    #             lc_class = int(lc_class)
-    #             val = input_probs[k][i,j]
-    #             if np.isnan(val):
-    #                 break
-    #             master[i:j:lc_class]+=val
-    
-    # mosaic = np.argmax(master, axis = 0)
-
-    # return mosaic
-
 def probMosaic(input_arrays, input_probs):
     """Mosaics a set of rasters based on classification probability"""
 
-    n = 8 # number of unique LC classes
-    master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], n),dtype=np.float64)
+    n = 9 # number of unique LC classes
+    master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], n+1),dtype=np.float64)
+
+    progressDlg = QProgressDialog("Mosaicking rasters...","Cancel", 0, len(input_arrays))
+    progressDlg.setWindowModality(Qt.WindowModal)
+    progressDlg.setValue(0)
+    progressDlg.forceShow()
+    progressDlg.show() 
 
     for i, array in enumerate(input_arrays):
+        progressDlg.setValue(i)
         for lc in range(1,n+1):
             lc_index = np.where(array==lc)
             probs = input_probs[i]
             lc_probs = probs[lc_index]
-            #print(lc_probs)
 
-            master[lc_index[0],lc_index[1],lc-1]+=lc_probs
+            master[lc_index[0],lc_index[1],lc]+=lc_probs
 
-    #print(master)
     mosaic = np.argmax(master, axis = 2)
-    #print(mosaic)
 
     return mosaic
 
