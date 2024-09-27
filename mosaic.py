@@ -29,7 +29,7 @@ import skimage
 import tempfile
 
 from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe
-from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog
 from PyQt5.QtCore import Qt
 from qgis import processing
 
@@ -113,9 +113,9 @@ def readRasterLayers(listWidget):
 
     return filepaths, extents, refResX, refResY
 
-def rankedMosaic(filepaths, extents, res_x, res_y):
-    """Mosaics a set of rasters based on mode"""
-    
+def pad_arrays(filepaths, extents, res_x, res_y):
+    """Pads all input arrays based on max combined extents"""
+
     input_arrays = []
 
     for i, filepath in enumerate(filepaths):
@@ -125,11 +125,11 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
 
         # pad array with NaN values so that all inputs have same size
 
-        before_y = int((extents[2][i-1] - min(extents[2]))/res_y)
-        after_y = int((max(extents[3]) - extents[3][i-1])/res_y)
+        before_y = int((extents[2][i] - min(extents[2]))/res_y)
+        after_y = int((max(extents[3]) - extents[3][i])/res_y)
 
-        before_x = int((max(extents[1]) - extents[1][i-1])/res_x)
-        after_x = int((extents[0][i-1] - min(extents[0]))/res_x)
+        before_x = int((max(extents[1]) - extents[1][i])/res_x)
+        after_x = int((extents[0][i] - min(extents[0]))/res_x)
         
         pad_width = ((before_y, after_y), (before_x, after_x))
 
@@ -138,14 +138,75 @@ def rankedMosaic(filepaths, extents, res_x, res_y):
         img_pad[img_pad == 0] = np.nan # convert zeros to NaN as well
 
         input_arrays.append(img_pad)
-    
+
+    return input_arrays
+
+def rankedMosaic(input_arrays):
+    """Mosaics a set of rasters based on mode"""
+
     mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0] # find mode
     mosaic = mosaic.astype(np.int)
 
     return mosaic
 
-def probMosaic(filepaths, extents):
+# def probMosaic(input_arrays, input_probs):
+    # """Mosaics a set of rasters based on classification probability"""
+
+    # # create large raster using max extents of all inputs, add 8 channels for 8 LC types
+    # master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], 8),dtype=np.float64)
+
+    # rows = master.shape[0]
+    # cols = master.shape[1]
+
+    # progressDlg = QProgressDialog("Creating viewshed...","Cancel", 0, rows)
+    # progressDlg.setWindowModality(Qt.WindowModal)
+    # progressDlg.setValue(0)
+    # progressDlg.forceShow()
+    # progressDlg.show() 
+
+    # for i in range(0, rows):
+    #     progressDlg.setValue(i)
+    #     for j in range(0, cols):
+    #         for k, array in enumerate(input_arrays):
+    #             lc_class = array[i,j]
+    #             if np.isnan(lc_class):
+    #                 break
+    #             lc_class = int(lc_class)
+    #             val = input_probs[k][i,j]
+    #             if np.isnan(val):
+    #                 break
+    #             master[i:j:lc_class]+=val
+    
+    # mosaic = np.argmax(master, axis = 0)
+
+    # return mosaic
+
+def probMosaic(input_arrays, input_probs):
     """Mosaics a set of rasters based on classification probability"""
+
+    n = 8 # number of unique LC classes
+    master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], n),dtype=np.float64)
+
+    for i, array in enumerate(input_arrays):
+        for lc in range(1,n+1):
+            lc_index = np.where(array==lc)
+            probs = input_probs[i]
+            lc_probs = probs[lc_index]
+            #print(lc_probs)
+
+            master[lc_index[0],lc_index[1],lc-1]+=lc_probs
+
+    #print(master)
+    mosaic = np.argmax(master, axis = 2)
+    #print(mosaic)
+
+    return mosaic
+
+        
+        
+
+
+
 
 def createMosaicLayer(mosaic_path, extents):
     """Converts mosaic image to useable layer"""
@@ -172,12 +233,19 @@ def createMosaicLayer(mosaic_path, extents):
 def mosaicRasters(listWidget, ranking_checkBox, dlg):
     """Mosaics provided rasters together"""
 
-    filepaths, extents, res_x, res_y = readRasterLayers(listWidget)
+    filepaths, extents, res_x, res_y = readRasterLayers(listWidget) # read all layers from list
+
+    input_arrays = pad_arrays(filepaths, extents, res_x, res_y) # pad all inputs to max extents
 
     if ranking_checkBox.isChecked():
-        mosaic_img = rankedMosaic(filepaths, extents, res_x, res_y)
+        mosaic_img = rankedMosaic(input_arrays) # mosaic the input arrays based on mode
     else:
-        mosaic_img = probMosaic(filepaths, extents)
+        prob_paths = []
+        for path in filepaths:
+            raster_path, ext = os.path.splitext(path)
+            prob_paths.append(os.path.join(raster_path + '_probs.tiff'))
+            input_probs = pad_arrays(prob_paths, extents, res_x, res_y)
+        mosaic_img = probMosaic(input_arrays, input_probs) # mosaic the input arrays based on PyLC probability
 
     if mosaic_img is None:
         # break if mosaicking did not work

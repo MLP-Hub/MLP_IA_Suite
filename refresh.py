@@ -262,3 +262,4 @@ def refresh_VS(dlg, canvas_list):
     # refresh save filepaths
     dlg.refresh_dict["VS"]["VS"] = None
     dlg.vs_path = None
+    dlg.probs_lyr_path = None
