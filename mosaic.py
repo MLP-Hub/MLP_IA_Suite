@@ -175,10 +175,6 @@ def probMosaic(input_arrays, input_probs):
     return mosaic
 
         
-        
-
-
-
 
 def createMosaicLayer(mosaic_path, extents):
     """Converts mosaic image to useable layer"""

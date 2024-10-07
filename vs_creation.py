@@ -22,9 +22,9 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe, QgsColorRampShader, QgsPalettedRasterRenderer
+from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog, QGraphicsScene, QGraphicsPixmapItem, QMessageBox
-from qgis.PyQt.QtGui import QImage, QPixmap, QColor
+from qgis.PyQt.QtGui import QImage, QPixmap
 from qgis.PyQt.QtCore import Qt
 from qgis import processing
 
@@ -234,30 +234,26 @@ def drawViewshed(dlg):
 
     return vs, DEM_layer, vis_ex, probs_lyr
 
-def convertSingleBand(vs):
-    """Converts viewshed to singleband image classified into unique classes and the corresponding rbg values"""
+def singleBand(vs):
+    """Converts viewshed to singleband layer based on PyLC classes"""
 
     # convert to singleband
-    vs_sb = cv2.cvtColor(vs, cv2.COLOR_BGR2GRAY)
-    
-    # convert to class values + create legend
-    unique_colors = np.unique(vs.reshape(-1, vs.shape[2]), axis=0) # find unique RGB values
+    vs_sb = np.sum(vs, 2)
 
-    pcolor = [] # create list for palette
-    i = 1
-    for bgr in unique_colors:
-        y = 0.299*bgr[2] + 0.587*bgr[1] + 0.114*bgr[0] # cv2 formula for greyscale values
-        y = round(y)
-        if y == 1:
-            vs_sb[vs_sb == y] = 0
-        else:
-            vs_sb[vs_sb == y] = i
-            pcolor.append(QgsColorRampShader.ColorRampItem(i, QColor(bgr[2], bgr[1], bgr[0]), str(y))) 
-            i+=1
+    # convert to correct legend (1 to 8 for classes, 0 is ND)
+    vs_sb[vs_sb == 3] = 0
+    vs_sb[vs_sb == 207] = 1
+    vs_sb[vs_sb == 420] = 2
+    vs_sb[vs_sb == 376] = 3
+    vs_sb[vs_sb == 227] = 4
+    vs_sb[vs_sb == 255] = 5
+    vs_sb[vs_sb == 413] = 6
+    vs_sb[vs_sb == 259] = 7
+    vs_sb[vs_sb == 489] = 8
 
     vs_sb_int = vs_sb.astype(int)
-
-    return vs_sb_int, pcolor
+    
+    return(vs_sb_int)
 
 def clipVSLayer(vs_layer, vis_ex):
     """Clip viewshed to visible area"""
@@ -352,8 +348,8 @@ def createVS(dlg):
         errorMessage("Viewshed creation failed.")
         return
     
-    if not dlg.image_checkBox.isChecked():
-        vs, pcolor = convertSingleBand(vs)
+    if dlg.image_checkBox.isChecked():
+        vs = singleBand(vs) # if PyLC mask provided, convert to singleband
     
     # save vs to temp path
     dlg.vs_path = os.path.join(tempfile.mkdtemp(), 'tempVS.tiff')
@@ -380,9 +376,13 @@ def createVS(dlg):
     QgsProject.instance().addMapLayer(vs_ref_layer, False) # add layer to the registry (but don't load into main map)
     QgsProject.instance().addMapLayer(DEM_layer, False) # add layer to the registry (but don't load into main map)
 
-    if not dlg.image_checkBox.isChecked():
-        renderer = QgsPalettedRasterRenderer(vs_ref_layer.dataProvider(), 1, QgsPalettedRasterRenderer.colorTableToClassData(pcolor))
-        vs_ref_layer.setRenderer(renderer)
+    if dlg.image_checkBox.isChecked():
+        # if using PyLC mask, add style
+        dir_path = os.path.dirname(__file__)
+        dir_path = os.path.normpath(dir_path)
+        style_path = os.path.join(dir_path, "sb_PyLC_style.qml") # path to file containing layer style
+
+        vs_ref_layer.loadNamedStyle(style_path)
 
     #remove any existing layers, then add VS and DEM to map
     layer_list = dlg.VS_mapCanvas.layers()
