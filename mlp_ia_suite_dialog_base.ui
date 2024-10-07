@@ -931,7 +931,7 @@ border-color: rgb(255, 255, 255);</string>
                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
                </property>
                <property name="text">
-                <string>Regenerating Area</string>
+                <string>Recently Burned</string>
                </property>
               </widget>
              </item>
@@ -1561,6 +1561,12 @@ margin-bottom: -6px;
         <layout class="QVBoxLayout" name="VP_Tab_Canvases_VL">
          <item>
           <widget class="QgsMapCanvas" name="Full_mapCanvas_2" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <layout class="QHBoxLayout" name="VP_Tab_SideBySide_HL">
@@ -1570,21 +1576,23 @@ margin-bottom: -6px;
               <item>
                <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_15"/>
                </widget>
               </item>
               <item>
                <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_16"/>
                </widget>
               </item>
              </layout>
@@ -4176,7 +4184,7 @@ border-radius: 4px;
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is the final step in the process used to create a classified and spatially referenced viewshed. Use a digital &lt;span style=&quot; font-style:italic;&quot;&gt;terrain&lt;/span&gt; model. Load the same camera parameters that you used for the virtual photograph production. Then, retrieve the &lt;span style=&quot; font-style:italic;&quot;&gt;aligned&lt;/span&gt; mask that you made in the previous step.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool is the final step in the process used to create a classified and spatially referenced viewshed. Use a digital &lt;span style=&quot; font-style:italic;&quot;&gt;terrain&lt;/span&gt; model. Load the same camera parameters that you used for the virtual photograph production. Then, retrieve the &lt;span style=&quot; font-style:italic;&quot;&gt;aligned&lt;/span&gt; mask that you made in the previous step. If you are using an image rather than a classified mask, select Unclassified Image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -4227,7 +4235,7 @@ border-radius: 4px;
               <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
              </property>
              <property name="text">
-              <string>Landcover Types</string>
+              <string>PyLC Landcover Types</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -4283,7 +4291,7 @@ border-radius: 4px;
                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
                </property>
                <property name="text">
-                <string>Regenerating Area</string>
+                <string>Recently Burned</string>
                </property>
               </widget>
              </item>
@@ -4576,6 +4584,30 @@ border-color: rgb(255, 255, 255);</string>
           </spacer>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_17">
+           <item>
+            <spacer name="horizontalSpacer_17">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="image_checkBox">
+             <property name="text">
+              <string>Unclassified Image</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <layout class="QGridLayout" name="VS_Tab_Input_GL">
            <property name="verticalSpacing">
             <number>15</number>
@@ -4592,31 +4624,6 @@ border-color: rgb(255, 255, 255);</string>
               </size>
              </property>
             </spacer>
-           </item>
-           <item row="0" column="3">
-            <spacer name="horizontalSpacer_18">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="CamParam_label">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Camera Parameters</string>
-             </property>
-            </widget>
            </item>
            <item row="2" column="0">
             <widget class="QLineEdit" name="CamParam_lineEdit">
@@ -4674,6 +4681,31 @@ border-color: rgb(255, 255, 255);</string>
              </property>
             </widget>
            </item>
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer_18">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="CamParam_label">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Camera Parameters</string>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="2">
             <widget class="QLabel" name="DEM_label">
              <property name="font">
@@ -4720,6 +4752,28 @@ border-color: rgb(255, 255, 255);</string>
              </property>
             </widget>
            </item>
+           <item row="0" column="1">
+            <widget class="QPushButton" name="DEM_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>31</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(243, 243, 243);</string>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="1">
             <widget class="QPushButton" name="CamParam_button">
              <property name="sizePolicy">
@@ -4741,6 +4795,19 @@ border-color: rgb(255, 255, 255);</string>
               <string>...</string>
              </property>
             </widget>
+           </item>
+           <item row="2" column="3">
+            <spacer name="horizontalSpacer_20">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item row="0" column="0">
             <widget class="QLineEdit" name="DEM_lineEdit">
@@ -4767,41 +4834,6 @@ border-color: rgb(255, 255, 255);</string>
              </property>
              <property name="text">
               <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <spacer name="horizontalSpacer_20">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="1">
-            <widget class="QPushButton" name="DEM_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>31</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(243, 243, 243);</string>
-             </property>
-             <property name="text">
-              <string>...</string>
              </property>
             </widget>
            </item>

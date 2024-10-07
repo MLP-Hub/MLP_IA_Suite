@@ -283,8 +283,8 @@ class MLP_IA_Suite:
         self.dlg.CountClckwis_button.clicked.connect(lambda: rotateCam(self.dlg, "CntrClckwise"))
 
         # Link the extent of the image to the extent of the VP and v.v.
-        self.dlg.VP_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas))
-        self.dlg.Img_mapCanvas_2.extentsChanged.connect(lambda: updateExtents(self.dlg.VP_mapCanvas, self.dlg.Img_mapCanvas_2))
+        #self.dlg.VP_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas))
+        #self.dlg.Img_mapCanvas_2.extentsChanged.connect(lambda: updateExtents(self.dlg.VP_mapCanvas, self.dlg.Img_mapCanvas_2))
 
         # Connect tools to appropriate functions (VP tab)
         self.dlg.SideBySide_pushButton_2.hide() # hide side by side view button to start

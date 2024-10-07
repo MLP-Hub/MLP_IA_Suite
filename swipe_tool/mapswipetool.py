@@ -61,7 +61,6 @@ class MapSwipeTool(QgsMapTool):
         dX = abs( e.x() - self.firstPoint.x() )
         dY = abs( e.y() - self.firstPoint.y() )
         isVertical = dX > dY
-        print(isVertical)
         self.swipe.setIsVertical( isVertical )
         self.checkDirection = False
         self.canvas.setCursor( self.cursorH if isVertical else self.cursorV )

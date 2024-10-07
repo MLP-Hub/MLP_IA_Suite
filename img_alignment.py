@@ -194,7 +194,7 @@ def delCPTool(dlg, canvas_list):
         dlg.delTool1 = QgsMapToolIdentifyFeature(canvas_list[0])
         dlg.delTool1.setLayer(vl1)
         canvas_list[0].setMapTool(dlg.delTool1)
-        dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table))    # connect delete tools to delete function
+        dlg.delTool1.featureIdentified.connect(lambda f: deleteCP(f, [vl1,vl2], dlg.CP_table, dlg))    # connect delete tools to delete function
     
     vl2 = canvas_list[1].layers()[0] # get CP layer for canvas (should always be top layer)
     
