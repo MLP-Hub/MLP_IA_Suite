@@ -355,6 +355,9 @@ padding: 15px 15px 15px 15px;
          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0">
           <item>
            <layout class="QHBoxLayout" name="PyLC_Tab_Canvas_HL">
+            <property name="spacing">
+             <number>6</number>
+            </property>
             <property name="sizeConstraint">
              <enum>QLayout::SetNoConstraint</enum>
             </property>
@@ -1578,7 +1581,7 @@ margin-bottom: -6px;
             <item>
              <layout class="QHBoxLayout" name="VP_Tab_SideBySide_HL">
               <property name="spacing">
-               <number>6</number>
+               <number>5</number>
               </property>
               <item>
                <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">

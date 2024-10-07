@@ -215,10 +215,6 @@ class MLP_IA_Suite:
         # Run PyLC and display outputs
         self.dlg.Run_pushButton.clicked.connect(lambda: runPylc(self.dlg))
         self.dlg.PyLC_Save_pushButton.clicked.connect(lambda: saveMask(self.dlg))
-        
-        # Link the extent of the image to the extent of the mask and v.v.
-        self.dlg.Mask_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas, self.dlg.Mask_mapCanvas))
-        self.dlg.Img_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Mask_mapCanvas, self.dlg.Img_mapCanvas))
 
         # Connect tools to appropriate functions (PyLC tab)
         self.dlg.SideBySide_pushButton.hide() # hide side by side view button to start
@@ -281,10 +277,6 @@ class MLP_IA_Suite:
         self.dlg.Down_button.clicked.connect(lambda: camHeight(self.dlg, "Down"))
         self.dlg.Clckwis_button.clicked.connect(lambda: rotateCam(self.dlg, "Clckwise"))
         self.dlg.CountClckwis_button.clicked.connect(lambda: rotateCam(self.dlg, "CntrClckwise"))
-
-        # Link the extent of the image to the extent of the VP and v.v.
-        #self.dlg.VP_mapCanvas.extentsChanged.connect(lambda: updateExtents(self.dlg.Img_mapCanvas_2, self.dlg.VP_mapCanvas))
-        #self.dlg.Img_mapCanvas_2.extentsChanged.connect(lambda: updateExtents(self.dlg.VP_mapCanvas, self.dlg.Img_mapCanvas_2))
 
         # Connect tools to appropriate functions (VP tab)
         self.dlg.SideBySide_pushButton_2.hide() # hide side by side view button to start
