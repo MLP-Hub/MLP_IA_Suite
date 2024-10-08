@@ -151,6 +151,7 @@ def drawViewshed(dlg):
     
     # create blank viewshed (same size as DEM)
     dem_h, dem_w, *_ = DEM_img.shape
+
     vs = np.ones((dem_h,dem_w, 3),dtype=np.uint8)
     # create probability layer if using
     probs_lyr = None
@@ -168,7 +169,7 @@ def drawViewshed(dlg):
     progressDlg.setWindowModality(Qt.WindowModal)
     progressDlg.setValue(0)
     progressDlg.forceShow()
-    progressDlg.show()  
+    progressDlg.show()
 
     for img_x in range(0, img_w):
         # First, find all visible pixels on DEM and match to image coordinates based on angles
@@ -181,13 +182,18 @@ def drawViewshed(dlg):
         ray_start_x = cam_x + (100*math.sin(np.radians(a))/pixelSizeX)
         
         # create ray end position
-        ray_end_y = cam_y - (7000*math.cos(np.radians(a))/pixelSizeY)
-        ray_end_x = cam_x + (7000*math.sin(np.radians(a))/pixelSizeX)
+        ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
+        ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
 
         xs = np.linspace(ray_start_x, ray_end_x, round(100000/pixelSizeX))
         ys = np.linspace(ray_start_y, ray_end_y, round(100000/pixelSizeY))
 
-        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
+        
+        inside = np.where(np.logical_and(abs(xs) < dem_w, abs(ys) < dem_h))
+        xs = xs[inside]
+        ys = ys[inside]
+
+        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"] - cam_params["hgt"]
 
         opp = (xs - cam_x)*pixelSizeX
         adj = (cam_y - ys)*pixelSizeY
@@ -197,7 +203,6 @@ def drawViewshed(dlg):
 
         dem_angles_inc = np.fmax.accumulate(vert_angles) # checks for only increasing DEM angles
         unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
-
         xs_visible = xs[unique_angles_indx].astype(int) # keep only visible x-coordinates
         ys_visible = ys[unique_angles_indx].astype(int) # keep only visible y-coordinates
 
