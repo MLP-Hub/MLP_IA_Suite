@@ -176,11 +176,12 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
 
     # reset layer transparency
     active_layer = canvas_list[0].layer(0)
-    active_layer.renderer().setOpacity(1)
-    active_layer.triggerRepaint()
-    active_layer = canvas_list[1].layer(0)
-    active_layer.renderer().setOpacity(1)
-    active_layer.triggerRepaint()
+    if active_layer is not None:
+        active_layer.renderer().setOpacity(1)
+        active_layer.triggerRepaint()
+        active_layer = canvas_list[1].layer(0)
+        active_layer.renderer().setOpacity(1)
+        active_layer.triggerRepaint()
 
 
     for tool in exclusive_tools:
