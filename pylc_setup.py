@@ -34,7 +34,7 @@ import os.path
 
 # Import the code for pylc
 this_dir = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(this_dir, 'pylc_master')
+path = os.path.join(this_dir, 'pylc_ia')
 sys.path.append(path)
 import pylc
 
@@ -57,9 +57,14 @@ def pylcArgs(dlg):
         img_path = os.path.normpath(dlg.InputImg_lineEdit.text())
 
     dlg.PyLC_path = os.path.join(tempfile.mkdtemp(), 'tempMask.png')
+    probs_path = os.path.join(os.path.basename(dlg.PyLC_path), 'tempProb.npy')
     if os.path.isfile(dlg.PyLC_path):
         # check if the temporary file already exists
         os.remove(dlg.PyLC_path)
+    if os.path.isfile( probs_path ):
+        # check if the temporary file already exists
+        os.remove(probs_path)
+        
     
     try:
         scale_val = float(dlg.Scale_lineEdit.text())
@@ -78,7 +83,9 @@ def pylcArgs(dlg):
             'scale':scale_val, 
             'save_logits':None, 
             'aggregate_metrics':None,
-            'mask_path':dlg.PyLC_path}
+            'mask_path':dlg.PyLC_path,
+            'save_probs': True
+            }
 
     # Check for optional model arguments (decided to get rid of this for V1)
     
