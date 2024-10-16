@@ -31,6 +31,7 @@ import cv2
 import tempfile
 import sys
 import os.path
+import numpy as np
 
 # Import the code for pylc
 this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -157,3 +158,13 @@ def saveMask(dlg):
 
         cv2.imwrite(mask_path, mask)
         dlg.refresh_dict["PyLC"]["Mask"]=mask_path
+
+        mask_name, ext = os.path.splitext(os.path.realpath(dlg.PyLC_path))
+        probs_file = os.path.join(mask_name + '.npy')
+
+        if os.path.exists(probs_file):
+            probs = np.load(probs_file)
+            save_name, ext = os.path.splitext(os.path.realpath(mask_path))
+            probs_save = os.path.join(save_name + '.npy')
+            np.save(probs_save, probs)
+

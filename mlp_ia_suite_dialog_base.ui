@@ -364,7 +364,7 @@ padding: 15px 15px 15px 15px;
             <item>
              <widget class="QgsMapCanvas" name="Img_mapCanvas" native="true">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -372,7 +372,14 @@ padding: 15px 15px 15px 15px;
              </widget>
             </item>
             <item>
-             <widget class="QgsMapCanvas" name="Mask_mapCanvas" native="true"/>
+             <widget class="QgsMapCanvas" name="Mask_mapCanvas" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

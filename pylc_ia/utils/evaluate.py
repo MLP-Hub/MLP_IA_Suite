@@ -126,7 +126,6 @@ class Evaluator:
 
             # Reconstruct seg-mask from predicted tiles and write to file
         cv2.imwrite(mask_file, cv2.cvtColor(self.mask_pred, cv2.COLOR_RGB2BGR))
-        print("Output mask saved to: \n\t{}.".format(mask_file))
         return mask_file
 
     def save_probs(self, args):
@@ -148,5 +147,4 @@ class Evaluator:
             return
 
         np.save(probs_file, self.probs_pred)
-        print("Output probabilities saved to: \n\t{}.".format(probs_file))
         return probs_file
