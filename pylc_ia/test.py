@@ -17,9 +17,11 @@ import sys
 from qgis.PyQt.QtWidgets import QProgressDialog
 from qgis.PyQt.QtCore import Qt
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import torch
-import utils.tools as utils
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from utils import tools as utils
 from config import defaults, Parameters
 from utils.extract import Extractor
 from utils.evaluate import Evaluator

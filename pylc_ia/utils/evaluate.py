@@ -18,7 +18,7 @@ import numpy as np
 import cv2
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-import utils.tools as utils
+
 from config import defaults, Parameters
 
 from interface_tools import errorMessage

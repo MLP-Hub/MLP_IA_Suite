@@ -20,7 +20,7 @@ import cv2
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from config import Parameters, defaults
-import utils.tools as utils
+from utils import tools as utils
 
 from interface_tools import errorMessage
 
