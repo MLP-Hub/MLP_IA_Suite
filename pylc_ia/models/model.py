@@ -11,11 +11,14 @@ University of Victoria
 Module: Base Model Class
 File: model.py
 """
-import os
+import os, sys
 import torch
 import torch.utils.data
 from torch import nn
 import numpy as np
+
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from models.architectures.deeplab import DeepLab
 from config import defaults
 from utils.tools import get_fname

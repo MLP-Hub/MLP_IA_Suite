@@ -12,13 +12,15 @@ Module: Evaluator Class
 File: evaluate.py
 """
 
+
 import os, sys
 import numpy as np
 import cv2
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import utils.tools as utils
 from config import defaults, Parameters
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from interface_tools import errorMessage
 
 class Evaluator:

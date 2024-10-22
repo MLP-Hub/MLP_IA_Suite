@@ -16,10 +16,12 @@ import time
 import torch
 import numpy as np
 import cv2
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from config import Parameters, defaults
 import utils.tools as utils
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from interface_tools import errorMessage
 
 class Extractor(object):
