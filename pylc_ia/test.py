@@ -21,7 +21,7 @@ import torch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from .utils import tools as utils
+from mlp_ia_suite-master.pylc_ia.utils import tools as utils
 from config import defaults, Parameters
 from utils.extract import Extractor
 from utils.evaluate import Evaluator

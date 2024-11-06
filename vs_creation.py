@@ -185,8 +185,10 @@ def drawViewshed(dlg):
         ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
         ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
 
-        xs = np.linspace(ray_start_x, ray_end_x, round(100000/pixelSizeX))
-        ys = np.linspace(ray_start_y, ray_end_y, round(100000/pixelSizeY))
+        min_px = min(pixelSizeX, pixelSizeY)
+
+        xs = np.linspace(ray_start_x, ray_end_x, round(100000/min_px))
+        ys = np.linspace(ray_start_y, ray_end_y, round(100000/min_px))
 
         
         inside = np.where(np.logical_and(abs(xs) < dem_w, abs(ys) < dem_h))
