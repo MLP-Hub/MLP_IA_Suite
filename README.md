@@ -6,10 +6,10 @@ __QGIS plugin for analysing ground-based oblique images__
 [![GNU License](https://img.shields.io/badge/License-GNU-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12587817.svg)](https://doi.org/10.5281/zenodo.12587817)
 
-Reference: Wright, C., Bone, C., Mathews, D., Tricker, J., Wright, B., and Higgs, E. Mountain Image Analysis Suite (MIAS): A new plugin for converting oblique images to landcover maps in QGIS. *Transactions in GIS* (Submitted 2024).
+Reference: Wright, C., Bone, C., Mathews, D., Tricker, J., Wright, B., and Higgs, E. (2024) Mountain Image Analysis Suite (MIAS): A new plugin for converting oblique images to landcover maps in QGIS. *Transactions in GIS*.[doi.org/10.1111/tgis.13229](doi.org/10.1111/tgis.13229)
 
 ## Overview
-This plugin contains four tools for analysing ground-based oblique images. The final product is a classified and spatially referenced viewshed representing the landscape shown in the photograph. MIAS harnesses PyLC (Python Landscape Classifier) available independently [here](https://github.com/scrose/pylc). The training dataset is sampled from the [Mountain Legacy Project](https://mountainlegacy.ca) repeat photography collection hosted at the [University of Victoria](https://www.uvic.ca).
+This plugin contains four tools for analysing ground-based oblique images. The final product is a classified and spatially referenced viewshed representing the landscape shown in the photograph. MIAS harnesses PyLC (Python Landscape Classifier) available independently [here](https://github.com/MLP-Hub/pylc_mlp). The training dataset is sampled from the [Mountain Legacy Project](https://mountainlegacy.ca) repeat photography collection hosted at the [University of Victoria](https://www.uvic.ca).
 
 ## Requirements (QGIS 3.28.1) 
 
@@ -43,6 +43,6 @@ From the Plugins menu in QGIS, choose Manage and Install Plugins, then Install f
 
 ## Usage
 A video tutorial for MIAS is available [here](https://youtu.be/y0ASg9S3Up8).
-Example data and written instructions can be downloaded [here](https://doi.org/10.5281/zenodo.12587817).
+Example data and written instructions can be downloaded [here](https://doi.org/10.5683/SP3/PR368H).
 
 

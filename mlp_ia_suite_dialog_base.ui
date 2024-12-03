@@ -258,7 +258,7 @@ padding: 15px 15px 15px 15px;
              <item row="2" column="1">
               <widget class="QLabel" name="Help_label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our help documentation for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plugin related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our&lt;/span&gt;&lt;a href=&quot;https://doi.org/10.5683/SP3/PR368H&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt; help documentation and example dataset&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plugin related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -812,7 +812,7 @@ border-radius: 4px;
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. To download a model, visit the &lt;a href=&quot;https://github.com/scrose/pylc&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PyLC Github&lt;/span&gt;&lt;/a&gt; page.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This tool accesses the Python Landscape Classifier (PyLC), a Pytorch-based trainable segmentation network and land cover classification tool for oblique landscape photography. PyLC was developed for the land cover classification of high-resolution grayscale and colour oblique mountain photographs. Pretrained models can be downloaded &lt;a href=&quot; https://doi.org/10.5683/SP3/CEYU10&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignJustify|Qt::AlignTop</set>
