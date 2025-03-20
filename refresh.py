@@ -87,6 +87,7 @@ def refresh_PyLC(dlg, canvas_list):
     # refresh defaults and save filepaths
     dlg.refresh_dict["PyLC"]["Mask"]=None
     dlg.PyLC_path = None
+    dlg.pylc_run = False
 
 def checkCamParams(dlg):
     """Check if all camera parameters are empty"""

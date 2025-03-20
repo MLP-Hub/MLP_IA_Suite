@@ -113,6 +113,7 @@ def runPylc(dlg):
     if pylc_args is None:
         return # exit if there was an error getting the arguments
     pylc.main(pylc_args) # run pylc
+    dlg.pylc_run = True
     
     # Display output
     scale_val = dlg.Scale_lineEdit.text()

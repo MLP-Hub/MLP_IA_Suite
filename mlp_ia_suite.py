@@ -203,6 +203,7 @@ class MLP_IA_Suite:
         
         # PYLC TAB 
         self.dlg.PyLC_path = None # initiate variable to hold path to mask (for temp file)
+        self.dlg.pylc_run = False # initiate variable to check whether PyLC ran already
 
         # Set up image scale slider
         self.dlg.Scale_slider.valueChanged['int'].connect(lambda: setScaleBoxVal(self.dlg, self.dlg.Scale_slider.value()))
