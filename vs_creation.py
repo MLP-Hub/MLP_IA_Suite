@@ -247,7 +247,7 @@ def singleBand(vs):
     # convert to singleband
     vs_sb = np.sum(vs, 2)
 
-    # convert to correct legend (1 to 8 for classes, 0 is ND)
+    # convert to correct legend (1 to 9 for classes, 0 is ND)
     vs_sb[vs_sb == 3] = 0
     vs_sb[vs_sb == 207] = 1
     vs_sb[vs_sb == 420] = 2
@@ -257,6 +257,7 @@ def singleBand(vs):
     vs_sb[vs_sb == 413] = 6
     vs_sb[vs_sb == 259] = 7
     vs_sb[vs_sb == 489] = 8
+    vs_sb[vs_sb == 500] = 9
 
     vs_sb_int = vs_sb.astype(int)
     
