@@ -400,18 +400,13 @@ def createVP(dlg):
     img_h, img_w = getImgDimensions(dlg)
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(dlg.hs_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
 
-    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
-    
     if cam_params["elev"] is None:
         cam_params["elev"] = DEM_img[cam_y, cam_x] # read elevation from DEM if not provided by user
 
     img = np.zeros((img_h,img_w),dtype=np.uint8) # create blank image
 
-    a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
+    dc = (img_w/2)/math.tan(math.radians(cam_params['h_fov']/2)) # distance to camera in pixels for image center
     
-    img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
-    img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
-
     progressDlg = QProgressDialog("Creating virtual photograph...","Cancel", 0, img_w)
     progressDlg.setWindowModality(Qt.WindowModal)
     progressDlg.setValue(0)
@@ -424,6 +419,11 @@ def createVP(dlg):
         # and find the corresponding greyscale values
         
         progressDlg.setValue(img_x)
+
+        # find horizontal angle
+        wx = img_w/2 - img_x # find distance of column to image centre in pixels
+        beta = math.atan(wx/dc) # find horizontal angle between camera and pixel column
+        a = cam_params['azi'] - math.degrees(beta) # find angle relative to north
 
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
@@ -438,7 +438,7 @@ def createVP(dlg):
         xs = np.linspace(ray_start_x, ray_end_x, round(100000/min_px))
         ys = np.linspace(ray_start_y, ray_end_y, round(100000/min_px))
 
-        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"]-cam_params["hgt"]
+        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"] - cam_params["hgt"]
         greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
 
         opp = (xs - cam_x)*pixelSizeX
@@ -447,18 +447,28 @@ def createVP(dlg):
         dem_dist = np.sqrt(np.add(opp**2, adj**2))
         vert_angles = np.arctan(np.divide(elevs,dem_dist)) # find ratio (opp/adj)
 
-        dem_angles_inc = np.fmax.accumulate(vert_angles) # checks for only increasing DEM angles
-        unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
+        #  now find location of each point on ray on the picture plane of the VP
+        dcx = dc/math.cos(math.radians(cam_params['azi']-a)) # distance to camera of current ray
 
-        greys_visible = greys[unique_angles_indx]
+        img_ys = np.tan(vert_angles)*dcx # convert angles from DEM into Y position on picture plane of VP
+        img_ys = img_h/2 - img_ys # actual position is relative to the centre
 
-        nonsky_pixels = img_v_angles[img_v_angles < max(dem_angles_inc)] # truncate picture array to remove sky pixels
-        yinterp = np.interp(nonsky_pixels, unique_angles, greys_visible) # interpolate any missing greyscale values
+        img_ys_inc = np.fmin.accumulate(img_ys) # converts to array with only decreasing y positions (increasing elevation)
+        unique_ys, unique_ys_indx = np.unique(img_ys_inc, return_index=True) # keep only unique y positions (and their index)
+
+        greys_visible = greys[unique_ys_indx] # keep hillshade values at each index of a unique y value
         
-        img_column = np.concatenate((yinterp, np.ones(img_h - len(yinterp)) * 255)) # create column for image and fill sky pixels white
-        img[:, img_x] = np.flip(img_column, axis=0) # flip the column
-            
-        a = a+(cam_params["h_fov"]/img_w) # update ray angle
+        min_px = max(0, min(img_ys))
+
+        nonsky_pixels = np.arange(int(min_px), img_h) # find the area of the image column that is not sky
+
+        unique_ys = unique_ys[::1]
+        greys_visible = greys_visible[::1]
+
+        yinterp = np.interp(nonsky_pixels, unique_ys, greys_visible) # interpolate the missing pixel values
+
+        img_column = np.concatenate(((np.ones(img_h - len(yinterp)) * 255),yinterp)) # create column for image and fill sky pixels white
+        img[:, img_x] = img_column # add the column to the image
 
     return img
 

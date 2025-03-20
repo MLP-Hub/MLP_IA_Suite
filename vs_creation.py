@@ -143,7 +143,7 @@ def drawViewshed(dlg):
 
     img_h, img_w, *_ = mask.shape # get height and width of mask
     cam_x, cam_y, pixelSizeX, pixelSizeY = camXY(DEM_layer, cam_params["lat"], cam_params["lon"]) # find pixel coordinates of camera position and raster resolution
-    v_fov = cam_params["h_fov"]*img_h/img_w # determine vertical field of view from horizontal field of view and picture size
+    dc = (img_w/2)/math.tan(math.radians(cam_params['h_fov']/2)) # distance to camera in pixels for image center
 
     # get elevation from DEM if not provided by user
     if cam_params["elev"] is None:
@@ -157,12 +157,7 @@ def drawViewshed(dlg):
     probs_lyr = None
     if probs is not None:
         probs_lyr = np.ones((dem_h,dem_w),dtype=np.float32)
-
-    a = cam_params["azi"] - cam_params["h_fov"]/2 # starting ray angle is azimuth minus half of horizontal FOV
     
-    img_v_angles = np.linspace(-v_fov/2, v_fov/2, img_h) # create list of image angles
-    img_v_angles = np.tan(np.radians(img_v_angles)) # find ratio (opp/adj)
-
     xmins, xmaxs, ymins, ymaxs = [], [], [], [] # initiate variables to find visible extent for clipping later
 
     progressDlg = QProgressDialog("Creating viewshed...","Cancel", 0, img_w)
@@ -177,6 +172,11 @@ def drawViewshed(dlg):
 
         progressDlg.setValue(img_x)
 
+        # calculate horizontal angle
+        wx = img_w/2 - img_x # find distance of column to image centre in pixels
+        beta = math.atan(wx/dc) # find horizontal angle between camera and pixel column
+        a = cam_params['azi'] - math.degrees(beta) # find angle relative to north
+
         # create ray start position (remove first 100 m)
         ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
         ray_start_x = cam_x + (100*math.sin(np.radians(a))/pixelSizeX)
@@ -190,23 +190,39 @@ def drawViewshed(dlg):
         xs = np.linspace(ray_start_x, ray_end_x, round(100000/min_px))
         ys = np.linspace(ray_start_y, ray_end_y, round(100000/min_px))
 
-        
+        # find ray positions on DEM
         inside = np.where(np.logical_and(abs(xs) < dem_w, abs(ys) < dem_h))
         xs = xs[inside]
         ys = ys[inside]
 
+        # sample elevations
         elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"] - cam_params["hgt"]
 
         opp = (xs - cam_x)*pixelSizeX
         adj = (cam_y - ys)*pixelSizeY
 
         dem_dist = np.sqrt(np.add(opp**2, adj**2))
-        vert_angles = np.divide(elevs,dem_dist) # find ratio (opp/adj)
+        vert_angles = np.arctan(np.divide(elevs,dem_dist)) # find ratio (opp/adj)
 
-        dem_angles_inc = np.fmax.accumulate(vert_angles) # checks for only increasing DEM angles
-        unique_angles, unique_angles_indx = np.unique(dem_angles_inc, return_index=True) # keep only unique increasing angles and their index
-        xs_visible = xs[unique_angles_indx].astype(int) # keep only visible x-coordinates
-        ys_visible = ys[unique_angles_indx].astype(int) # keep only visible y-coordinates
+        #  now find location of each point on ray on the picture plane of the VP
+        dcx = dc/math.cos(math.radians(cam_params['azi']-a)) # distance to camera of current ray
+
+        img_ys = np.tan(vert_angles)*dcx # convert angles from DEM into Y position on picture plane of VP
+        img_ys = img_h/2 - img_ys # actual position is relative to the centre
+
+        img_ys_inc = np.fmin.accumulate(img_ys) # converts to array with only decreasing y positions (increasing elevation)
+        unique_ys, unique_ys_indx = np.unique(img_ys_inc, return_index=True) # keep only unique y positions (and their index)
+
+        xs_visible = xs[unique_ys_indx].astype(int) # keep only visible x-coordinates
+        ys_visible = ys[unique_ys_indx].astype(int) # keep only visible y-coordinates
+
+        y_coords = unique_ys.astype(int)
+
+        y_coords_inbounds = y_coords[np.where(np.logical_and(y_coords>=0, y_coords<img_h))]
+        ys_visible = ys_visible[np.where(np.logical_and(y_coords>=0, y_coords<img_h))]
+        xs_visible = xs_visible[np.where(np.logical_and(y_coords>=0, y_coords<img_h))]
+
+        vs[ys_visible, xs_visible] = mask[y_coords_inbounds, img_x]
 
         # add max and min extents
         xmins.append(min(xs_visible))
@@ -214,23 +230,9 @@ def drawViewshed(dlg):
         ymins.append(min(ys_visible))
         ymaxs.append(max(ys_visible))
 
-        # fund matching angles
-        angle_matches_index = closest_argmin(unique_angles, img_v_angles)
-
-        mask_col = mask[:,img_x] # get column from mask
-        mask_col = np.flip(mask_col, axis=0) # reverse order of pixels
-        mask_col = mask_col[angle_matches_index] # keep only the visible pixels
-
-        vs[ys_visible, xs_visible] = mask_col
-
         # if probabilities exist, also fill into probs layer
         if probs_lyr is not None:
-            probs_col = probs[:,img_x]
-            probs_col = np.flip(probs_col, axis=0)
-            probs_col = probs_col[angle_matches_index]
-            probs_lyr[ys_visible, xs_visible] = probs_col
-            
-        a = a+(cam_params["h_fov"]/img_w) # update ray angle
+            probs_lyr[ys_visible, xs_visible] = probs[y_coords_inbounds, img_x]
 
     # find visible extents to clip VS later   
     xmin = ex.xMinimum() + min(xmins)*pixelSizeX
@@ -247,7 +249,7 @@ def singleBand(vs):
     # convert to singleband
     vs_sb = np.sum(vs, 2)
 
-    # convert to correct legend (1 to 9 for classes, 0 is ND)
+    # convert to correct legend (1 to 8 for classes, 0 is ND)
     vs_sb[vs_sb == 3] = 0
     vs_sb[vs_sb == 207] = 1
     vs_sb[vs_sb == 420] = 2
