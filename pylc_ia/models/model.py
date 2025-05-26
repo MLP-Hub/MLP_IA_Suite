@@ -95,7 +95,7 @@ class Model:
 
             # load model data
             try:
-                model_data = torch.load(self.model_path, map_location=self.device)
+                model_data = torch.load(self.model_path, map_location=self.device, weights_only=False)
             except Exception as err:
                 print('An error occurred loading model:\n\t{}.'.format(model_path))
                 print(err)
