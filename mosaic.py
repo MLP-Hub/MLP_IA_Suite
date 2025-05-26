@@ -26,9 +26,10 @@ import os
 import numpy as np
 import scipy
 import skimage
+import cv2
 import tempfile
 
-from qgis.core import QgsRasterLayer, QgsProcessing, QgsProject, QgsRasterFileWriter, QgsRasterPipe
+from qgis.core import QgsRasterLayer, QgsProject, QgsRasterFileWriter, QgsRasterPipe, QgsProcessingFeedback
 from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog
 from PyQt5.QtCore import Qt
 from qgis import processing
@@ -62,6 +63,7 @@ def moveLayerUp(listWidget):
     currentRow = listWidget.currentRow()
     currentItem = listWidget.takeItem(currentRow)
     listWidget.insertItem(currentRow - 1, currentItem)
+    listWidget.setCurrentRow(listWidget.currentRow() - 2)
 
 def moveLayerDown(listWidget):
     """Moves layer down in list"""
@@ -69,16 +71,12 @@ def moveLayerDown(listWidget):
     currentRow = listWidget.currentRow()
     currentItem = listWidget.takeItem(currentRow)
     listWidget.insertItem(currentRow + 1, currentItem)
+    listWidget.setCurrentRow(listWidget.currentRow() + 2)
 
 def readRasterLayers(listWidget):
     """Reads filepaths from list and finds extents, resolutions, and checks CRS for each layer"""
 
     filepaths = [listWidget.item(x).text() for x in range(listWidget.count())] # get list of filepaths from input
-
-    min_xs = []
-    max_xs = []
-    min_ys = []
-    max_ys = []
 
     # check original CRS and resolution
     good_path = os.path.realpath(filepaths[0])
@@ -95,7 +93,7 @@ def readRasterLayers(listWidget):
 
         # check layer CRS (all must be the same CRS and in meters)
         if raster_layer.crs() != ref_crs:
-            errorMessage("All inputs must be in the same coordinate reference systems")
+            errorMessage("All inputs must be in the same coordinate reference system")
             return
         
         # check layer resolution (must be the same)
@@ -103,132 +101,121 @@ def readRasterLayers(listWidget):
             errorMessage("All inputs must have in the same spatial resolution")
             return
 
-        ex = raster_layer.extent()
-        min_xs.append(ex.xMinimum())
-        max_xs.append(ex.xMaximum())
-        min_ys.append(ex.yMinimum())
-        max_ys.append(ex.yMaximum())
+    return filepaths
 
-    extents = [min_xs, max_xs, min_ys, max_ys]
+def grassModeMosaic(input_layers):
+    """Uses GRASS r.series to find mode"""
 
-    return filepaths, extents, refResX, refResY
+    PARAMS = {
+     'input' : input_layers,
+     'output' : 'TEMPORARY_OUTPUT',
+     '-n' : False,
+     'method' : [3]
+       }
 
-def pad_arrays(filepaths, extents, res_x, res_y):
-    """Pads all input arrays based on max combined extents"""
+    # Run algorithm
+    mode_mosaic = processing.run('grass7:r.series', PARAMS)  
 
-    input_arrays = []
+    mode_mosaic_path=mode_mosaic['output']
 
-    for i, filepath in enumerate(filepaths):
-        
-        # read image into array
-        img = skimage.io.imread(os.path.realpath(filepath), as_gray=True)
+    return mode_mosaic_path
 
-        # pad array with NaN values so that all inputs have same size
+def addProbs(input_layers):
+    "Add together raster layers using GRASS r.series"
 
-        before_y = int((extents[2][i] - min(extents[2]))/res_y)
-        after_y = int((max(extents[3]) - extents[3][i])/res_y)
+    PARAMS = {
+     'input' : input_layers,
+     'output' : 'TEMPORARY_OUTPUT',
+     '-n' : False,
+     'method' : [10]
+       }
 
-        before_x = int((max(extents[1]) - extents[1][i])/res_x)
-        after_x = int((extents[0][i] - min(extents[0]))/res_x)
-        
-        pad_width = ((after_y, before_y), (after_x, before_x))
+    # Run algorithm
+    summed_probs = processing.run('grass7:r.series', PARAMS)  
 
-        img_pad = np.pad(img.astype(np.float), pad_width, mode='constant', constant_values=np.nan)
+    summed_probs_path=summed_probs['output']
 
-        img_pad[img_pad == 0] = np.nan # convert zeros to NaN as well
+    return summed_probs_path
 
-        input_arrays.append(img_pad)
-
-    return input_arrays
-
-def rankedMosaic(input_arrays):
-    """Mosaics a set of rasters based on mode"""
-
-    mosaic = scipy.stats.mode(input_arrays, axis = 0, nan_policy = 'omit')[0] # find mode
-    mosaic = mosaic.astype(np.int)
-
-    return mosaic
-
-def probMosaic(input_arrays, input_probs):
+def probMosaic(input_lyrs, input_probs):
     """Mosaics a set of rasters based on classification probability"""
 
-    n = 9 # number of unique LC classes
-    master = np.zeros((input_arrays[0].shape[0],input_arrays[0].shape[1], n+1),dtype=np.float64)
+    n_classes = 9 # number of unique LC classes
 
-    progressDlg = QProgressDialog("Mosaicking rasters...","Cancel", 0, len(input_arrays))
-    progressDlg.setWindowModality(Qt.WindowModal)
-    progressDlg.setValue(0)
-    progressDlg.forceShow()
-    progressDlg.show() 
+    all_class_probs = []
 
-    for i, array in enumerate(input_arrays):
-        progressDlg.setValue(i)
-        for lc in range(1,n+1):
-            lc_index = np.where(array==lc)
-            probs = input_probs[i]
-            lc_probs = probs[lc_index]
+    for n in range(1, n_classes + 1):
+    # loop through each land cover class
 
-            master[lc_index[0],lc_index[1],lc]+=lc_probs
+        class_spec_probs = [] # initiate list to hold the masked class-specific probabilities for each input raster
 
-    mosaic = np.argmax(master, axis = 2)
+        for i, class_path in enumerate(input_lyrs):
+        # loop through each input raster and associated probability
 
-    return mosaic
+            # use raster calculator to mask probabilities based on class value in the lc raster
+            formula = f"(A == {n}) * B"
+            PARAMS = {'INPUT_A' : class_path,
+                        'INPUT_B' : input_probs[i],
+                        'BAND_A' : 1,
+                        'BAND_B' : 1,
+                        'NO_DATA':0,
+                        'FORMULA' : formula,
+                        'OUTPUT' : 'TEMPORARY_OUTPUT'}
 
+            masked_probs = processing.run('gdal:rastercalculator', PARAMS)
+            
+            class_spec_probs.append(masked_probs['OUTPUT'])  
         
+        all_class_probs.append(addProbs(class_spec_probs)) # sum class specific probabilites across all input rasters
 
-def createMosaicLayer(mosaic_path, extents):
-    """Converts mosaic image to useable layer"""
- 
-    ext_list = ["-a_ullr",str(min(extents[0])),str(max(extents[3])),str(max(extents[1])), str(min(extents[2]))]
-    ullr = " ".join(ext_list)
+    # find max probability at each pixel and return the associated class
+    PARAMS = {
+     'input' : all_class_probs,
+     'output' : 'TEMPORARY_OUTPUT',
+     '-n' : False,
+     'method' : [7]
+       }
 
-    PARAMS = { 'COPY_SUBDATASETS' : False, 
-              'DATA_TYPE' : 0, 
-              'EXTRA' : ullr, 
-              'INPUT' : mosaic_path, 
-              'NODATA' : "0", 
-              'OPTIONS' : '', 
-              'OUTPUT' : QgsProcessing.TEMPORARY_OUTPUT, 
-              'TARGET_CRS' : None }
+    # Run algorithm
+    max_probs_class = processing.run('grass7:r.series', PARAMS)  
 
-    mosaic_ref=processing.run("gdal:translate", PARAMS)
+    max_probs_class_path=max_probs_class['output']
 
-    mosaic_ref_path=mosaic_ref['OUTPUT']
-    mosaic_layer = QgsRasterLayer(mosaic_ref_path, "Mosaic")
+    # Add one to output
+    formula = "A + 1"
+    parameters = {'INPUT_A' : max_probs_class_path,
+                'BAND_A' : 1,
+                'FORMULA' : formula,
+                'OUTPUT' : 'TEMPORARY_OUTPUT'}
 
-    return mosaic_ref_path, mosaic_layer  
-
+    probs_mosaic = processing.run('gdal:rastercalculator', parameters)
+    
+    probs_mosaic_path = probs_mosaic['OUTPUT']  
+    
+    return probs_mosaic_path
+       
 def mosaicRasters(listWidget, ranking_checkBox, dlg):
     """Mosaics provided rasters together"""
 
-    filepaths, extents, res_x, res_y = readRasterLayers(listWidget) # read all layers from list
-
-    input_arrays = pad_arrays(filepaths, extents, res_x, res_y) # pad all inputs to max extents
+    input_raster_paths = readRasterLayers(listWidget) # read all layers from list
 
     if ranking_checkBox.isChecked():
-        mosaic_img = rankedMosaic(input_arrays) # mosaic the input arrays based on mode
+       dlg.mosaic_path = grassModeMosaic(input_raster_paths)
+    
     else:
         prob_paths = []
-        for path in filepaths:
+        for path in input_raster_paths:
             raster_path, ext = os.path.splitext(path)
-            prob_paths.append(os.path.join(raster_path + '_probs.tiff'))
-            input_probs = pad_arrays(prob_paths, extents, res_x, res_y)
-        mosaic_img = probMosaic(input_arrays, input_probs) # mosaic the input arrays based on PyLC probability
+            prob_path = os.path.join(raster_path + '_probs.tiff')
+            if os.path.isfile(prob_path):
+                prob_paths.append(prob_path)
+            else:
+                errorMessage("Missing probability file. \n"+prob_path+" does not exist.\n Use ranked mosaic instead.")
+                return
+        
+        dlg.mosaic_path = probMosaic(input_raster_paths, prob_paths)
 
-    if mosaic_img is None:
-        # break if mosaicking did not work
-        errorMessage("Mosaicking failed.")
-        return
-
-    # save mosaicked image to temp path
-    dlg.mosaic_path = os.path.join(tempfile.mkdtemp(), 'tempMosaic.tiff')
-    if os.path.isfile(dlg.mosaic_path):
-        # check if the temporary file already exists
-        os.remove(dlg.mosaic_path)
-
-    skimage.io.imsave(dlg.mosaic_path, mosaic_img) # write mosaic to image
-
-    dlg.mosaic_path, mosaic_ref_layer = createMosaicLayer(dlg.mosaic_path, extents) # convert mosaic from image to referenced raster layer
+    mosaic_ref_layer = QgsRasterLayer(dlg.mosaic_path, "Mosaic")
 
     QgsProject.instance().addMapLayer(mosaic_ref_layer, False) # add layer to the registry (but don't load into main map)
     
@@ -243,7 +230,6 @@ def mosaicRasters(listWidget, ranking_checkBox, dlg):
     for lyr in layer_list:
         QgsProject.instance().removeMapLayer(lyr.id()) # if the layer already exists, remove it from the canvas
     loadLayer(dlg.Mosaic_mapCanvas, mosaic_ref_layer)
-
 
 def saveMosaic(dlg):
     """Saves mosaic to specified location"""
