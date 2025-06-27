@@ -102,8 +102,6 @@ def readRasterLayers(listWidget):
             return
 
     return filepaths
-
-def grassModeMosaic(input_layers):
     """Uses GRASS r.series to find mode"""
 
     PARAMS = {
@@ -118,6 +116,29 @@ def grassModeMosaic(input_layers):
 
     mode_mosaic_path=mode_mosaic['output']
 
+    return mode_mosaic_path
+
+def gdalModeMosaic(input_layers):
+    """Uses GDAL Build VRT to find mode"""
+
+    parameters = {'INPUT':input_layers,
+                    'RESOLUTION':0,
+                    'SEPARATE':False,
+                    'PROJ_DIFFERENCE':False,
+                    'ADD_ALPHA':False,
+                    'ASSIGN_CRS':None,
+                    'RESAMPLING':6,
+                    'SRC_NODATA':'',
+                    'EXTRA':'',
+                    'OUTPUT':'TEMPORARY_OUTPUT'}
+    
+    try:
+        mode_mosaic=processing.run("gdal:buildvirtualraster", parameters)
+
+        mode_mosaic_path=mode_mosaic['OUTPUT']
+    except:
+        errorMessage("Mosaicking failed")
+    
     return mode_mosaic_path
 
 def addProbs(input_layers):
@@ -200,7 +221,8 @@ def mosaicRasters(listWidget, ranking_checkBox, dlg):
     input_raster_paths = readRasterLayers(listWidget) # read all layers from list
 
     if ranking_checkBox.isChecked():
-       dlg.mosaic_path = grassModeMosaic(input_raster_paths)
+       paths_reversed = input_raster_paths[::-1] # reverse order for mosaic
+       dlg.mosaic_path = gdalModeMosaic(paths_reversed)
     
     else:
         prob_paths = []
