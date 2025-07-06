@@ -62,6 +62,8 @@ def getFolder(lineEdit):
     if dialog.exec_():
         filepath = dialog.selectedFiles()[0]
         lineEdit.setText(filepath)
+    else:
+        return
 
 def getFile(lineEdit, filter_string):
     """Select file"""
@@ -74,6 +76,8 @@ def getFile(lineEdit, filter_string):
     if dialog.exec_():
         filepath = dialog.selectedFiles()[0]
         lineEdit.setText(filepath)
+    else:
+        return
 
 def removeLayer(canvas, img_lyr):
     """Removes provided layer from map canvas"""
@@ -94,7 +98,7 @@ def loadLayer(canvas, img_lyr):
 def addImg(filepath, name, canvas, visible):
     """Adds provided image in map canvas"""
 
-    layer_list = canvas.layers()
+    layer_list = QgsProject.instance().mapLayers().values()
 
     lyr_ids = {}
     for lyr in layer_list:
@@ -182,7 +186,6 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
         active_layer = canvas_list[1].layer(0)
         active_layer.renderer().setOpacity(1)
         active_layer.triggerRepaint()
-
 
     for tool in exclusive_tools:
         tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)

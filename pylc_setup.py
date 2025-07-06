@@ -104,7 +104,7 @@ def runPylc(dlg):
     """Runs pylc and displays outputs"""
 
     # check if mask exists in tempfile but was not saved
-    if dlg.refresh_dict["PyLC"]["Mask"] is None and dlg.PyLC_path is not None:
+    if dlg.refresh_dict["PyLC"]["Mask"] is None and dlg.pylc_run:
         ret = messageBox("PyLC mask")
         if ret == QMessageBox.No:
             return
@@ -136,8 +136,6 @@ def runPylc(dlg):
              
     addImg(img_path,"Original Image",dlg.Img_mapCanvas, True) # show input image in side-by-side
     addImg(dlg.PyLC_path,"PyLC Mask",dlg.Mask_mapCanvas, True) # show output mask in side-by-side
-    addImg(dlg.PyLC_path,"PyLC Mask",dlg.Full_mapCanvas, False) # show output mask in fullview
-    addImg(dlg.InputImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas, False) # show input image in full view
 
     enableTools(dlg)
 
@@ -168,4 +166,6 @@ def saveMask(dlg):
             save_name, ext = os.path.splitext(os.path.realpath(mask_path))
             probs_save = os.path.join(save_name + '.npy')
             np.save(probs_save, probs)
+    else:
+        return
 

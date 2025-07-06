@@ -331,7 +331,7 @@ class MLP_IA_Suite:
         self.dlg.Fit_toolButton_3.clicked.connect(lambda: zoomToExt(canvas_list_4)) # Zoom to mask extent
         self.dlg.Swipe_toolButton_3.clicked.connect(lambda: swipeTool(self.dlg, self.dlg.Full_mapCanvas_3, self.dlg.Swipe_toolButton_3, self.dlg.Pan_toolButton_3))
         self.dlg.Transparency_slider_3.valueChanged['int'].connect(lambda: transparency(self.dlg.Transparency_slider_3.value(), self.dlg.Full_mapCanvas_3))
-        self.dlg.Layer_comboBox.activated.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3, self.dlg.SourceImg_canvas))
+        self.dlg.Layer_comboBox.activated.connect(lambda: switchLayer(self.dlg.Layer_comboBox, self.dlg.Full_mapCanvas_3, self.dlg.SourceImg_canvas, self.dlg))
 
         self.dlg.Align_refresh.clicked.connect(lambda: refresh_align(self.dlg, canvas_list_4))
 

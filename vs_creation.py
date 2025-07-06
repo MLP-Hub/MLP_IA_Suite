@@ -453,3 +453,5 @@ def saveVS(dlg):
             writeRaster(probs, save_probs_path, dest_crs)
 
         dlg.refresh_dict["VS"]["VS"]=save_vs_path
+    else:
+        return

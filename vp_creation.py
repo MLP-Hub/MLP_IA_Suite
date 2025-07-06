@@ -89,6 +89,8 @@ def loadCamParam(dlg):
     dialog.setNameFilter("Text files (*.txt)")
     if dialog.exec_():
         cam_filepath = dialog.selectedFiles()[0]
+    else:
+        return
 
     cam_file = open(cam_filepath, "r")
 
@@ -127,6 +129,8 @@ def saveCamParam(dlg):
 
     if dialog.exec_():
         cam_filepath = dialog.selectedFiles()[0]
+    else:
+        return
     
     cam_file = open(cam_filepath, "w")
 
@@ -230,7 +234,8 @@ def createHillshade(clipped_DEM):
                     'COMBINED': False,
                     'ALTITUDE': 45,
                     'MULTIDIRECTIONAL': False,
-                    'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT}
+                    'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+                    }
 
     try:
         hillshade=processing.run("gdal:hillshade", parameters)
@@ -353,6 +358,9 @@ def createVP(dlg):
         return # exit VP creation if the camera parameters are incorrect
 
     # Read DEM from user input
+    if not dlg.InputDEM_lineEdit.text():
+        errorMessage("DEM field cannot be empty")
+        return
     DEM_path = os.path.realpath(dlg.InputDEM_lineEdit.text())
     DEM_layer = QgsRasterLayer(DEM_path, "VP_DEM")
     if DEM_layer is None:
@@ -502,10 +510,8 @@ def displayVP(dlg):
     
     cv2.imwrite(dlg.vp_path, vp)
 
-    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Img_mapCanvas_2, True) # show input image in side-by-side
+    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image VP",dlg.Img_mapCanvas_2, True) # show input image in side-by-side
     addImg(dlg.vp_path,"Virtual Photo",dlg.VP_mapCanvas, True) # show output mask in side-by-side
-    addImg(dlg.vp_path,"Virtual Photo",dlg.Full_mapCanvas_2, False) # show output mask in fullview
-    addImg(dlg.InputRefImg_lineEdit.text(),"Original Image",dlg.Full_mapCanvas_2, False) # show input image in full view
     
     enableTools(dlg)
 
@@ -535,3 +541,5 @@ def saveVP(dlg):
 
         cv2.imwrite(save_vp_path, vp)
         dlg.refresh_dict["VP"]["VP"]=save_vp_path
+    else:
+        return

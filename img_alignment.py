@@ -21,12 +21,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-from .interface_tools import addImg, removeLayer, singleView, sideBySide
+from .interface_tools import addImg, removeLayer, sideBySide
 
 from qgis.gui import QgsMapToolEmitPoint, QgsMapToolIdentifyFeature
 from qgis.core import QgsVectorLayer, QgsField, QgsProject, QgsFeature, QgsGeometry, QgsMarkerSymbol, QgsFontMarkerSymbolLayer, QgsPointXY
 from PyQt5.QtCore import Qt, QVariant
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QFileDialog
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QFileDialog, QMessageBox
 
 import cv2
 import numpy as np
@@ -113,6 +113,9 @@ def addCP(canvas, vl, x, y, table, name, dlg):
     row = len(list(cp_list))-1 # tells you which row to fill in data
     if table.rowCount() <= row:
         table.setRowCount(row+1) # add row if number of CPs exceeds table size
+
+    print(vl)
+    print(row)
     table.setItem(row, col, QTableWidgetItem(str(round(x,2))))
     table.setItem(row, col+1, QTableWidgetItem(str(abs(round(y,2)))))
 
@@ -266,6 +269,8 @@ def saveCPs(dlg):
 
     if dialog.exec_():
         cp_filepath = dialog.selectedFiles()[0]
+    else:
+        return
 
     cp_file = open(cp_filepath, "w")
 
@@ -284,7 +289,42 @@ def saveCPs(dlg):
 
 def loadCPs(layer_names, canvases, img_names, table, dlg):
     """Allows user to load a set of saved control points"""
-    
+
+    # Check if CPs already exist
+    x = 0
+    for x in range(0, 2):
+        # check if vector layer of CPs exists
+        layer_list = canvases[x].layers()
+        lyr_ids = {}
+        for lyr in layer_list:
+            lyr_ids[lyr.name()] = lyr.id()
+    if layer_names[x] in lyr_ids:
+        # delete existing CPs
+        msg = QMessageBox()
+        msg.setText("This operation will clear your current control points.")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.setDefaultButton(QMessageBox.Ok)
+        # Execute the message box and get the result
+        result = msg.exec_()
+
+        if result == QMessageBox.Cancel:
+            return
+        
+        # clear the table
+        table.clearContents()
+        table.setRowCount(4)
+        
+        # delete the cp layers
+        layer_list = QgsProject.instance().mapLayers().values()
+        lyr_ids = {}
+        for lyr in layer_list:
+            lyr_ids[lyr.name()] = lyr.id()
+        for name in layer_names:
+            if name in lyr_ids:
+                QgsProject.instance().removeMapLayer(lyr_ids[name])
+
+   
     # first, get user specified text file containing previously saved CPs
     dialog = QFileDialog()
     dialog.setFileMode(QFileDialog.ExistingFile)
@@ -292,6 +332,8 @@ def loadCPs(layer_names, canvases, img_names, table, dlg):
     dialog.setNameFilter("Text files (*.txt)")
     if dialog.exec_():
         cp_filepath = dialog.selectedFiles()[0]
+    else:
+        return
 
     cp_file = open(cp_filepath, "r")
 
@@ -312,13 +354,7 @@ def loadCPs(layer_names, canvases, img_names, table, dlg):
 
     x = 0
     for x in range(0, 2):
-        # check if vector layer of CPs exists, otherwise create one
-        layer_list = canvases[x].layers()
-        lyr_ids = {}
-        for lyr in layer_list:
-            lyr_ids[lyr.name()] = lyr.id()
-        if layer_names[x] not in lyr_ids:
-            createCPLayer(canvases[x], layer_names[x], img_names[x]) 
+        createCPLayer(canvases[x], layer_names[x], img_names[x]) 
 
         vl = QgsProject.instance().mapLayersByName(layer_names[x])[0] # get CP vector layer
 
@@ -366,8 +402,10 @@ def enableButtons(dlg, undo):
     dlg.addCP_button.setEnabled(undo)
     dlg.delCP_button.setEnabled(undo)
     dlg.loadCP_button.setEnabled(undo)
+    dlg.SourceImg_button.setEnabled(undo)
+    dlg.DestImg_button.setEnabled(undo)
 
-def switchLayer(comboBox, main_canvas, side_canvas):
+def switchLayer(comboBox, main_canvas, side_canvas, dlg):
     """Switches which image is on top"""
 
     layer_name = comboBox.currentText() # find selected layer from combo box
@@ -386,8 +424,12 @@ def switchLayer(comboBox, main_canvas, side_canvas):
         side_list = [al_mask, al_img]
 
     # reset layer list in side-by-side and single view
-    main_canvas.setLayers(main_list) 
-    side_canvas.setLayers(side_list)
+    if dlg.SideBySide_pushButton_3.isVisible():
+        print("got here 1")
+        main_canvas.setLayers(main_list) 
+    else:
+        print("got here 2")
+        side_canvas.setLayers(side_list)
 
 def alignImgs(dlg, source_img_path, table):
     """Aligns images using perspective transformation"""
@@ -472,7 +514,6 @@ def alignImgs(dlg, source_img_path, table):
         cv2.imwrite(dlg.aligned_mask_path, aligned_mask)
 
         addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.SourceImg_canvas, True) # show aligned mask in side-by-side
-        addImg(dlg.aligned_mask_path,"Aligned Mask",dlg.Full_mapCanvas_3, False) # show aligned mask in full view
         
         # add layers to combo box
         dlg.Layer_comboBox.insertItem(0,"Aligned Mask")
@@ -483,8 +524,6 @@ def alignImgs(dlg, source_img_path, table):
     removeLayer(dlg.DestImg_canvas, dlg.DestImg_canvas.layers()[0]) # remove the destination image CPs
     
     addImg(dlg.aligned_img_path,"Aligned Image",dlg.SourceImg_canvas, True) # show aligned image in side-by-side
-    addImg(dlg.DestImg_lineEdit.text(),"Destination Image",dlg.Full_mapCanvas_3, False) # show input image in full view
-    addImg(dlg.aligned_img_path,"Aligned Image",dlg.Full_mapCanvas_3, False) # show aligned image in full view
 
     # re-center VP
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[0].extent())
@@ -492,6 +531,7 @@ def alignImgs(dlg, source_img_path, table):
 
     enableTools(dlg)
     enableButtons(dlg, False)
+
 
 def undoAlign(dlg):
     """Undoes alignment and re-instates control points but keeps info in CP table"""
@@ -513,6 +553,8 @@ def undoAlign(dlg):
     # reset layer list and canvas extent in side-by-side view
     dlg.Full_mapCanvas_3.setLayers([])
     dlg.SourceImg_canvas.setLayers([source_cps, source_img])
+    dlg.SourceImg_canvas.setExtent(dlg.SourceImg_canvas.layers()[1].extent())
+    dlg.SourceImg_canvas.refresh()
     dlg.DestImg_canvas.setLayers([dest_cps, dest_img])
     dlg.DestImg_canvas.setExtent(dlg.DestImg_canvas.layers()[1].extent())
     dlg.DestImg_canvas.refresh()
@@ -557,3 +599,5 @@ def saveAlign(dlg):
             mask_path, ext = os.path.splitext(align_path)
             probs_path = os.path.join(mask_path + '.npy')
             np.save(probs_path, aligned_probs)
+    else:
+        return

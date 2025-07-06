@@ -29,8 +29,8 @@ import skimage
 import cv2
 import tempfile
 
-from qgis.core import QgsRasterLayer, QgsProject, QgsRasterFileWriter, QgsRasterPipe, QgsProcessingFeedback
-from qgis.PyQt.QtWidgets import QFileDialog, QProgressDialog
+from qgis.core import QgsRasterLayer, QgsProject, QgsRasterFileWriter, QgsRasterPipe
+from qgis.PyQt.QtWidgets import QFileDialog
 from PyQt5.QtCore import Qt
 from qgis import processing
 
@@ -50,6 +50,8 @@ def addLayer(filter_string, listWidget):
             match = listWidget.findItems(filepath,Qt.MatchExactly) # check to ensure filepath doesn't exist already
             if len(match) == 0:
                 listWidget.addItem(filepath) # if not a duplicate, add filepath to list
+    else:
+        return
 
 def removeLayer(listWidget):
     """Removes selected layer from layer list"""
@@ -290,3 +292,5 @@ def saveMosaic(dlg):
             provider.ySize(),
             provider.extent(),
             dest_crs, ctc)
+    else:
+        return
