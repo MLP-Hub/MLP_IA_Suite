@@ -404,6 +404,7 @@ def enableButtons(dlg, undo):
     dlg.loadCP_button.setEnabled(undo)
     dlg.SourceImg_button.setEnabled(undo)
     dlg.DestImg_button.setEnabled(undo)
+    dlg.Mask_button.setEnabled(undo)
 
 def switchLayer(comboBox, main_canvas, side_canvas, dlg):
     """Switches which image is on top"""
