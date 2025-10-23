@@ -545,7 +545,7 @@ def undoAlign(dlg):
 
     # reset to side-by-side view
     canvas_list_4 = [dlg.SourceImg_canvas, dlg.DestImg_canvas, dlg.Full_mapCanvas_3]
-    sideBySide(canvas_list_4, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
+    sideBySide(canvas_list_4, dlg.AL_stack, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
     dlg.SingleView_pushButton_3.setEnabled(False)
     dlg.SideBySide_pushButton_3.setEnabled(False)
     dlg.Layer_comboBox.clear()

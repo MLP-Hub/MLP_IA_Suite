@@ -81,7 +81,7 @@ def refresh_PyLC(dlg, canvas_list):
     dlg.Pan_toolButton.setEnabled(False)
 
     # return to side-by-side view
-    sideBySide(canvas_list, [dlg.Swipe_toolButton, dlg.Transparency_slider], dlg.SideBySide_pushButton, dlg.SingleView_pushButton)
+    sideBySide(canvas_list, dlg.PyLC_stack, [dlg.Swipe_toolButton, dlg.Transparency_slider], dlg.SideBySide_pushButton, dlg.SingleView_pushButton)
     dlg.SideBySide_pushButton.hide() # hide side by side view button
 
     # refresh defaults and save filepaths
@@ -152,7 +152,7 @@ def refresh_VP(dlg, canvas_list):
     dlg.Pan_toolButton_2.setEnabled(False)
 
     # return to side-by-side view
-    sideBySide(canvas_list, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
+    sideBySide(canvas_list, dlg.VP_stack, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
     dlg.SideBySide_pushButton_2.hide() # hide side by side view button
 
     # refresh defaults and save filepaths
@@ -224,7 +224,7 @@ def refresh_align(dlg, canvas_list):
     dlg.Mask_button.setEnabled(True)
     
     # return to side-by-side view
-    sideBySide(canvas_list, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
+    sideBySide(canvas_list, dlg.AL_stack, [dlg.Swipe_toolButton_3, dlg.Transparency_slider_3],dlg.SideBySide_pushButton_3, dlg.SingleView_pushButton_3)
     dlg.SideBySide_pushButton_3.hide() # hide side by side view button
 
     # refresh defaults and save filepaths

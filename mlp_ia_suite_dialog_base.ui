@@ -341,51 +341,6 @@ padding: 15px 15px 15px 15px;
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
-       <item row="3" column="1">
-        <widget class="QgsMapCanvas" name="Full_mapCanvas" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QgsMapCanvas#Full_mapCanvas {highlightthickness: 0px;border: 0px;}</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0">
-          <item>
-           <layout class="QHBoxLayout" name="PyLC_Tab_Canvas_HL">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetNoConstraint</enum>
-            </property>
-            <item>
-             <widget class="QgsMapCanvas" name="Img_mapCanvas" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QgsMapCanvas" name="Mask_mapCanvas" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QFrame" name="Toolbar_frame_1">
          <property name="sizePolicy">
@@ -1567,6 +1522,33 @@ margin-bottom: -6px;
          </item>
         </layout>
        </item>
+       <item row="3" column="1">
+        <widget class="QStackedWidget" name="PyLC_stack">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QgsMapCanvas#Full_mapCanvas {highlightthickness: 0px;border: 0px;}</string>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="PyLC_stack_page1">
+          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0">
+           <item>
+            <widget class="QgsMapCanvas" name="Img_mapCanvas" native="true"/>
+           </item>
+           <item>
+            <widget class="QgsMapCanvas" name="Mask_mapCanvas" native="true"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QgsMapCanvas" name="Full_mapCanvas"/>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="VP_tab">
@@ -1574,49 +1556,6 @@ margin-bottom: -6px;
        <string>VP Creation</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout" rowstretch="0,40" columnstretch="0,20" rowminimumheight="40,0" columnminimumwidth="0,1000">
-       <item row="1" column="1">
-        <layout class="QVBoxLayout" name="VP_Tab_Canvases_VL">
-         <item>
-          <widget class="QgsMapCanvas" name="Full_mapCanvas_2" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <layout class="QHBoxLayout" name="VP_Tab_SideBySide_HL">
-              <property name="spacing">
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="1" column="0">
         <layout class="QVBoxLayout" name="VP_Tab_Text_VL">
          <item>
@@ -2874,6 +2813,61 @@ border-radius: 4px;
          </layout>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QStackedWidget" name="VP_stack">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="Page1">
+          <layout class="QVBoxLayout" name="VP_Tab_Canvases_VL">
+           <item>
+            <layout class="QHBoxLayout" name="VP_Tab_SideBySide_HL">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="QgsMapCanvas" name="Img_mapCanvas_2" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_24">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QgsMapCanvas" name="VP_mapCanvas" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QgsMapCanvas" name="Full_mapCanvas_2"/>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="Align_tab">
@@ -3513,39 +3507,64 @@ border-radius: 4px;
          <item>
           <layout class="QVBoxLayout" name="AL_Tab_Canvases_VL">
            <item>
-            <widget class="QgsMapCanvas" name="Full_mapCanvas_3" native="true">
+            <widget class="QStackedWidget" name="AL_stack">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <layout class="QHBoxLayout" name="AL_Tab_SideBySide_HL">
-                <item>
-                 <widget class="QgsMapCanvas" name="SourceImg_canvas" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QgsMapCanvas" name="DestImg_canvas" native="true">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <widget class="QWidget" name="AL_stack_page1">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <layout class="QHBoxLayout" name="AL_Tab_SideBySide_HL">
+                 <item>
+                  <widget class="QgsMapCanvas" name="SourceImg_canvas" native="true">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_17">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QgsMapCanvas" name="DestImg_canvas" native="true">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QgsMapCanvas" name="Full_mapCanvas_3"/>
             </widget>
            </item>
           </layout>

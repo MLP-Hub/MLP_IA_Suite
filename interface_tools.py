@@ -165,18 +165,44 @@ def transparency(val, canvas):
     active_layer.renderer().setOpacity(opacity)
     active_layer.triggerRepaint()
 
-def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+#def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+    # """Changes display to side-by-side canvases"""
+
+    # # change which canvases are visible
+    # canvas_list[0].raise_()
+    # canvas_list[1].raise_()
+    # canvas_list[2].lower()
+
+    # # hide the layers on the main canvas
+    # lyr_list = canvas_list[2].layers()
+    # for lyr in lyr_list:
+    #     removeLayer(canvas_list[2],lyr)
+
+    # # reset layer transparency
+    # active_layer = canvas_list[0].layer(0)
+    # if active_layer is not None:
+    #     active_layer.renderer().setOpacity(1)
+    #     active_layer.triggerRepaint()
+    #     active_layer = canvas_list[1].layer(0)
+    #     active_layer.renderer().setOpacity(1)
+    #     active_layer.triggerRepaint()
+
+    # for tool in exclusive_tools:
+    #     tool.setEnabled(False) # disables any tools exclusive to full view (e.g., swipe)
+
+    # # deactivate swipe tool
+    # if exclusive_tools[0].isChecked:
+    #     exclusive_tools[0].setChecked(False) # changes swipe tool to not be checked
+    #     # canvas_list[2].unsetMapTool(exclusive_tools[0]) # do I need to disable? Would have to pass the tool itself, not the button
+
+    # # change which display button is visible
+    # ss_view_button.hide()
+    # single_view_button.show()
+
+def sideBySide(canvas_list, stack, exclusive_tools, ss_view_button, single_view_button):
     """Changes display to side-by-side canvases"""
 
-    # change which canvases are visible
-    canvas_list[0].raise_()
-    canvas_list[1].raise_()
-    canvas_list[2].lower()
-
-    # hide the layers on the main canvas
-    lyr_list = canvas_list[2].layers()
-    for lyr in lyr_list:
-        removeLayer(canvas_list[2],lyr)
+    stack.setCurrentIndex(0)
 
     # reset layer transparency
     active_layer = canvas_list[0].layer(0)
@@ -199,13 +225,31 @@ def sideBySide(canvas_list, exclusive_tools, ss_view_button, single_view_button)
     ss_view_button.hide()
     single_view_button.show()
 
-def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+# def singleView(canvas_list, exclusive_tools, ss_view_button, single_view_button):
+#     """Changes display to single canvas"""
+
+#     # change which canvases are visible
+#     canvas_list[2].raise_()
+#     canvas_list[0].lower()
+#     canvas_list[1].lower()
+
+#     # make the layers on the main canvas visible
+#     lyr_list = canvas_list[1].layers()
+#     lyr_list.extend(canvas_list[0].layers())
+#     for lyr in lyr_list:
+#         loadLayer(canvas_list[2],lyr)
+
+#     for tool in exclusive_tools:
+#         tool.setEnabled(True) # enables any tools exclusive to full view (e.g., swipe)
+
+#     # change which display button is visible
+#     single_view_button.hide()
+#     ss_view_button.show()
+
+def singleView(canvas_list, stack, exclusive_tools, ss_view_button, single_view_button):
     """Changes display to single canvas"""
 
-    # change which canvases are visible
-    canvas_list[2].raise_()
-    canvas_list[0].lower()
-    canvas_list[1].lower()
+    stack.setCurrentIndex(1)
 
     # make the layers on the main canvas visible
     lyr_list = canvas_list[1].layers()

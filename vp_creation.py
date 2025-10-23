@@ -36,6 +36,7 @@ import tempfile
 import skimage
 import cv2
 import scipy
+import scipy.ndimage
 import numpy as np
 import math
 
@@ -493,7 +494,7 @@ def displayVP(dlg):
 
     if dlg.SideBySide_pushButton_2.isEnabled():
         canvas_list_2 = [dlg.Img_mapCanvas_2, dlg.VP_mapCanvas, dlg.Full_mapCanvas_2]
-        sideBySide(canvas_list_2, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
+        sideBySide(canvas_list_2, dlg.Vp_stack, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
     
     vp = createVP(dlg) # create virtual photo
     
