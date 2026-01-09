@@ -467,11 +467,8 @@ def createVP(dlg):
         beta = math.atan(wx/dc) # find horizontal angle between camera and pixel column
         a = cam_params['azi'] - math.degrees(beta) # find angle relative to north
 
-        tilt = -70
-
         # FORWARD RAY
         vert_angles, greys_visible = buildRay(a, cam_x, cam_y, pixelSizeX, pixelSizeY, DEM_img, HS_img, cam_params)
-        vert_angles = vert_angles - np.radians(tilt)
 
         #  now find location of each point on ray on the picture plane of the VP
         dcx = dc/math.cos(math.radians(cam_params['azi']-a)) # distance to camera of current ray
