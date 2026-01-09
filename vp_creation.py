@@ -345,6 +345,39 @@ def camXY(hillshade_layer, lat, lon):
 
     return cam_x, cam_y, pixelSizeX, pixelSizeY
 
+def buildRay(a, cam_x, cam_y, pixelSizeX, pixelSizeY, DEM_img, HS_img, cam_params):
+    """Builds a ray for the ray tracer. Returns the corresponding 
+    grey values and y_indices corresponding to the ray"""
+
+    # create ray start position (remove first 100 m)
+    ray_start_y = cam_y - (0*math.cos(np.radians(a))/pixelSizeY)
+    ray_start_x = cam_x + (0*math.sin(np.radians(a))/pixelSizeX)
+    
+    # create ray end position
+    ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
+    ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
+
+    min_px = min(pixelSizeX, pixelSizeY)
+
+    xs = np.linspace(ray_start_x, ray_end_x, round(100000/min_px))
+    ys = np.linspace(ray_start_y, ray_end_y, round(100000/min_px))
+
+    elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"] - cam_params["hgt"]
+    greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
+
+    opp = (xs - cam_x)*pixelSizeX
+    adj = (cam_y - ys)*pixelSizeY
+
+    dem_dist = np.sqrt(np.add(opp**2, adj**2))
+    vert_angles = np.arctan(np.divide(elevs,dem_dist)) # find vertical angle where ray intersects terrain (opp/adj)
+
+    vert_angles_inc = np.fmax.accumulate(vert_angles)
+    vert_angles_unique, unique_index = np.unique(vert_angles_inc, return_index=True)
+    greys_visible = greys[unique_index] # keep hillshade values at each index of a unique, visible elevation value
+
+    return vert_angles_unique, greys_visible
+
+
 def createVP(dlg):
     """Creates virtual photograph""" 
 
@@ -422,7 +455,7 @@ def createVP(dlg):
     progressDlg.forceShow()
     progressDlg.show()  
 
-    for img_x in range(0, img_w):
+    for img_x in range(0,img_w):
         # First, find all visible pixles
         # get the horizontal and vertical angles to the camera position
         # and find the corresponding greyscale values
@@ -434,45 +467,27 @@ def createVP(dlg):
         beta = math.atan(wx/dc) # find horizontal angle between camera and pixel column
         a = cam_params['azi'] - math.degrees(beta) # find angle relative to north
 
-        # create ray start position (remove first 100 m)
-        ray_start_y = cam_y - (100*math.cos(np.radians(a))/pixelSizeY)
-        ray_start_x = cam_x + (100*math.sin(np.radians(a))/pixelSizeX)
-        
-        # create ray end position
-        ray_end_y = cam_y - (25000*math.cos(np.radians(a))/pixelSizeY)
-        ray_end_x = cam_x + (25000*math.sin(np.radians(a))/pixelSizeX)
+        tilt = -70
 
-        min_px = min(pixelSizeX, pixelSizeY)
-
-        xs = np.linspace(ray_start_x, ray_end_x, round(100000/min_px))
-        ys = np.linspace(ray_start_y, ray_end_y, round(100000/min_px))
-
-        elevs = scipy.ndimage.map_coordinates(DEM_img, np.vstack((ys,xs)), order = 1) - cam_params["elev"] - cam_params["hgt"]
-        greys = scipy.ndimage.map_coordinates(HS_img, np.vstack((ys,xs)), order = 1)
-
-        opp = (xs - cam_x)*pixelSizeX
-        adj = (cam_y - ys)*pixelSizeY
-
-        dem_dist = np.sqrt(np.add(opp**2, adj**2))
-        vert_angles = np.arctan(np.divide(elevs,dem_dist)) # find ratio (opp/adj)
+        # FORWARD RAY
+        vert_angles, greys_visible = buildRay(a, cam_x, cam_y, pixelSizeX, pixelSizeY, DEM_img, HS_img, cam_params)
+        vert_angles = vert_angles - np.radians(tilt)
 
         #  now find location of each point on ray on the picture plane of the VP
         dcx = dc/math.cos(math.radians(cam_params['azi']-a)) # distance to camera of current ray
 
         img_ys = np.tan(vert_angles)*dcx # convert angles from DEM into Y position on picture plane of VP
-        img_ys = img_h/2 - img_ys # actual position is relative to the centre
+        unique_ys = img_h/2 - img_ys # actual position is relative to the centre
 
-        img_ys_inc = np.fmin.accumulate(img_ys) # converts to array with only decreasing y positions (increasing elevation)
-        unique_ys, unique_ys_indx = np.unique(img_ys_inc, return_index=True) # keep only unique y positions (and their index)
-
-        greys_visible = greys[unique_ys_indx] # keep hillshade values at each index of a unique y value
-        
-        min_px = max(0, min(img_ys))
+        min_px = max(0, min(img_ys)) # find max terrain height
 
         nonsky_pixels = np.arange(int(min_px), img_h) # find the area of the image column that is not sky
 
         unique_ys = unique_ys[::1]
         greys_visible = greys_visible[::1]
+
+        unique_ys = np.flip(unique_ys)
+        greys_visible = np.flip(greys_visible)
 
         yinterp = np.interp(nonsky_pixels, unique_ys, greys_visible) # interpolate the missing pixel values
 
@@ -494,7 +509,7 @@ def displayVP(dlg):
 
     if dlg.SideBySide_pushButton_2.isEnabled():
         canvas_list_2 = [dlg.Img_mapCanvas_2, dlg.VP_mapCanvas, dlg.Full_mapCanvas_2]
-        sideBySide(canvas_list_2, dlg.Vp_stack, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
+        sideBySide(canvas_list_2, dlg.VP_stack, [dlg.Swipe_toolButton_2, dlg.Transparency_slider_2],dlg.SideBySide_pushButton_2, dlg.SingleView_pushButton_2)
     
     vp = createVP(dlg) # create virtual photo
     
