@@ -258,12 +258,15 @@ padding: 15px 15px 15px 15px;
              <item row="2" column="1">
               <widget class="QLabel" name="Help_label">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our&lt;/span&gt;&lt;a href=&quot;https://doi.org/10.5683/SP3/PR368H&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt; help documentation and example dataset&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plugin related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Questions? Have a look at our &lt;a href=&quot;https://doi.org/10.5683/SP3/PR368H&quot;&gt;help documentation and example dataset&lt;/a&gt; for detailed instructions. For general inquiries, email mntnlgcy@uvic.ca. Plugin related inquiries should be directed to clairewright@uvic.ca.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignJustify|Qt::AlignVCenter</set>
                </property>
                <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+               <property name="openExternalLinks">
                 <bool>true</bool>
                </property>
               </widget>
@@ -1534,7 +1537,7 @@ margin-bottom: -6px;
           <string notr="true">QgsMapCanvas#Full_mapCanvas {highlightthickness: 0px;border: 0px;}</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="PyLC_stack_page1">
           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0">
